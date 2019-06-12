@@ -1,0 +1,36 @@
+{
+  "name": "elsa-workflow-designer",
+  "version": "0.0.1",
+  "description": "Stencil Component Starter",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "es2015": "dist/esm/index.mjs",
+  "es2017": "dist/esm/index.mjs",
+  "types": "dist/types/index.d.ts",
+  "collection": "dist/collection/collection-manifest.json",
+  "collection:main": "dist/collection/index.js",
+  "unpkg": "dist/elsa-workflow-designer/elsa-workflow-designer.js",
+  "files": [
+    "dist/",
+    "loader/"
+  ],
+  "scripts": {
+    "build": "stencil build --docs",
+    "start": "stencil build --dev --watch --serve",
+    "test": "stencil test --spec --e2e",
+    "test.watch": "stencil test --spec --e2e --watchAll"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0.5",
+    "@stencil/core": "1.0.0-beta.8",
+    "@stencil/sass": "latest"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/bootstrap": "^4.3.0",
+    "@types/jquery": "^3.3.29",
+    "handlebars": "^4.1.2",
+    "jsplumb": "^2.10.0",
+    "uuid-browser": "^3.1.0"
+  }
+}

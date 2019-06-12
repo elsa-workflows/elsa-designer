@@ -1,0 +1,100 @@
+@import "~jsplumb/css/jsplumbtoolkit-defaults.css";
+
+.workflow-canvas {
+  position: relative;
+  touch-action: none;
+  min-height: 1000px;
+
+  .activity {
+    display: block;
+    border: 1px solid #cccccc;
+    box-shadow: 2px 2px 19px #aaa;
+    border-radius: 0.5em;
+    opacity: 0.8;
+    min-width: 80px;
+    min-height: 80px;
+    text-align: left;
+    z-index: 20;
+    position: absolute;
+    background-color: #f1f1f1;
+    color: #3d3d3d;
+    font-family: helvetica, sans-serif;
+    padding: 1em;
+    font-size: 0.7em;
+    cursor: default;
+    transition: box-shadow 0.15s ease-in;
+
+    .activity-status {
+      position: absolute;
+      right: 4px;
+      bottom: 4px;
+      cursor: pointer;
+
+      i {
+        font-size: 2em;
+      }
+    }
+
+    &.activity-definition {
+      border: 1px solid #5a8fee;
+    }
+
+    &.activity-executed {
+      border: 1px solid #6faa44;
+
+      .activity-status {
+        i {
+          color: #6faa44;
+        }
+      }
+    }
+
+    &.activity-blocking {
+      border: 1px solid #5a8fee;
+
+      .activity-status {
+        i {
+          color: #5a8fee;
+        }
+      }
+    }
+
+    &.activity-faulted {
+      border: 1px solid #d23c3c;
+
+      .activity-status {
+        i {
+          color: #d23c3c;
+        }
+      }
+    }
+  }
+
+}
+
+.jtk-connector {
+  z-index: 4;
+}
+
+.jtk-endpoint, .endpointTargetLabel, .endpointSourceLabel {
+  z-index: 21;
+  cursor: pointer;
+}
+
+.endpointTargetLabel, .endpointSourceLabel {
+  font-size: 8px;
+}
+
+.jtk-overlay {
+  background-color: transparent;
+}
+
+.connection-label {
+  z-index: 31;
+  border: 1px solid #cccccc;
+  padding: 0 0.5em;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background-color: white;
+}

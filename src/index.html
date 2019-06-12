@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
+  <title>Stencil Component Starter</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script type="module" src="/build/elsa-workflow-designer.esm.js"></script>
+  <script nomodule src="/build/elsa-workflow-designer.js"></script>
+
+  <style type="text/css">
+    html {
+      font-size: 14px;
+    }
+
+    #header h5 {
+      color: white;
+    }
+
+  </style>
+</head>
+<body>
+
+<wf-designer-host>
+
+  <!-- Activity Library -->
+  <wf-activity-library id="activityLibrary">
+    <wf-write-line></wf-write-line>
+    <wf-read-line></wf-read-line>
+    <wf-log></wf-log>
+    <wf-set-variable></wf-set-variable>
+  </wf-activity-library>
+
+  <!-- Activity Editor -->
+  <wf-activity-editor-modal></wf-activity-editor-modal>
+
+  <div id="header" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-dark border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Workflow Designer</h5>
+
+    <!-- Activity Picker -->
+    <wf-activity-picker></wf-activity-picker>
+  </div>
+
+  <!-- Workflow Designer -->
+  <wf-designer id="workflowDesigner">
+    <wf-activity activity-id="1" left="50" top="50" type="WriteLine"></wf-activity>
+    <wf-activity activity-id="2" left="430" top="190" type="ReadLine"></wf-activity>
+    <wf-activity activity-id="3" left="280" top="490" type="Log"></wf-activity>
+    <wf-connection source-id="2" destination-id="3" outcome="next"></wf-connection>
+    <wf-connection source-id="1" destination-id="2" outcome="next"></wf-connection>
+  </wf-designer>
+</wf-designer-host>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+  var activityLibrary = document.querySelector('wf-activity-library');
+
+  // activityLibrary.componentOnReady().then(() => {
+  //
+  // });
+
+  activityLibrary.registerActivity(function () {
+    this.displayName = "My Activity";
+    this.category = "Custom";
+    this.description = "My custom activity";
+    this.getOutcomes = function (activity) { return ['next'];};
+    this.displayTemplate = function (activity) {return '<div>Hello!</div>'};
+    this.editorTemplate = function (activity) {
+      return '<div>Editor goes here...</div>'
+    };
+
+    this.updateEditor = function (activity, formData) {
+      alert('Updating!')
+    };
+  });
+
+</script>
+</body>
+</html>
