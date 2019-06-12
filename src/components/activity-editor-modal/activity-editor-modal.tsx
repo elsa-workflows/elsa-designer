@@ -1,4 +1,5 @@
 import {Component, Element, h, Method, Event, EventEmitter, Prop, Watch} from '@stencil/core';
+import Handlebars from 'handlebars/dist/handlebars';
 import activityDefinitionStore from '../../services/ActivityDefinitionStore';
 import {Activity, ActivityComponent} from "../../models";
 import {FormUpdater} from "../../utils/form-updater";
@@ -46,6 +47,9 @@ export class ActivityEditorModal {
     }
 
     this.editor = this.activityComponent.editorTemplate ? this.activityComponent.editorTemplate(this.activity) : null;
+
+    if(typeof(this.editor) === 'string')
+      this.editor = ActivityEditorModal.parseHandlebars(this.editor, this.activity);
   }
 
   editor: any;
@@ -94,5 +98,10 @@ export class ActivityEditorModal {
         </div>
       </div>
     )
+  }
+
+  private static parseHandlebars(source: string, activity: Activity): string {
+    const template = Handlebars.compile(source);
+    return template({...activity.state, activity});
   }
 }

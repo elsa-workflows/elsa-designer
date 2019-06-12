@@ -35,11 +35,11 @@
       <div slot="editor">
         <div class="form-group">
           <label for="firstName">First Name</label>
-          <input id="firstName" name="firstName" type="text" class="form-control" value="{{firstName}}"/>
+          <input id="firstName" name="firstName" type="text" class="form-control" value="{{firstName}}" />
         </div>
         <div class="form-group">
           <label for="lastName">Last Name</label>
-          <input id="lastName" name="lastName" type="text" class="form-control" value="{{lastName}}"/>
+          <input id="lastName" name="lastName" type="text" class="form-control" value="{{lastName}}" />
         </div>
       </div>
       <div slot="display">
@@ -77,12 +77,24 @@
 
 <script type="text/javascript">
 
+  // Temporary workaround until I figure out how to make "componentOnReady" work with stencil-generated-web components.
+  // According to the docs, the web component should have a `componentOnReady` function available.
+  // However, this function is only available after the component has been hydrated.
+  function initialize(component, callback) {
+    var handle = setInterval(function () {
+      if (component.componentOnReady) {
+        clearInterval(handle);
+        callback(component);
+      }
+    }, 100);
+  }
+
   // Programmatically add custom activities.
+  initialize(document.querySelector('wf-activity-library'), function (component) {
+    addActivities(component);
+  });
 
-  function addActivities() {
-
-    var activityLibrary = document.querySelector('wf-activity-library');
-
+  function addActivities(activityLibrary) {
     activityLibrary.registerActivity({
       type: "MyProgrammaticActivity",
       displayName: "My Programmatic Activity",
@@ -93,17 +105,14 @@
         return '<div>' +
           '  <div class="form-group">\n' +
           '  <label for="age">Age</label>\n' +
-          '  <input id="age" name="age" type="text" class="form-control" value="' + activity.state.age + '"/>\n' +
+          '  <input id="age" name="age" type="text" class="form-control" value="{{age}}"/>\n' +
           '  </div>' +
           '</div>';
-      }
+      },
+      displayTemplate: null // Optionally provide a custom display.
     });
   }
 
-  // Temporary workaround until I figure out how to make "componentOnReady" work with stencil-generated-web components.
-  setTimeout(function () {
-    addActivities();
-  }, 100);
 
 </script>
 </body>

@@ -42,8 +42,9 @@ export class CustomActivity implements ActivityComponent {
     );
   };
 
-  private getDefaultEditor = () => (
+  private getDefaultEditor = (activity: Activity) => (
     <div>
+      <p>No editor defined for {activity.type}</p>
     </div>
   );
 
@@ -69,11 +70,9 @@ export class CustomActivity implements ActivityComponent {
     const editorTemplate: any = this.el.querySelector('[slot=editor]');
 
     if (!editorTemplate)
-      return this.getDefaultEditor();
+      return this.getDefaultEditor(activity);
 
-    const source = editorTemplate.innerHTML;
-    const template = Handlebars.compile(source);
-    return template({...activity.state, activity});
+    return editorTemplate.innerHTML;
   }
 
   getOutcomes(_: Activity): string[] {
