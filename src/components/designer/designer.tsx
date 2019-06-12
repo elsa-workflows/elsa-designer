@@ -92,7 +92,7 @@ export class Designer {
       const definition = activityDefinitionStore.findActivityByType(activity.type);
       const display = definition.displayTemplate
         ? definition.displayTemplate(activity)
-        : <div><h5>{activity.type}</h5><p>{definition.description}</p></div>;
+        : <div><h5>{definition.displayName}</h5><p>{definition.description}</p></div>;
 
       return {
         activity,

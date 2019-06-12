@@ -55,7 +55,14 @@ export class CustomActivity implements ActivityComponent {
 
     const source = displayTemplate.innerHTML;
     const template = Handlebars.compile(source);
-    return template({...activity.state, activity});
+    return template({
+      ...activity.state,
+      activity,
+      definition: {
+        displayName: this.displayName,
+        description: this.description
+      }
+    });
   }
 
   editorTemplate(activity: Activity): RenderResult {

@@ -1,6 +1,7 @@
 import {Component, Element, h, Method, Event, EventEmitter, Prop, Watch} from '@stencil/core';
 import activityDefinitionStore from '../../services/ActivityDefinitionStore';
 import {Activity, ActivityComponent} from "../../models";
+import {FormUpdater} from "../../utils/form-updater";
 
 @Component({
   tag: 'wf-activity-editor-modal',
@@ -55,7 +56,8 @@ export class ActivityEditorModal {
 
     const form: any = e.target;
     const formData = new FormData(form);
-    const updatedActivity: Activity = this.activityComponent.updateEditor(this.activity, formData);
+    const updateEditor = this.activityComponent.updateEditor ? this.activityComponent.updateEditor : FormUpdater.updateEditor;
+    const updatedActivity: Activity = updateEditor(this.activity, formData);
     this.submit.emit(updatedActivity);
     await this.hide();
   }
@@ -74,7 +76,7 @@ export class ActivityEditorModal {
             <div class="modal-content">
               <form onSubmit={e => this.onSubmit(e)}>
                 <div class="modal-header">
-                  <h5 class="modal-title">Edit {displayName} Activity</h5>
+                  <h5 class="modal-title">Edit {displayName}</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>

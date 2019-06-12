@@ -25,7 +25,6 @@ export class ReadLine implements ActivityComponent {
   category: string = "Console";
 
   public componentDidLoad() {
-    debugger;
     activityDefinitionStore.addActivity(this);
   }
 

@@ -74,7 +74,7 @@ export class ActivityPicker {
                       {activities.map(activity => (
                         <div class="card activity">
                           <div class="card-body">
-                            <h4 class="card-title"><i class="far fa-envelope" />{activity.type}</h4>
+                            <h4 class="card-title"><i class="far fa-envelope" />{activity.displayName}</h4>
                             <p>{activity.description}</p>
                           </div>
                           <div class="card-footer text-muted text-xs-right">

@@ -30,7 +30,7 @@ export class DesignerHost {
   activityEditor: HTMLWfActivityEditorModalElement;
   designer: HTMLWfDesignerElement;
 
-  componentDidLoad(){
+  async componentDidLoad(){
     this.activityPicker = this.el.querySelector<HTMLWfActivityPickerElement>('wf-activity-picker');
     this.activityEditor = this.el.querySelector<HTMLWfActivityEditorModalElement>('wf-activity-editor-modal');
     this.designer = this.el.querySelector<HTMLWfDesignerElement>('wf-designer');

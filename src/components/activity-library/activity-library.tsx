@@ -1,4 +1,4 @@
-import {Component, h, Method, Prop} from '@stencil/core';
+import {Component, h, Method} from '@stencil/core';
 import activityDefinitionStore from '../../services/ActivityDefinitionStore';
 import {ActivityComponent} from "../../models";
 
@@ -7,9 +7,6 @@ import {ActivityComponent} from "../../models";
   shadow: true
 })
 export class ActivityLibrary {
-
-  @Prop({reflect: true })
-  myTest: string;
 
   @Method()
   async registerActivity(activity: ActivityComponent) {

@@ -21,7 +21,7 @@
 </head>
 <body>
 
-<wf-designer-host>
+<wf-designer-host id="designerHost">
 
   <!-- Activity Library -->
   <wf-activity-library id="activityLibrary">
@@ -29,6 +29,24 @@
     <wf-read-line></wf-read-line>
     <wf-log></wf-log>
     <wf-set-variable></wf-set-variable>
+
+    <!-- Custom declarative activity -->
+    <wf-custom-activity type="MyCustomActivity" display-name="My Custom Activity" category="Custom" description="This is a sample custom activity declared using HTML" outcomes="one, two, three">
+      <div slot="editor">
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input id="firstName" name="firstName" type="text" class="form-control" value="{{firstName}}"/>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input id="lastName" name="lastName" type="text" class="form-control" value="{{lastName}}"/>
+        </div>
+      </div>
+      <div slot="display">
+        <h5>{{definition.displayName}}</h5>
+        <p>Welcome, {{firstName}} {{lastName}}!</p>
+      </div>
+    </wf-custom-activity>
   </wf-activity-library>
 
   <!-- Activity Editor -->
@@ -59,26 +77,33 @@
 
 <script type="text/javascript">
 
-  var activityLibrary = document.querySelector('wf-activity-library');
+  // Programmatically add custom activities.
 
-  // activityLibrary.componentOnReady().then(() => {
-  //
-  // });
+  function addActivities() {
 
-  activityLibrary.registerActivity(function () {
-    this.displayName = "My Activity";
-    this.category = "Custom";
-    this.description = "My custom activity";
-    this.getOutcomes = function (activity) { return ['next'];};
-    this.displayTemplate = function (activity) {return '<div>Hello!</div>'};
-    this.editorTemplate = function (activity) {
-      return '<div>Editor goes here...</div>'
-    };
+    var activityLibrary = document.querySelector('wf-activity-library');
 
-    this.updateEditor = function (activity, formData) {
-      alert('Updating!')
-    };
-  });
+    activityLibrary.registerActivity({
+      type: "MyProgrammaticActivity",
+      displayName: "My Programmatic Activity",
+      category: "Custom",
+      description: "A programmatically declared custom activity",
+      getOutcomes: function (activity) { return ['next'];},
+      editorTemplate: function (activity) {
+        return '<div>' +
+          '  <div class="form-group">\n' +
+          '  <label for="age">Age</label>\n' +
+          '  <input id="age" name="age" type="text" class="form-control" value="' + activity.state.age + '"/>\n' +
+          '  </div>' +
+          '</div>';
+      }
+    });
+  }
+
+  // Temporary workaround until I figure out how to make "componentOnReady" work with stencil-generated-web components.
+  setTimeout(function () {
+    addActivities();
+  }, 100);
 
 </script>
 </body>

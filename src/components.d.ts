@@ -25,7 +25,6 @@ export namespace Components {
     'show': () => Promise<void>;
   }
   interface WfActivityLibrary {
-    'myTest': string;
     'registerActivity': (activity: ActivityComponent) => Promise<void>;
   }
   interface WfActivityPicker {
@@ -176,9 +175,7 @@ declare namespace LocalJSX {
     'activity'?: Activity;
     'onUpdate-activity'?: (event: CustomEvent<any>) => void;
   }
-  interface WfActivityLibrary extends JSXBase.HTMLAttributes<HTMLWfActivityLibraryElement> {
-    'myTest'?: string;
-  }
+  interface WfActivityLibrary extends JSXBase.HTMLAttributes<HTMLWfActivityLibraryElement> {}
   interface WfActivityPicker extends JSXBase.HTMLAttributes<HTMLWfActivityPickerElement> {
     'onActivity-picked'?: (event: CustomEvent<any>) => void;
   }
