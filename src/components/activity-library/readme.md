@@ -5,13 +5,6 @@
 <!-- Auto Generated Below -->
 
 
-## Properties
-
-| Property | Attribute | Description | Type     | Default     |
-| -------- | --------- | ----------- | -------- | ----------- |
-| `myTest` | `my-test` |             | `string` | `undefined` |
-
-
 ## Methods
 
 ### `registerActivity(activity: ActivityComponent) => Promise<void>`

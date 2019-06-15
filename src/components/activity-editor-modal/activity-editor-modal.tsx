@@ -3,10 +3,13 @@ import Handlebars from 'handlebars/dist/handlebars';
 import activityDefinitionStore from '../../services/ActivityDefinitionStore';
 import {Activity, ActivityComponent} from "../../models";
 import {FormUpdater} from "../../utils/form-updater";
+import $ from "jquery";
+import 'bootstrap';
 
 @Component({
   tag: 'wf-activity-editor-modal',
-  shadow: false
+  styleUrl: 'activity-editor-modal.scss',
+  shadow: true
 })
 export class ActivityEditorModal {
 

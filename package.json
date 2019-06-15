@@ -1,6 +1,6 @@
 {
-  "name": "elsa-workflow-designer",
-  "version": "0.0.1",
+  "name": "@elsa-workflows/elsa-workflow-designer",
+  "version": "0.0.2",
   "description": "Stencil Component Starter",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -10,6 +10,21 @@
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
   "unpkg": "dist/elsa-workflow-designer/elsa-workflow-designer.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elsa-workflows/elsa-designer-html.git"
+  },
+  "bugs": {
+    "url": "https://github.com/elsa-workflows/elsa-designer-html/issues"
+  },
+  "homepage": "https://github.com/elsa-workflows/elsa-designer-html",
+  "keywords": [
+    "workflow",
+    "workflow designer",
+    "web component",
+    "stenciljs"
+  ],
+  "author": "Sipke Schoorstra",
   "files": [
     "dist/",
     "loader/"
@@ -25,12 +40,15 @@
     "@stencil/core": "1.0.0-beta.8",
     "@stencil/sass": "latest"
   },
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "dependencies": {
-    "@types/bootstrap": "^4.3.0",
-    "@types/jquery": "^3.3.29",
+    "bootstrap": "^4.3.1",
     "handlebars": "^4.1.2",
     "jsplumb": "^2.10.0",
-    "uuid-browser": "^3.1.0"
+    "uuid-browser": "^3.1.0",
+    "jquery": "^3.4.1"
+  },
+  "directories": {
+    "doc": "doc"
   }
 }

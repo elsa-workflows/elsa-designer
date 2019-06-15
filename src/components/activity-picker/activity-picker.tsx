@@ -1,10 +1,13 @@
 import {Component, Element, h, Method, Event, EventEmitter, State} from '@stencil/core';
 import activityDefinitionStore from '../../services/ActivityDefinitionStore';
-import {ActivityComponent} from "../../models";
+import {ActivityComponent} from '../../models';
+import $ from "jquery";
+import 'bootstrap';
 
 @Component({
   tag: 'wf-activity-picker',
-  shadow: false
+  styleUrl: 'activity-picker.scss',
+  shadow: true
 })
 export class ActivityPicker {
 

@@ -70,9 +70,10 @@ export class Designer {
   }
 
   public render() {
+    const activities = this.activityModels;
     return (
       <div class="workflow-canvas">
-        {this.activityModels.map((model: ActivityModel) => {
+        {activities.map((model: ActivityModel) => {
           const activity = model.activity;
           const styles: CssMap = {'left': `${activity.left}px`, 'top': `${activity.top}px`};
           const isHtml = typeof (model.display) === 'string';

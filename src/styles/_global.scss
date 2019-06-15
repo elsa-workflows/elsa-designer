@@ -1,0 +1,18 @@
+// Bootstrap globals
+@import '../../node_modules/bootstrap/scss/_functions.scss';
+@import '../../node_modules/bootstrap/scss/_variables.scss';
+
+$headings-font-family: $font-family-sans-serif;
+
+@import '../../node_modules/bootstrap/scss/_mixins.scss';
+@import '../../node_modules/bootstrap/scss/_root.scss';
+@import '../../node_modules/bootstrap/scss/_reboot.scss';
+@import '../../node_modules/bootstrap/scss/_type.scss';
+@import '../../node_modules/bootstrap/scss/_utilities.scss';
+@import '../../node_modules/bootstrap/scss/_tooltip.scss';
+@import '../../node_modules/bootstrap/scss/_transitions.scss';
+
+
+* {
+  font-family: $font-family-sans-serif;
+}
