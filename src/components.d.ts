@@ -36,6 +36,14 @@ export namespace Components {
     'outcome': string;
     'sourceActivityId': string;
   }
+  interface WfContextMenu {
+    'handleContextMenuEvent': (e: MouseEvent) => Promise<void>;
+    'target': HTMLElement;
+    'targetSelector': string;
+  }
+  interface WfContextMenuItem {
+    'text': any;
+  }
   interface WfCustomActivity {
     'category': string;
     'description': string;
@@ -107,6 +115,18 @@ declare global {
     new (): HTMLWfConnectionElement;
   };
 
+  interface HTMLWfContextMenuElement extends Components.WfContextMenu, HTMLStencilElement {}
+  var HTMLWfContextMenuElement: {
+    prototype: HTMLWfContextMenuElement;
+    new (): HTMLWfContextMenuElement;
+  };
+
+  interface HTMLWfContextMenuItemElement extends Components.WfContextMenuItem, HTMLStencilElement {}
+  var HTMLWfContextMenuItemElement: {
+    prototype: HTMLWfContextMenuItemElement;
+    new (): HTMLWfContextMenuItemElement;
+  };
+
   interface HTMLWfCustomActivityElement extends Components.WfCustomActivity, HTMLStencilElement {}
   var HTMLWfCustomActivityElement: {
     prototype: HTMLWfCustomActivityElement;
@@ -154,6 +174,8 @@ declare global {
     'wf-activity-library': HTMLWfActivityLibraryElement;
     'wf-activity-picker': HTMLWfActivityPickerElement;
     'wf-connection': HTMLWfConnectionElement;
+    'wf-context-menu': HTMLWfContextMenuElement;
+    'wf-context-menu-item': HTMLWfContextMenuItemElement;
     'wf-custom-activity': HTMLWfCustomActivityElement;
     'wf-designer': HTMLWfDesignerElement;
     'wf-designer-host': HTMLWfDesignerHostElement;
@@ -184,6 +206,14 @@ declare namespace LocalJSX {
     'outcome'?: string;
     'sourceActivityId'?: string;
   }
+  interface WfContextMenu extends JSXBase.HTMLAttributes<HTMLWfContextMenuElement> {
+    'onContext-menu'?: (event: CustomEvent<any>) => void;
+    'target'?: HTMLElement;
+    'targetSelector'?: string;
+  }
+  interface WfContextMenuItem extends JSXBase.HTMLAttributes<HTMLWfContextMenuItemElement> {
+    'text'?: any;
+  }
   interface WfCustomActivity extends JSXBase.HTMLAttributes<HTMLWfCustomActivityElement> {
     'category'?: string;
     'description'?: string;
@@ -192,6 +222,7 @@ declare namespace LocalJSX {
     'type'?: string;
   }
   interface WfDesigner extends JSXBase.HTMLAttributes<HTMLWfDesignerElement> {
+    'onAdd-activity'?: (event: CustomEvent<any>) => void;
     'onEdit-activity'?: (event: CustomEvent<any>) => void;
   }
   interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {}
@@ -226,6 +257,8 @@ declare namespace LocalJSX {
     'wf-activity-library': WfActivityLibrary;
     'wf-activity-picker': WfActivityPicker;
     'wf-connection': WfConnection;
+    'wf-context-menu': WfContextMenu;
+    'wf-context-menu-item': WfContextMenuItem;
     'wf-custom-activity': WfCustomActivity;
     'wf-designer': WfDesigner;
     'wf-designer-host': WfDesignerHost;
