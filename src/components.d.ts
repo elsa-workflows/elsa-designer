@@ -58,6 +58,11 @@ export namespace Components {
     'updateActivity': (activity: Activity) => Promise<void>;
   }
   interface WfDesignerHost {}
+  interface WfExportButton {}
+  interface WfImportExport {
+    'designer': HTMLWfDesignerElement;
+    'export': (format: WorkflowFormat) => Promise<void>;
+  }
   interface WfLog {
     'category': string;
     'description': string;
@@ -147,6 +152,18 @@ declare global {
     new (): HTMLWfDesignerHostElement;
   };
 
+  interface HTMLWfExportButtonElement extends Components.WfExportButton, HTMLStencilElement {}
+  var HTMLWfExportButtonElement: {
+    prototype: HTMLWfExportButtonElement;
+    new (): HTMLWfExportButtonElement;
+  };
+
+  interface HTMLWfImportExportElement extends Components.WfImportExport, HTMLStencilElement {}
+  var HTMLWfImportExportElement: {
+    prototype: HTMLWfImportExportElement;
+    new (): HTMLWfImportExportElement;
+  };
+
   interface HTMLWfLogElement extends Components.WfLog, HTMLStencilElement {}
   var HTMLWfLogElement: {
     prototype: HTMLWfLogElement;
@@ -181,6 +198,8 @@ declare global {
     'wf-custom-activity': HTMLWfCustomActivityElement;
     'wf-designer': HTMLWfDesignerElement;
     'wf-designer-host': HTMLWfDesignerHostElement;
+    'wf-export-button': HTMLWfExportButtonElement;
+    'wf-import-export': HTMLWfImportExportElement;
     'wf-log': HTMLWfLogElement;
     'wf-read-line': HTMLWfReadLineElement;
     'wf-set-variable': HTMLWfSetVariableElement;
@@ -228,6 +247,10 @@ declare namespace LocalJSX {
     'onEdit-activity'?: (event: CustomEvent<any>) => void;
   }
   interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {}
+  interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {}
+  interface WfImportExport extends JSXBase.HTMLAttributes<HTMLWfImportExportElement> {
+    'designer'?: HTMLWfDesignerElement;
+  }
   interface WfLog extends JSXBase.HTMLAttributes<HTMLWfLogElement> {
     'category'?: string;
     'description'?: string;
@@ -264,6 +287,8 @@ declare namespace LocalJSX {
     'wf-custom-activity': WfCustomActivity;
     'wf-designer': WfDesigner;
     'wf-designer-host': WfDesignerHost;
+    'wf-export-button': WfExportButton;
+    'wf-import-export': WfImportExport;
     'wf-log': WfLog;
     'wf-read-line': WfReadLine;
     'wf-set-variable': WfSetVariable;

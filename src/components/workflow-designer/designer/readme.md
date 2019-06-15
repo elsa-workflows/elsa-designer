@@ -25,6 +25,16 @@ Type: `Promise<void>`
 
 
 
+### `export(format: WorkflowFormat) => Promise<any>`
+
+
+
+#### Returns
+
+Type: `Promise<any>`
+
+
+
 ### `updateActivity(activity: Activity) => Promise<void>`
 
 

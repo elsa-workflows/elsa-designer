@@ -13,8 +13,16 @@
       font-size: 14px;
     }
 
+    .nav-item {
+      margin-left: 1em;
+    }
+
     #header h5 {
       color: white;
+    }
+
+    #import {
+      display: none;
     }
 
   </style>
@@ -56,10 +64,18 @@
     <h5 class="my-0 mr-md-auto font-weight-normal">Workflow Designer</h5>
 
 
-    <!-- Activity Picker -->
-    <wf-activity-picker></wf-activity-picker>
-
-    <a class="btn btn-outline-secondary" href="#">Download</a>
+    <ul class="nav">
+      <li class="nav-item">
+        <wf-activity-picker></wf-activity-picker>
+      </li>
+      <li class="nav-item">
+        <wf-export-button></wf-export-button>
+      </li>
+      <li class="nav-item">
+        <input type="file" id="import" onchange="importWorkflow()"/>
+        <button class="btn btn-secondary" onclick="return browseWorkflow()">Import</button>
+      </li>
+    </ul>
   </div>
 
   <!-- Workflow Designer -->
@@ -110,7 +126,24 @@
     });
   }
 
+</script>
 
+<script type="text/javascript">
+  window.workflowBlobUrl = null;
+
+
+  function browseWorkflow()
+  {
+    var fileInput = document.querySelector('#import');
+
+    fileInput.click();
+  }
+
+  function importWorkflow()
+  {
+    alert(1);
+    var designer = document.querySelector('wf-designer');
+  }
 </script>
 </body>
 </html>
