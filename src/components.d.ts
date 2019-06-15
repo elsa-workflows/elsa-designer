@@ -9,6 +9,7 @@ import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
   Activity,
   ActivityComponent,
+  WorkflowFormat,
 } from './models';
 
 
@@ -53,6 +54,7 @@ export namespace Components {
   }
   interface WfDesigner {
     'addActivity': (activityDefinition: ActivityComponent) => Promise<void>;
+    'export': (format: WorkflowFormat) => Promise<any>;
     'updateActivity': (activity: Activity) => Promise<void>;
   }
   interface WfDesignerHost {}

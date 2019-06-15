@@ -1,13 +1,13 @@
 import {Component, Element, Event, EventEmitter, h, Method, State} from '@stencil/core';
 import {Connection as JsPlumbConnection, DragEventCallbackOptions, Endpoint, EndpointOptions, jsPlumb} from "jsplumb";
-import {CssMap} from "../../../utils/css-class-map";
+import {CssMap} from "../../../utils";
 import {JsPlumbUtils} from "./jsplumb-utils";
 import {Activity as ActivityInstance} from "../activity/activity";
 import {Connection as ConnectionComponent} from "../connection/connection";
 import {ActivityModel} from "./models";
 import uuid from 'uuid-browser/v4';
 import activityDefinitionStore from '../../../services/ActivityDefinitionStore';
-import {Activity, ActivityComponent, Connection} from "../../../models";
+import {Activity, ActivityComponent, Connection, Workflow, WorkflowFormat} from "../../../models";
 import {Point} from "../../../models";
 
 @Component({
@@ -54,6 +54,22 @@ export class Designer {
     this.updateActivityInternal(activity);
   }
 
+  @Method()
+  public async export(format: WorkflowFormat): Promise<any> {
+    const graph = this.createObjectGraph();
+
+    switch (format) {
+      case 'json':
+        return JSON.stringify(graph);
+      case 'yaml':
+        return JSON.stringify(graph);
+      case 'xml':
+        return JSON.stringify(graph);
+      default:
+        return graph;
+    }
+  }
+
   private jsPlumb = JsPlumbUtils.createInstance(this.el);
   private activityModels: ActivityModel[] = [];
   private lastClickedLocation: Point = null;
@@ -91,7 +107,7 @@ export class Designer {
           const innerHtml = isHtml ? model.display : null;
           const innerJsx = isHtml ? null : model.display;
           return (
-            <div id={`wf-activity-${activity.id}`} data-activity-id={activity.id} class="activity" style={styles} innerHTML={innerHtml} onDblClick={() => this.onEditActivity(activity)} onContextMenu={(e) => this.onActivityContextMenu(e, activity)} >
+            <div id={`wf-activity-${activity.id}`} data-activity-id={activity.id} class="activity" style={styles} innerHTML={innerHtml} onDblClick={() => this.onEditActivity(activity)} onContextMenu={(e) => this.onActivityContextMenu(e, activity)}>
               {innerJsx}
             </div>);
         })}
@@ -220,6 +236,13 @@ export class Designer {
     this.activities = updatedActivities;
   }
 
+  private createObjectGraph(): Workflow {
+    return {
+      activities: [...this.activities],
+      connections: [...this.connections]
+    }
+  };
+
   private setupJsPlumbEventHandlers = () => {
     this.jsPlumb.bind('connection', this.connectionCreated);
     this.jsPlumb.bind('connectionDetached', this.connectionDetached);
@@ -277,7 +300,7 @@ export class Designer {
     this.onEditActivity(this.selectedActivity);
   };
 
-  private async onActivityContextMenu(e: MouseEvent, activity: Activity){
+  private async onActivityContextMenu(e: MouseEvent, activity: Activity) {
     this.selectedActivity = activity;
     await this.activityContextMenu.handleContextMenuEvent(e);
   }
