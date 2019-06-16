@@ -1,4 +1,4 @@
-import {Component, Element, Event, EventEmitter, h, Method, State} from '@stencil/core';
+import {Component, Element, Event, EventEmitter, h, Method, Prop} from '@stencil/core';
 import {Connection as JsPlumbConnection, DragEventCallbackOptions, Endpoint, EndpointOptions, jsPlumb} from "jsplumb";
 import {CssMap} from "../../../utils";
 import {JsPlumbUtils} from "./jsplumb-utils";
@@ -7,7 +7,7 @@ import {Connection as ConnectionComponent} from "../connection/connection";
 import {ActivityModel} from "./models";
 import uuid from 'uuid-browser/v4';
 import activityDefinitionStore from '../../../services/ActivityDefinitionStore';
-import {Activity, ActivityComponent, Connection, Workflow, WorkflowFormat} from "../../../models";
+import {Activity, ActivityComponent, Workflow} from "../../../models";
 import {Point} from "../../../models";
 
 @Component({
@@ -20,11 +20,11 @@ export class Designer {
   @Element()
   private el: HTMLElement;
 
-  @State()
-  private activities: Activity[] = [];
-
-  @State()
-  private connections: Connection[] = [];
+  @Prop()
+  public workflow: Workflow = {
+    activities: [],
+    connections: []
+  };
 
   @Event({eventName: 'edit-activity'})
   private editActivityEvent: EventEmitter;
@@ -46,28 +46,13 @@ export class Designer {
     };
 
     this.lastClickedLocation = null;
-    this.activities = [...this.activities, activity];
+    const activities = [...this.workflow.activities, activity];
+    this.workflow = {...this.workflow, activities};
   }
 
   @Method()
   public async updateActivity(activity: Activity) {
     this.updateActivityInternal(activity);
-  }
-
-  @Method()
-  public async export(format: WorkflowFormat): Promise<any> {
-    const graph = this.createObjectGraph();
-
-    switch (format) {
-      case 'json':
-        return JSON.stringify(graph);
-      case 'yaml':
-        return JSON.stringify(graph);
-      case 'xml':
-        return JSON.stringify(graph);
-      default:
-        return graph;
-    }
   }
 
   private jsPlumb = JsPlumbUtils.createInstance(this.el);
@@ -77,8 +62,10 @@ export class Designer {
   private selectedActivity: Activity;
 
   public async componentWillLoad() {
-    this.activities = Array.from(this.el.querySelectorAll('wf-activity')).map(x => ActivityInstance.getModel(x));
-    this.connections = Array.from(this.el.querySelectorAll('wf-connection')).map(x => ConnectionComponent.getModel(x));
+    const activities = Array.from(this.el.querySelectorAll('wf-activity')).map(x => ActivityInstance.getModel(x));
+    const connections = Array.from(this.el.querySelectorAll('wf-connection')).map(x => ConnectionComponent.getModel(x));
+
+    this.workflow = {...this.workflow, activities, connections};
   }
 
   public async componentWillRender() {
@@ -123,11 +110,12 @@ export class Designer {
   }
 
   private deleteActivity = (activity: Activity) => {
-    this.activities = this.activities.filter(x => x.id !== activity.id);
+    const activities = this.workflow.activities.filter(x => x.id !== activity.id);
+    this.workflow = {...this.workflow, activities};
   };
 
   private async createActivityModels() {
-    this.activityModels = await Promise.all(this.activities.map(async (activity: Activity) => {
+    this.activityModels = await Promise.all(this.workflow.activities.map(async (activity: Activity) => {
       const definition = activityDefinitionStore.findActivityByType(activity.type);
       const display = definition.displayTemplate
         ? definition.displayTemplate(activity)
@@ -144,12 +132,12 @@ export class Designer {
   private setupJsPlumb = () => {
     this.setupJsPlumbEventHandlers();
     this.jsPlumb.batch(() => {
-      this.getActivityElements().forEach(this.setupActivtyElement);
+      this.getActivityElements().forEach(this.setupActivityElement);
       this.setupConnections();
     });
   };
 
-  private setupActivtyElement = (element: Element) => {
+  private setupActivityElement = (element: Element) => {
     this.setupDragDrop(element);
     this.setupTargets(element);
     this.setupOutcomes(element);
@@ -200,7 +188,7 @@ export class Designer {
   }
 
   private setupConnections = () => {
-    for (let connection of this.connections) {
+    for (let connection of this.workflow.connections) {
       const sourceEndpointId: string = JsPlumbUtils.createEndpointUuid(connection.sourceActivityId, connection.outcome);
       const sourceEndpoint: Endpoint = this.jsPlumb.getEndpoint(sourceEndpointId);
       const destinationElementId: string = `wf-activity-${connection.destinationActivityId}`;
@@ -225,23 +213,17 @@ export class Designer {
     return this.findActivityById(id);
   };
 
-  private findActivityById = (id: string): Activity => this.activities.find(x => x.id === id);
+  private findActivityById = (id: string): Activity => this.workflow.activities.find(x => x.id === id);
 
   private updateActivityInternal(activity: Activity) {
-    const updatedActivities = [...this.activities];
-    const index = updatedActivities.findIndex(x => x.id == activity.id);
+    const activities = [...this.workflow.activities];
+    const index = activities.findIndex(x => x.id == activity.id);
 
-    updatedActivities[index] = activity;
+    activities[index] = activity;
 
-    this.activities = updatedActivities;
+    this.workflow = {...this.workflow, activities};
   }
 
-  private createObjectGraph(): Workflow {
-    return {
-      activities: [...this.activities],
-      connections: [...this.connections]
-    }
-  };
 
   private setupJsPlumbEventHandlers = () => {
     this.jsPlumb.bind('connection', this.connectionCreated);
@@ -259,15 +241,17 @@ export class Designer {
     // Check if we already have this connection.
     const sourceActivity: Activity = this.findActivityByElement(info.source);
     const destinationActivity: Activity = this.findActivityByElement(info.target);
-    const wfConnection = this.connections.find(x => x.sourceActivityId === sourceActivity.id && x.destinationActivityId == destinationActivity.id);
+    const wfConnection = this.workflow.connections.find(x => x.sourceActivityId === sourceActivity.id && x.destinationActivityId == destinationActivity.id);
 
     if (!wfConnection) {
       // Add created connection to list.
-      this.connections = [...this.connections, {
+      const connections = [...this.workflow.connections, {
         sourceActivityId: sourceActivity.id,
         destinationActivityId: destinationActivity.id,
         outcome: outcome
       }];
+
+      this.workflow = {...this.workflow, connections};
     }
   };
 
@@ -276,8 +260,9 @@ export class Designer {
     const outcome: string = sourceEndpoint.getParameter('outcome');
     const sourceActivity: Activity = this.findActivityByElement(info.source);
     const destinationActivity: Activity = this.findActivityByElement(info.target);
+    const connections = this.workflow.connections.filter(x => !(x.sourceActivityId === sourceActivity.id && x.destinationActivityId === destinationActivity.id && x.outcome === outcome));
 
-    this.connections = this.connections.filter(x => !(x.sourceActivityId === sourceActivity.id && x.destinationActivityId === destinationActivity.id && x.outcome === outcome));
+    this.workflow = {...this.workflow, connections};
   };
 
   private onEditActivity(activity: Activity) {

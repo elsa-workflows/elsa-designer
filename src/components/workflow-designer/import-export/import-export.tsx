@@ -1,5 +1,5 @@
 import {Component, Element, Method} from '@stencil/core';
-import {WorkflowFormatDescriptor} from "../../../models";
+import {ImportedWorkflowData, Workflow, WorkflowFormat, WorkflowFormatDescriptor} from "../../../models";
 
 @Component({
   tag: 'wf-import-export',
@@ -18,7 +18,8 @@ export class ImportExport {
       window.URL.revokeObjectURL(blobUrl)
     }
 
-    const data = await designer.export(formatDescriptor.format);
+    const workflow = await designer.workflow;
+    const data = this.serialize(workflow, formatDescriptor.format);
     const blob = new Blob([data], {type: formatDescriptor.mimeType});
 
     this.blobUrl = blobUrl = window.URL.createObjectURL(blob);
@@ -32,6 +33,23 @@ export class ImportExport {
     document.body.removeChild(downloadLink);
   }
 
+  @Method()
+  async import(designer: HTMLWfDesignerElement, data: ImportedWorkflowData) {
+    designer.workflow = JSON.parse(data.data) as Workflow;
+  }
+
   blobUrl: string;
 
+  private serialize = (workflow: Workflow, format: WorkflowFormat): any => {
+    switch (format) {
+      case 'json':
+        return JSON.stringify(workflow);
+      case 'yaml':
+        return JSON.stringify(workflow);
+      case 'xml':
+        return JSON.stringify(workflow);
+      default:
+        return workflow;
+    }
+  };
 }

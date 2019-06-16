@@ -4,5 +4,6 @@ export * from './connection';
 export * from './workflow';
 export * from './workflow-format';
 export * from './workflow-format-descriptors';
+export * from './imported-workflow-data';
 export * from './render-result';
 export * from './point';

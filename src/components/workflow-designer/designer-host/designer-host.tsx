@@ -1,5 +1,5 @@
 import {Component, Element, h, Listen} from '@stencil/core';
-import {Activity, ActivityComponent, WorkflowFormatDescriptor} from "../../../models";
+import {Activity, ActivityComponent, ImportedWorkflowData, WorkflowFormatDescriptor} from "../../../models";
 
 @Component({
   tag: 'wf-designer-host',
@@ -37,6 +37,14 @@ export class DesignerHost {
       return;
 
     await this.importExport.export(this.designer, e.detail);
+  }
+
+  @Listen('import-workflow')
+  async onImportWorkflow(e: CustomEvent<ImportedWorkflowData>){
+    if(!this.importExport)
+      return;
+
+    await this.importExport.import(this.designer, e.detail);
   }
 
   activityPicker: HTMLWfActivityPickerElement;

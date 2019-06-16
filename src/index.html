@@ -72,8 +72,7 @@
         <wf-export-button></wf-export-button>
       </li>
       <li class="nav-item">
-        <input type="file" id="import" onchange="importWorkflow()"/>
-        <button class="btn btn-secondary" onclick="return browseWorkflow()">Import</button>
+        <wf-import-button></wf-import-button>
       </li>
     </ul>
   </div>
@@ -131,22 +130,5 @@
 
 </script>
 
-<script type="text/javascript">
-  window.workflowBlobUrl = null;
-
-
-  function browseWorkflow()
-  {
-    var fileInput = document.querySelector('#import');
-
-    fileInput.click();
-  }
-
-  function importWorkflow()
-  {
-    alert(1);
-    var designer = document.querySelector('wf-designer');
-  }
-</script>
 </body>
 </html>

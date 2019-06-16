@@ -9,7 +9,8 @@ import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
   Activity,
   ActivityComponent,
-  WorkflowFormat,
+  ImportedWorkflowData,
+  Workflow,
   WorkflowFormatDescriptor,
 } from './models';
 
@@ -55,13 +56,15 @@ export namespace Components {
   }
   interface WfDesigner {
     'addActivity': (activityDefinition: ActivityComponent) => Promise<void>;
-    'export': (format: WorkflowFormat) => Promise<any>;
     'updateActivity': (activity: Activity) => Promise<void>;
+    'workflow': Workflow;
   }
   interface WfDesignerHost {}
   interface WfExportButton {}
+  interface WfImportButton {}
   interface WfImportExport {
     'export': (designer: HTMLWfDesignerElement, formatDescriptor: WorkflowFormatDescriptor) => Promise<void>;
+    'import': (designer: HTMLWfDesignerElement, data: ImportedWorkflowData) => Promise<void>;
   }
   interface WfLog {
     'category': string;
@@ -158,6 +161,12 @@ declare global {
     new (): HTMLWfExportButtonElement;
   };
 
+  interface HTMLWfImportButtonElement extends Components.WfImportButton, HTMLStencilElement {}
+  var HTMLWfImportButtonElement: {
+    prototype: HTMLWfImportButtonElement;
+    new (): HTMLWfImportButtonElement;
+  };
+
   interface HTMLWfImportExportElement extends Components.WfImportExport, HTMLStencilElement {}
   var HTMLWfImportExportElement: {
     prototype: HTMLWfImportExportElement;
@@ -199,6 +208,7 @@ declare global {
     'wf-designer': HTMLWfDesignerElement;
     'wf-designer-host': HTMLWfDesignerHostElement;
     'wf-export-button': HTMLWfExportButtonElement;
+    'wf-import-button': HTMLWfImportButtonElement;
     'wf-import-export': HTMLWfImportExportElement;
     'wf-log': HTMLWfLogElement;
     'wf-read-line': HTMLWfReadLineElement;
@@ -245,10 +255,14 @@ declare namespace LocalJSX {
   interface WfDesigner extends JSXBase.HTMLAttributes<HTMLWfDesignerElement> {
     'onAdd-activity'?: (event: CustomEvent<any>) => void;
     'onEdit-activity'?: (event: CustomEvent<any>) => void;
+    'workflow'?: Workflow;
   }
   interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {}
   interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {
     'onExport-workflow'?: (event: CustomEvent<any>) => void;
+  }
+  interface WfImportButton extends JSXBase.HTMLAttributes<HTMLWfImportButtonElement> {
+    'onImport-workflow'?: (event: CustomEvent<any>) => void;
   }
   interface WfImportExport extends JSXBase.HTMLAttributes<HTMLWfImportExportElement> {}
   interface WfLog extends JSXBase.HTMLAttributes<HTMLWfLogElement> {
@@ -288,6 +302,7 @@ declare namespace LocalJSX {
     'wf-designer': WfDesigner;
     'wf-designer-host': WfDesignerHost;
     'wf-export-button': WfExportButton;
+    'wf-import-button': WfImportButton;
     'wf-import-export': WfImportExport;
     'wf-log': WfLog;
     'wf-read-line': WfReadLine;
