@@ -1,5 +1,5 @@
 import {Component, Element, h, Listen} from '@stencil/core';
-import {Activity, ActivityComponent} from "../../../models";
+import {Activity, ActivityComponent, WorkflowFormatDescriptor} from "../../../models";
 
 @Component({
   tag: 'wf-designer-host',
@@ -31,14 +31,24 @@ export class DesignerHost {
     await this.designer.updateActivity(e.detail);
   }
 
+  @Listen('export-workflow')
+  async onExportWorkflow(e: CustomEvent<WorkflowFormatDescriptor>){
+    if(!this.importExport)
+      return;
+
+    await this.importExport.export(this.designer, e.detail);
+  }
+
   activityPicker: HTMLWfActivityPickerElement;
   activityEditor: HTMLWfActivityEditorModalElement;
   designer: HTMLWfDesignerElement;
+  importExport: HTMLWfImportExportElement;
 
   async componentDidLoad(){
     this.activityPicker = this.el.querySelector<HTMLWfActivityPickerElement>('wf-activity-picker');
     this.activityEditor = this.el.querySelector<HTMLWfActivityEditorModalElement>('wf-activity-editor-modal');
     this.designer = this.el.querySelector<HTMLWfDesignerElement>('wf-designer');
+    this.importExport = this.el.querySelector<HTMLWfImportExportElement>('wf-import-export');
   }
 
   render(){

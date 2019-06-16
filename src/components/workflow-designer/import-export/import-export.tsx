@@ -1,5 +1,5 @@
-import {Component, Element, Method, Prop} from '@stencil/core';
-import {WorkflowFormat, WorkflowFormatDescriptors} from "../../../models";
+import {Component, Element, Method} from '@stencil/core';
+import {WorkflowFormatDescriptor} from "../../../models";
 
 @Component({
   tag: 'wf-import-export',
@@ -10,20 +10,15 @@ export class ImportExport {
   @Element()
   el: HTMLElement;
 
-  @Prop()
-  designer: HTMLWfDesignerElement;
-
   @Method()
-  async export(format: WorkflowFormat) {
+  async export(designer: HTMLWfDesignerElement, formatDescriptor: WorkflowFormatDescriptor) {
     let blobUrl = this.blobUrl;
-    const formatDescriptor = WorkflowFormatDescriptors[format];
 
     if (!!blobUrl) {
       window.URL.revokeObjectURL(blobUrl)
     }
 
-    const designer = this.designer;
-    const data = await designer.export(format);
+    const data = await designer.export(formatDescriptor.format);
     const blob = new Blob([data], {type: formatDescriptor.mimeType});
 
     this.blobUrl = blobUrl = window.URL.createObjectURL(blob);

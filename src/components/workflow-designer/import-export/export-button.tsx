@@ -1,18 +1,20 @@
-import {Component, Element, h} from '@stencil/core';
-import {WorkflowFormatDescriptors} from "../../../models";
+import {Component, Element, EventEmitter, h, Event} from '@stencil/core';
+import {WorkflowFormatDescriptor, WorkflowFormatDescriptors} from "../../../models";
 
 @Component({
   tag: 'wf-export-button',
   styleUrl: 'export-button.scss',
-  shadow: true
+  shadow: false
 })
 export class ExportButton {
 
   @Element()
   el: HTMLElement;
 
-  public render() {
+  @Event({eventName: 'export-workflow' })
+  exportClickedEvent: EventEmitter;
 
+  public render() {
     return (
       <div class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="exportButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -21,15 +23,15 @@ export class ExportButton {
         <div class="dropdown-menu" aria-labelledby="exportButton">
           {Object.keys(WorkflowFormatDescriptors).map(key => {
             const descriptor = WorkflowFormatDescriptors[key];
-            return (<a class="dropdown-item" href="#" onClick={this.handleExportClick}>{descriptor.displayName}</a>);
+            return (<a class="dropdown-item" href="#" onClick={() => this.handleExportClick(descriptor)}>{descriptor.displayName}</a>);
           })}
         </div>
       </div>
     )
   }
 
-  private handleExportClick = () => {
-
+  private handleExportClick = (descriptor: WorkflowFormatDescriptor) => {
+    this.exportClickedEvent.emit(descriptor);
   }
 
 }

@@ -10,6 +10,7 @@ import {
   Activity,
   ActivityComponent,
   WorkflowFormat,
+  WorkflowFormatDescriptor,
 } from './models';
 
 
@@ -60,8 +61,7 @@ export namespace Components {
   interface WfDesignerHost {}
   interface WfExportButton {}
   interface WfImportExport {
-    'designer': HTMLWfDesignerElement;
-    'export': (format: WorkflowFormat) => Promise<void>;
+    'export': (designer: HTMLWfDesignerElement, formatDescriptor: WorkflowFormatDescriptor) => Promise<void>;
   }
   interface WfLog {
     'category': string;
@@ -247,10 +247,10 @@ declare namespace LocalJSX {
     'onEdit-activity'?: (event: CustomEvent<any>) => void;
   }
   interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {}
-  interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {}
-  interface WfImportExport extends JSXBase.HTMLAttributes<HTMLWfImportExportElement> {
-    'designer'?: HTMLWfDesignerElement;
+  interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {
+    'onExport-workflow'?: (event: CustomEvent<any>) => void;
   }
+  interface WfImportExport extends JSXBase.HTMLAttributes<HTMLWfImportExportElement> {}
   interface WfLog extends JSXBase.HTMLAttributes<HTMLWfLogElement> {
     'category'?: string;
     'description'?: string;
