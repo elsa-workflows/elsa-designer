@@ -19,6 +19,7 @@ export namespace Components {
   interface WfActivity {
     'activityId': string;
     'left': number;
+    'state': string;
     'top': number;
     'type': string;
   }
@@ -221,6 +222,7 @@ declare namespace LocalJSX {
   interface WfActivity extends JSXBase.HTMLAttributes<HTMLWfActivityElement> {
     'activityId'?: string;
     'left'?: number;
+    'state'?: string;
     'top'?: number;
     'type'?: string;
   }

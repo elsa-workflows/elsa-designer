@@ -39,20 +39,52 @@
     <wf-set-variable></wf-set-variable>
 
     <!-- Custom declarative activity -->
-    <wf-custom-activity type="MyCustomActivity" display-name="My Custom Activity" category="Custom" description="This is a sample custom activity declared using HTML" outcomes="one, two, three">
+    <wf-custom-activity type="State" display-name="State" category="State Machine" description="Represents a state in a state machine workflow" outcomes="A, B">
       <div slot="editor">
         <div class="form-group">
-          <label for="firstName">First Name</label>
-          <input id="firstName" name="firstName" type="text" class="form-control" value="{{firstName}}" />
+          <label for="stateName">Name</label>
+          <input id="stateName" name="stateName" type="text" class="form-control" value="{{stateName}}" />
         </div>
         <div class="form-group">
-          <label for="lastName">Last Name</label>
-          <input id="lastName" name="lastName" type="text" class="form-control" value="{{lastName}}" />
+          <label for="possibleOutcomes">Possible Outcomes</label>
+          <input id="possibleOutcomes" name="possibleOutcomes" type="text" class="form-control" value="{{possibleOutcomes}}" />
+        </div>
+      </div>
+      <div slot="display">
+        <h5>State</h5>
+        <p>{{stateName}}</p>
+      </div>
+    </wf-custom-activity>
+
+    <wf-custom-activity type="Cron" display-name="Cron" category="Timers" description="Triggers based on a Crontab interval" outcomes="Next">
+      <div slot="editor">
+        <div class="form-group">
+          <label for="cronExpression">Cron Expression</label>
+          <input id="cronExpression" name="cronExpression" type="text" class="form-control" value="{{cronExpression}}" />
         </div>
       </div>
       <div slot="display">
         <h5>{{definition.displayName}}</h5>
-        <p>Welcome, {{firstName}} {{lastName}}!</p>
+        <p>{{cronExpression}}</p>
+      </div>
+    </wf-custom-activity>
+
+    <wf-custom-activity type="Start" display-name="Start" category="State Machine" description="A starting point of any state machine" outcomes="Branch 1, Branch 2">
+      <div slot="display">
+        <h5>{{definition.displayName}}</h5>
+      </div>
+    </wf-custom-activity>
+
+    <wf-custom-activity type="UserInRole" display-name="Is User In Role" category="Identity" description="Returns whether the current user is in the specified role" outcomes="True, False">
+      <div slot="editor">
+        <div class="form-group">
+          <label for="roles">Roles</label>
+          <input id="roles" name="roles" type="text" class="form-control" value="{{roles}}" />
+        </div>
+      </div>
+      <div slot="display">
+        <h5>{{definition.displayName}}</h5>
+        <p>User is in any of the following roles: {{roles}}</p>
       </div>
     </wf-custom-activity>
   </wf-activity-library>
@@ -79,9 +111,9 @@
 
   <!-- Workflow Designer -->
   <wf-designer id="workflowDesigner">
-    <wf-activity activity-id="1" left="50" top="50" type="WriteLine"></wf-activity>
-    <wf-activity activity-id="2" left="430" top="190" type="ReadLine"></wf-activity>
-    <wf-activity activity-id="3" left="280" top="490" type="Log"></wf-activity>
+    <wf-activity activity-id="1" left="50" top="50" type="WriteLine" state='{ "textExpression": "Hello World!" }'></wf-activity>
+    <wf-activity activity-id="2" left="430" top="190" type="ReadLine" state='{ "variableName": "firstName" }'></wf-activity>
+    <wf-activity activity-id="3" left="280" top="490" type="Log" state='{ "messageExpression": "Something to log." }' ></wf-activity>
     <wf-connection source-id="2" destination-id="3" outcome="next"></wf-connection>
     <wf-connection source-id="1" destination-id="2" outcome="next"></wf-connection>
   </wf-designer>

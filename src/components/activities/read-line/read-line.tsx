@@ -1,7 +1,7 @@
 import {Component, Element, h, Prop} from '@stencil/core';
 import activityDefinitionStore from '../../../services/ActivityDefinitionStore';
 import {Activity, ActivityComponent, RenderResult} from "../../../models";
-import {FormUpdater} from "../../../utils/form-updater";
+import {FormUpdater} from "../../../utils";
 
 @Component({
   tag: 'wf-read-line',

@@ -22,13 +22,16 @@ export class Activity {
   @Prop({reflect: true})
   top: number;
 
+  @Prop({reflect: true})
+  state: string;
+
   static getModel = (element: HTMLWfActivityElement): ActivityModel => {
     return ({
       id: element.activityId,
       type: element.type,
       left: element.left,
       top: element.top,
-      state: {}
+      state: !!element.state ? JSON.parse(element.state) : {}
     });
   };
 }
