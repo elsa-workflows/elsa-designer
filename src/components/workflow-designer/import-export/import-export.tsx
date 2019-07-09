@@ -35,7 +35,11 @@ export class ImportExport {
 
   @Method()
   async import(designer: HTMLWfDesignerElement, data: ImportedWorkflowData) {
-    designer.workflow = JSON.parse(data.data) as Workflow;
+    const workflow = JSON.parse(data.data) as Workflow;
+
+    console.debug('loaded workflow:');
+    console.debug(workflow);
+    designer.workflow = workflow;
   }
 
   blobUrl: string;

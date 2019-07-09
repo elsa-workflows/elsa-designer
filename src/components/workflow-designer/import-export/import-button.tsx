@@ -30,6 +30,8 @@ export class ImportButton {
   };
 
   private importWorkflow = () => {
+    console.debug('file selected');
+
     const file = this.fileInput.files[0];
     const reader = new FileReader();
 
@@ -38,6 +40,7 @@ export class ImportButton {
       const format: WorkflowFormat = 'json';
 
       this.importEvent.emit({ data, format });
+      (this.fileInput as any).val('');
     };
 
     reader.readAsText(file);

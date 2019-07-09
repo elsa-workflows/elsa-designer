@@ -28,7 +28,6 @@ export class ReadLine implements ActivityDefinition {
   }];
 
   public componentDidLoad() {
-    console.debug('registering ReadLine');
     activityDefinitionStore.addActivity(this);
   }
 

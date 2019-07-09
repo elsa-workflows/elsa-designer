@@ -66,13 +66,7 @@
   </div>
 
   <!-- Workflow Designer -->
-  <wf-designer id="workflowDesigner">
-    <wf-activity activity-id="1" left="50" top="50" type="WriteLine" state='{ "textExpression": "Hello World!" }'></wf-activity>
-    <wf-activity activity-id="2" left="430" top="190" type="ReadLine" state='{ "variableName": "firstName" }'></wf-activity>
-    <wf-activity activity-id="3" left="280" top="490" type="Log" state='{ "message": "Something to log." }' ></wf-activity>
-    <wf-connection source-id="2" destination-id="3" outcome="Done"></wf-connection>
-    <wf-connection source-id="1" destination-id="2" outcome="Done"></wf-connection>
-  </wf-designer>
+  <wf-designer id="workflowDesigner"></wf-designer>
 
   <!-- Import/Export -->
   <wf-import-export></wf-import-export>

@@ -63,11 +63,7 @@ export class DesignerHost {
     this.activityEditor = this.el.querySelector<HTMLWfActivityEditorModalElement>('wf-activity-editor-modal');
     this.designer = this.el.querySelector<HTMLWfDesignerElement>('wf-designer');
     this.importExport = this.el.querySelector<HTMLWfImportExportElement>('wf-import-export');
-
-    const activityLookup = activityDefinitionStore.getActivityLookup();
-
-    console.log(activityLookup);
-    this.designer.activityDefinitions = activityLookup;
+    this.designer.activityDefinitions = activityDefinitionStore.getActivityLookup();
   }
 
   render(){

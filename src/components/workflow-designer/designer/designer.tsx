@@ -75,6 +75,7 @@ export class Designer {
   }
 
   public componentDidUpdate() {
+    console.debug('component did update');
     this.jsPlumb.reset();
     this.setupJsPlumb();
   }
@@ -107,7 +108,12 @@ export class Designer {
 
   private deleteActivity = (activity: Activity) => {
     const activities = this.workflow.activities.filter(x => x.id !== activity.id);
-    this.workflow = { ...this.workflow, activities };
+    const connections = this.workflow.connections.filter(x => x.sourceActivityId != activity.id && x.destinationActivityId != activity.id);
+
+    console.debug('pruned connections:');
+    console.debug(connections);
+
+    this.workflow = { ...this.workflow, activities, connections };
   };
 
   private createActivityModels(): Array<ActivityModel> {
@@ -248,12 +254,14 @@ export class Designer {
   };
 
   private connectionDetached = (info: any) => {
+    console.debug(`Connection detached`);
     const sourceEndpoint: any = info.sourceEndpoint;
     const outcome: string = sourceEndpoint.getParameter('outcome');
     const sourceActivity: Activity = this.findActivityByElement(info.source);
     const destinationActivity: Activity = this.findActivityByElement(info.target);
     const connections = this.workflow.connections.filter(x => !(x.sourceActivityId === sourceActivity.id && x.destinationActivityId === destinationActivity.id && x.outcome === outcome));
 
+    console.debug(connections);
     this.workflow = { ...this.workflow, connections };
   };
 
