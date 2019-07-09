@@ -1,4 +1,4 @@
-import { Component, Method, Prop} from '@stencil/core';
+import { Component, Method} from '@stencil/core';
 import activityDefinitionStore from '../../../services/activity-definition-store';
 import { ActivityDefinition } from "../../../models";
 
