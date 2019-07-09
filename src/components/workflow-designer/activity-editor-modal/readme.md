@@ -42,6 +42,19 @@ Type: `Promise<void>`
 
 
 
+## Dependencies
+
+### Depends on
+
+- [wf-activity-renderer](..\activity-renderer)
+
+### Graph
+```mermaid
+graph TD;
+  wf-activity-editor-modal --> wf-activity-renderer
+  style wf-activity-editor-modal fill:#f9f,stroke:#333,stroke-width:4px
+```
+
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

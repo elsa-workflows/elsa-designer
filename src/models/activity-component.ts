@@ -1,5 +1,5 @@
-import {Activity} from "./activity";
-import {RenderResult} from "./render-result";
+import { Activity } from "./activity";
+import { RenderResult } from "./render-result";
 
 export interface ActivityComponent {
   type: string

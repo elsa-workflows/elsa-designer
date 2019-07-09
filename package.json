@@ -1,6 +1,6 @@
 {
   "name": "@elsa-workflows/elsa-workflow-designer",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Stencil Component Starter",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -36,9 +36,9 @@
     "test.watch": "stencil test --spec --e2e --watchAll"
   },
   "devDependencies": {
-    "@types/node": "^12.0.5",
-    "@stencil/core": "1.0.0-beta.8",
-    "@stencil/sass": "latest"
+    "@types/node": "^12.6.1",
+    "@stencil/core": "^1.1.5",
+    "@stencil/sass": "^1.0.1"
   },
   "license": "BSD-3-Clause",
   "dependencies": {

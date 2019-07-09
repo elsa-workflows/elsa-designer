@@ -1,6 +1,6 @@
 import {Component, Element, h, Method, Event, EventEmitter, State} from '@stencil/core';
-import activityDefinitionStore from '../../../services/ActivityDefinitionStore';
-import {ActivityComponent} from '../../../models';
+import activityDefinitionStore from '../../../services/activity-definition-store';
+import { ActivityDefinition } from '../../../models';
 import $ from "jquery";
 import 'bootstrap';
 
@@ -34,7 +34,7 @@ export class ActivityPicker {
 
   private modal: any;
 
-  async onActivitySelected(activity: ActivityComponent) {
+  async onActivitySelected(activity: ActivityDefinition) {
     this.activitySelected.emit(activity);
     await this.hide();
   }

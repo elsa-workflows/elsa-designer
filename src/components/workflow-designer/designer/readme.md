@@ -5,6 +5,13 @@
 <!-- Auto Generated Below -->
 
 
+## Properties
+
+| Property   | Attribute | Description | Type                                                     | Default                                         |
+| ---------- | --------- | ----------- | -------------------------------------------------------- | ----------------------------------------------- |
+| `workflow` | --        |             | `{ activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
+
+
 ## Events
 
 | Event           | Description | Type               |
@@ -15,23 +22,13 @@
 
 ## Methods
 
-### `addActivity(activityDefinition: ActivityComponent) => Promise<void>`
+### `addActivity(activityDefinition: ActivityDefinition) => Promise<void>`
 
 
 
 #### Returns
 
 Type: `Promise<void>`
-
-
-
-### `export(format: WorkflowFormat) => Promise<any>`
-
-
-
-#### Returns
-
-Type: `Promise<any>`
 
 
 
@@ -50,12 +47,14 @@ Type: `Promise<void>`
 
 ### Depends on
 
+- [wf-activity-renderer](..\activity-renderer)
 - [wf-context-menu](..\..\context-menu)
 - [wf-context-menu-item](..\..\context-menu)
 
 ### Graph
 ```mermaid
 graph TD;
+  wf-designer --> wf-activity-renderer
   wf-designer --> wf-context-menu
   wf-designer --> wf-context-menu-item
   style wf-designer fill:#f9f,stroke:#333,stroke-width:4px

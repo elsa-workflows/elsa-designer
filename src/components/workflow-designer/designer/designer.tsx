@@ -1,14 +1,14 @@
-import {Component, Element, Event, EventEmitter, h, Method, Prop} from '@stencil/core';
-import {Connection as JsPlumbConnection, DragEventCallbackOptions, Endpoint, EndpointOptions, jsPlumb} from "jsplumb";
-import {CssMap} from "../../../utils";
-import {JsPlumbUtils} from "./jsplumb-utils";
-import {Activity as ActivityInstance} from "../activity/activity";
-import {Connection as ConnectionComponent} from "../connection/connection";
-import {ActivityModel} from "./models";
+import { Component, Element, Event, EventEmitter, h, Method, Prop } from '@stencil/core';
+import { Connection as JsPlumbConnection, DragEventCallbackOptions, Endpoint, EndpointOptions, jsPlumb } from "jsplumb";
+import { CssMap } from "../../../utils";
+import { JsPlumbUtils } from "./jsplumb-utils";
+import { Activity as ActivityInstance } from "../activity/activity";
+import { Connection as ConnectionComponent } from "../connection/connection";
+import { ActivityModel } from "./models";
 import uuid from 'uuid-browser/v4';
-import activityDefinitionStore from '../../../services/ActivityDefinitionStore';
-import {Activity, ActivityComponent, Workflow} from "../../../models";
-import {Point} from "../../../models";
+import activityDefinitionStore from '../../../services/activity-definition-store';
+import { Activity, ActivityDefinition, ActivityDisplayMode, Workflow } from "../../../models";
+import { Point } from "../../../models";
 
 @Component({
   tag: 'wf-designer',
@@ -26,14 +26,14 @@ export class Designer {
     connections: []
   };
 
-  @Event({eventName: 'edit-activity'})
+  @Event({ eventName: 'edit-activity' })
   private editActivityEvent: EventEmitter;
 
-  @Event({eventName: 'add-activity'})
+  @Event({ eventName: 'add-activity' })
   private addActivityEvent: EventEmitter;
 
   @Method()
-  public async addActivity(activityDefinition: ActivityComponent) {
+  public async addActivity(activityDefinition: ActivityDefinition) {
     const left = !!this.lastClickedLocation ? this.lastClickedLocation.left : 150;
     const top = !!this.lastClickedLocation ? this.lastClickedLocation.top : 150;
 
@@ -47,7 +47,7 @@ export class Designer {
 
     this.lastClickedLocation = null;
     const activities = [...this.workflow.activities, activity];
-    this.workflow = {...this.workflow, activities};
+    this.workflow = { ...this.workflow, activities };
   }
 
   @Method()
@@ -65,7 +65,7 @@ export class Designer {
     const activities = Array.from(this.el.querySelectorAll('wf-activity')).map(x => ActivityInstance.getModel(x));
     const connections = Array.from(this.el.querySelectorAll('wf-connection')).map(x => ConnectionComponent.getModel(x));
 
-    this.workflow = {...this.workflow, activities, connections};
+    this.workflow = { ...this.workflow, activities, connections };
   }
 
   public async componentWillRender() {
@@ -77,33 +77,29 @@ export class Designer {
   }
 
   public componentDidUpdate() {
-    console.log(`Resetting JsPlumb.`);
     this.jsPlumb.reset();
     this.setupJsPlumb();
-    console.log(`Resetting JsPlumb completed.`);
   }
 
   public render() {
     const activities = this.activityModels;
     return (
       <div class="workflow-canvas">
-        {activities.map((model: ActivityModel) => {
+        { activities.map((model: ActivityModel) => {
           const activity = model.activity;
-          const styles: CssMap = {'left': `${activity.left}px`, 'top': `${activity.top}px`};
-          const isHtml = typeof (model.display) === 'string';
-          const innerHtml = isHtml ? model.display : null;
-          const innerJsx = isHtml ? null : model.display;
+          const styles: CssMap = { 'left': `${ activity.left }px`, 'top': `${ activity.top }px` };
+
           return (
-            <div id={`wf-activity-${activity.id}`} data-activity-id={activity.id} class="activity" style={styles} innerHTML={innerHtml} onDblClick={() => this.onEditActivity(activity)} onContextMenu={(e) => this.onActivityContextMenu(e, activity)}>
-              {innerJsx}
+            <div id={ `wf-activity-${ activity.id }` } data-activity-id={ activity.id } class="activity" style={ styles } onDblClick={ () => this.onEditActivity(activity) } onContextMenu={ (e) => this.onActivityContextMenu(e, activity) }>
+              <wf-activity-renderer activity={ activity } activityDefinition={ model.definition } displayMode={ ActivityDisplayMode.Design } />
             </div>);
-        })}
-        <wf-context-menu target={this.el}>
-          <wf-context-menu-item text="Add Activity" onClick={this.onAddActivityClick} />
+        }) }
+        <wf-context-menu target={ this.el }>
+          <wf-context-menu-item text="Add Activity" onClick={ this.onAddActivityClick } />
         </wf-context-menu>
-        <wf-context-menu ref={(el) => this.activityContextMenu = el}>
-          <wf-context-menu-item text="Edit" onClick={this.onEditActivityClick} />
-          <wf-context-menu-item text="Delete" onClick={this.onDeleteActivityClick} />
+        <wf-context-menu ref={ (el) => this.activityContextMenu = el }>
+          <wf-context-menu-item text="Edit" onClick={ this.onEditActivityClick } />
+          <wf-context-menu-item text="Delete" onClick={ this.onDeleteActivityClick } />
         </wf-context-menu>
       </div>
     );
@@ -111,20 +107,21 @@ export class Designer {
 
   private deleteActivity = (activity: Activity) => {
     const activities = this.workflow.activities.filter(x => x.id !== activity.id);
-    this.workflow = {...this.workflow, activities};
+    this.workflow = { ...this.workflow, activities };
   };
 
   private async createActivityModels() {
     this.activityModels = await Promise.all(this.workflow.activities.map(async (activity: Activity) => {
       const definition = activityDefinitionStore.findActivityByType(activity.type);
-      const display = definition.displayTemplate
-        ? definition.displayTemplate(activity)
-        : <div><h5>{definition.displayName}</h5><p>{definition.description}</p></div>;
+
+      if (!definition) {
+        console.error(`Activity type ${ activity.type } not found.`);
+        throw Error();
+      }
 
       return {
         activity,
-        definition,
-        display
+        definition
       };
     }));
   }
@@ -151,7 +148,7 @@ export class Designer {
     this.jsPlumb.draggable(element, {
       containment: "true",
       start: (params: DragEventCallbackOptions) => {
-        dragStart = {left: params.e.screenX, top: params.e.screenY};
+        dragStart = { left: params.e.screenX, top: params.e.screenY };
       },
       stop: (params: DragEventCallbackOptions) => {
         hasDragged = dragStart.left !== params.e.screenX || dragStart.top !== params.e.screenY;
@@ -170,9 +167,9 @@ export class Designer {
 
   private setupTargets(element: Element) {
     this.jsPlumb.makeTarget(element, {
-      dropOptions: {hoverClass: 'hover'},
+      dropOptions: { hoverClass: 'hover' },
       anchor: 'Continuous',
-      endpoint: ['Blank', {radius: 4}]
+      endpoint: ['Blank', { radius: 4 }]
     });
   }
 
@@ -191,7 +188,7 @@ export class Designer {
     for (let connection of this.workflow.connections) {
       const sourceEndpointId: string = JsPlumbUtils.createEndpointUuid(connection.sourceActivityId, connection.outcome);
       const sourceEndpoint: Endpoint = this.jsPlumb.getEndpoint(sourceEndpointId);
-      const destinationElementId: string = `wf-activity-${connection.destinationActivityId}`;
+      const destinationElementId: string = `wf-activity-${ connection.destinationActivityId }`;
 
       this.jsPlumb.connect({
         source: sourceEndpoint,
@@ -221,9 +218,8 @@ export class Designer {
 
     activities[index] = activity;
 
-    this.workflow = {...this.workflow, activities};
+    this.workflow = { ...this.workflow, activities };
   }
-
 
   private setupJsPlumbEventHandlers = () => {
     this.jsPlumb.bind('connection', this.connectionCreated);
@@ -251,7 +247,7 @@ export class Designer {
         outcome: outcome
       }];
 
-      this.workflow = {...this.workflow, connections};
+      this.workflow = { ...this.workflow, connections };
     }
   };
 
@@ -262,7 +258,7 @@ export class Designer {
     const destinationActivity: Activity = this.findActivityByElement(info.target);
     const connections = this.workflow.connections.filter(x => !(x.sourceActivityId === sourceActivity.id && x.destinationActivityId === destinationActivity.id && x.outcome === outcome));
 
-    this.workflow = {...this.workflow, connections};
+    this.workflow = { ...this.workflow, connections };
   };
 
   private onEditActivity(activity: Activity) {

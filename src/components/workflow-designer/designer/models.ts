@@ -1,7 +1,6 @@
-import {Activity, ActivityComponent} from "../../../models";
+import { Activity, ActivityDefinition } from "../../../models";
 
 export type ActivityModel = {
   activity: Activity
-  definition: ActivityComponent
-  display: any;
+  definition: ActivityDefinition
 }

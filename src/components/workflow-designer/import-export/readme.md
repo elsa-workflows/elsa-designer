@@ -5,16 +5,19 @@
 <!-- Auto Generated Below -->
 
 
-## Properties
-
-| Property   | Attribute | Description | Type                    | Default     |
-| ---------- | --------- | ----------- | ----------------------- | ----------- |
-| `designer` | --        |             | `HTMLWfDesignerElement` | `undefined` |
-
-
 ## Methods
 
-### `export(format: WorkflowFormat) => Promise<void>`
+### `export(designer: HTMLWfDesignerElement, formatDescriptor: WorkflowFormatDescriptor) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `import(designer: HTMLWfDesignerElement, data: ImportedWorkflowData) => Promise<void>`
 
 
 

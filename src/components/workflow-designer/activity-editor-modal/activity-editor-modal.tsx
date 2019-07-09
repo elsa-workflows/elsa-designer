@@ -1,8 +1,8 @@
-import {Component, Element, h, Method, Event, EventEmitter, Prop, Watch} from '@stencil/core';
-import Handlebars from 'handlebars/dist/handlebars';
-import activityDefinitionStore from '../../../services/ActivityDefinitionStore';
-import {Activity, ActivityComponent} from "../../../models";
-import {FormUpdater} from "../../../utils/form-updater";
+import { Component, Element, h, Method, Event, EventEmitter, Prop, Watch } from '@stencil/core';
+//import Handlebars from 'handlebars/dist/handlebars';
+import activityDefinitionStore from '../../../services/activity-definition-store';
+import { Activity, ActivityDefinition, ActivityDisplayMode } from "../../../models";
+import { FormUpdater } from "../../../utils";
 import $ from "jquery";
 import 'bootstrap';
 
@@ -20,8 +20,8 @@ export class ActivityEditorModal {
   activity: Activity;
 
   @Watch('activity')
-  activityChangeHandler(newValue: Activity){
-    this.activityComponent = activityDefinitionStore.findActivityByType(newValue.type);
+  activityChangeHandler(newValue: Activity) {
+    this.activityDefinition = activityDefinitionStore.findActivityByType(newValue.type);
   }
 
   @Method()
@@ -34,28 +34,21 @@ export class ActivityEditorModal {
     $(this.modal).modal('hide');
   }
 
-  @Event({eventName: 'update-activity'})
+  @Event({ eventName: 'update-activity' })
   submit: EventEmitter;
 
-  activityComponent: ActivityComponent;
+  activityDefinition: ActivityDefinition;
 
   public componentWillRender() {
     if (!this.activity)
       return;
 
-    if(!this.activityComponent)
-    {
-      console.log(`No activity of type ${this.activity.type} exists in the library.`);
+    if (!this.activityDefinition) {
+      console.log(`No activity of type ${ this.activity.type } exists in the library.`);
       return;
     }
-
-    this.editor = this.activityComponent.editorTemplate ? this.activityComponent.editorTemplate(this.activity) : null;
-
-    if(typeof(this.editor) === 'string')
-      this.editor = ActivityEditorModal.parseHandlebars(this.editor, this.activity);
   }
 
-  editor: any;
   modal: HTMLElement;
 
   async onSubmit(e: Event) {
@@ -63,33 +56,33 @@ export class ActivityEditorModal {
 
     const form: any = e.target;
     const formData = new FormData(form);
-    const updateEditor = this.activityComponent.updateEditor ? this.activityComponent.updateEditor : FormUpdater.updateEditor;
+    const updateEditor = FormUpdater.updateEditor;
     const updatedActivity: Activity = updateEditor(this.activity, formData);
     this.submit.emit(updatedActivity);
     await this.hide();
   }
 
   render() {
-    const isHtml = typeof(this.editor) === 'string';
-    const innerHtml = isHtml ? this.editor : null;
-    const innerJsx = isHtml ? null : this.editor;
-    const activityComponent = this.activityComponent;
-    const displayName = activityComponent ? activityComponent.displayName : null;
+    const activity = this.activity;
+    const activityDefinition = this.activityDefinition;
+
+    if(!activityDefinition)
+      return null;
 
     return (
       <div>
-        <div class="modal" tabindex="-1" role="dialog" ref={el => this.modal = el as HTMLElement}>
+        <div class="modal" tabindex="-1" role="dialog" ref={ el => this.modal = el as HTMLElement }>
           <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
-              <form onSubmit={e => this.onSubmit(e)}>
+              <form onSubmit={ e => this.onSubmit(e) }>
                 <div class="modal-header">
-                  <h5 class="modal-title">Edit {displayName}</h5>
+                  <h5 class="modal-title">Edit { activityDefinition.displayName }</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <div class="modal-body" innerHTML={innerHtml}>
-                  {innerJsx}
+                <div class="modal-body">
+                  <wf-activity-renderer activity={ activity } activityDefinition={ activityDefinition } displayMode={ ActivityDisplayMode.Edit } />
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -103,8 +96,8 @@ export class ActivityEditorModal {
     )
   }
 
-  private static parseHandlebars(source: string, activity: Activity): string {
-    const template = Handlebars.compile(source);
-    return template({...activity.state, activity});
-  }
+  // private static parseHandlebars(source: string, activity: Activity): string {
+  //   const template = Handlebars.compile(source);
+  //   return template({...activity.state, activity});
+  // }
 }

@@ -1,6 +1,6 @@
-import {Component, h, Method} from '@stencil/core';
-import activityDefinitionStore from '../../../services/ActivityDefinitionStore';
-import {ActivityComponent} from "../../../models";
+import {Component, Method} from '@stencil/core';
+import activityDefinitionStore from '../../../services/activity-definition-store';
+import { ActivityDefinition } from "../../../models";
 
 @Component({
   tag: 'wf-activity-library',
@@ -9,15 +9,7 @@ import {ActivityComponent} from "../../../models";
 export class ActivityLibrary {
 
   @Method()
-  async registerActivity(activity: ActivityComponent) {
+  async registerActivity(activity: ActivityDefinition) {
     activityDefinitionStore.addActivity(activity);
-  }
-
-  public render() {
-    return (
-      <host>
-        <slot />
-      </host>
-    );
   }
 }

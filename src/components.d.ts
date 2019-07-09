@@ -8,12 +8,12 @@
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
   Activity,
-  ActivityComponent,
+  ActivityDefinition,
+  ActivityDisplayMode,
   ImportedWorkflowData,
   Workflow,
   WorkflowFormatDescriptor,
 } from './models';
-
 
 export namespace Components {
   interface WfActivity {
@@ -23,17 +23,35 @@ export namespace Components {
     'top': number;
     'type': string;
   }
+  interface WfActivityDefinition {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'outcomes': string;
+    'type': string;
+  }
+  interface WfActivityDefinitionProperty {
+    'hint': string;
+    'label': string;
+    'name': string;
+    'type': string;
+  }
   interface WfActivityEditorModal {
     'activity': Activity;
     'hide': () => Promise<void>;
     'show': () => Promise<void>;
   }
   interface WfActivityLibrary {
-    'registerActivity': (activity: ActivityComponent) => Promise<void>;
+    'registerActivity': (activity: ActivityDefinition) => Promise<void>;
   }
   interface WfActivityPicker {
     'hide': () => Promise<void>;
     'show': () => Promise<void>;
+  }
+  interface WfActivityRenderer {
+    'activity': Activity;
+    'activityDefinition': ActivityDefinition;
+    'displayMode': ActivityDisplayMode;
   }
   interface WfConnection {
     'destinationActivityId': string;
@@ -48,15 +66,8 @@ export namespace Components {
   interface WfContextMenuItem {
     'text': any;
   }
-  interface WfCustomActivity {
-    'category': string;
-    'description': string;
-    'displayName': string;
-    'outcomes': string;
-    'type': string;
-  }
   interface WfDesigner {
-    'addActivity': (activityDefinition: ActivityComponent) => Promise<void>;
+    'addActivity': (activityDefinition: ActivityDefinition) => Promise<void>;
     'updateActivity': (activity: Activity) => Promise<void>;
     'workflow': Workflow;
   }
@@ -102,6 +113,18 @@ declare global {
     new (): HTMLWfActivityElement;
   };
 
+  interface HTMLWfActivityDefinitionElement extends Components.WfActivityDefinition, HTMLStencilElement {}
+  var HTMLWfActivityDefinitionElement: {
+    prototype: HTMLWfActivityDefinitionElement;
+    new (): HTMLWfActivityDefinitionElement;
+  };
+
+  interface HTMLWfActivityDefinitionPropertyElement extends Components.WfActivityDefinitionProperty, HTMLStencilElement {}
+  var HTMLWfActivityDefinitionPropertyElement: {
+    prototype: HTMLWfActivityDefinitionPropertyElement;
+    new (): HTMLWfActivityDefinitionPropertyElement;
+  };
+
   interface HTMLWfActivityEditorModalElement extends Components.WfActivityEditorModal, HTMLStencilElement {}
   var HTMLWfActivityEditorModalElement: {
     prototype: HTMLWfActivityEditorModalElement;
@@ -120,6 +143,12 @@ declare global {
     new (): HTMLWfActivityPickerElement;
   };
 
+  interface HTMLWfActivityRendererElement extends Components.WfActivityRenderer, HTMLStencilElement {}
+  var HTMLWfActivityRendererElement: {
+    prototype: HTMLWfActivityRendererElement;
+    new (): HTMLWfActivityRendererElement;
+  };
+
   interface HTMLWfConnectionElement extends Components.WfConnection, HTMLStencilElement {}
   var HTMLWfConnectionElement: {
     prototype: HTMLWfConnectionElement;
@@ -136,12 +165,6 @@ declare global {
   var HTMLWfContextMenuItemElement: {
     prototype: HTMLWfContextMenuItemElement;
     new (): HTMLWfContextMenuItemElement;
-  };
-
-  interface HTMLWfCustomActivityElement extends Components.WfCustomActivity, HTMLStencilElement {}
-  var HTMLWfCustomActivityElement: {
-    prototype: HTMLWfCustomActivityElement;
-    new (): HTMLWfCustomActivityElement;
   };
 
   interface HTMLWfDesignerElement extends Components.WfDesigner, HTMLStencilElement {}
@@ -199,13 +222,15 @@ declare global {
   };
   interface HTMLElementTagNameMap {
     'wf-activity': HTMLWfActivityElement;
+    'wf-activity-definition': HTMLWfActivityDefinitionElement;
+    'wf-activity-definition-property': HTMLWfActivityDefinitionPropertyElement;
     'wf-activity-editor-modal': HTMLWfActivityEditorModalElement;
     'wf-activity-library': HTMLWfActivityLibraryElement;
     'wf-activity-picker': HTMLWfActivityPickerElement;
+    'wf-activity-renderer': HTMLWfActivityRendererElement;
     'wf-connection': HTMLWfConnectionElement;
     'wf-context-menu': HTMLWfContextMenuElement;
     'wf-context-menu-item': HTMLWfContextMenuItemElement;
-    'wf-custom-activity': HTMLWfCustomActivityElement;
     'wf-designer': HTMLWfDesignerElement;
     'wf-designer-host': HTMLWfDesignerHostElement;
     'wf-export-button': HTMLWfExportButtonElement;
@@ -226,6 +251,19 @@ declare namespace LocalJSX {
     'top'?: number;
     'type'?: string;
   }
+  interface WfActivityDefinition extends JSXBase.HTMLAttributes<HTMLWfActivityDefinitionElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'outcomes'?: string;
+    'type'?: string;
+  }
+  interface WfActivityDefinitionProperty extends JSXBase.HTMLAttributes<HTMLWfActivityDefinitionPropertyElement> {
+    'hint'?: string;
+    'label'?: string;
+    'name'?: string;
+    'type'?: string;
+  }
   interface WfActivityEditorModal extends JSXBase.HTMLAttributes<HTMLWfActivityEditorModalElement> {
     'activity'?: Activity;
     'onUpdate-activity'?: (event: CustomEvent<any>) => void;
@@ -233,6 +271,11 @@ declare namespace LocalJSX {
   interface WfActivityLibrary extends JSXBase.HTMLAttributes<HTMLWfActivityLibraryElement> {}
   interface WfActivityPicker extends JSXBase.HTMLAttributes<HTMLWfActivityPickerElement> {
     'onActivity-picked'?: (event: CustomEvent<any>) => void;
+  }
+  interface WfActivityRenderer extends JSXBase.HTMLAttributes<HTMLWfActivityRendererElement> {
+    'activity'?: Activity;
+    'activityDefinition'?: ActivityDefinition;
+    'displayMode'?: ActivityDisplayMode;
   }
   interface WfConnection extends JSXBase.HTMLAttributes<HTMLWfConnectionElement> {
     'destinationActivityId'?: string;
@@ -246,13 +289,6 @@ declare namespace LocalJSX {
   }
   interface WfContextMenuItem extends JSXBase.HTMLAttributes<HTMLWfContextMenuItemElement> {
     'text'?: any;
-  }
-  interface WfCustomActivity extends JSXBase.HTMLAttributes<HTMLWfCustomActivityElement> {
-    'category'?: string;
-    'description'?: string;
-    'displayName'?: string;
-    'outcomes'?: string;
-    'type'?: string;
   }
   interface WfDesigner extends JSXBase.HTMLAttributes<HTMLWfDesignerElement> {
     'onAdd-activity'?: (event: CustomEvent<any>) => void;
@@ -294,13 +330,15 @@ declare namespace LocalJSX {
 
   interface IntrinsicElements {
     'wf-activity': WfActivity;
+    'wf-activity-definition': WfActivityDefinition;
+    'wf-activity-definition-property': WfActivityDefinitionProperty;
     'wf-activity-editor-modal': WfActivityEditorModal;
     'wf-activity-library': WfActivityLibrary;
     'wf-activity-picker': WfActivityPicker;
+    'wf-activity-renderer': WfActivityRenderer;
     'wf-connection': WfConnection;
     'wf-context-menu': WfContextMenu;
     'wf-context-menu-item': WfContextMenuItem;
-    'wf-custom-activity': WfCustomActivity;
     'wf-designer': WfDesigner;
     'wf-designer-host': WfDesignerHost;
     'wf-export-button': WfExportButton;

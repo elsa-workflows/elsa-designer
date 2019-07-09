@@ -1,5 +1,10 @@
 import {Component, Element, h, Listen} from '@stencil/core';
-import {Activity, ActivityComponent, ImportedWorkflowData, WorkflowFormatDescriptor} from "../../../models";
+import {
+  Activity,
+  ActivityDefinition,
+  ImportedWorkflowData,
+  WorkflowFormatDescriptor
+} from "../../../models";
 
 @Component({
   tag: 'wf-designer-host',
@@ -11,7 +16,7 @@ export class DesignerHost {
   el: HTMLElement;
 
   @Listen('activity-picked')
-  async onActivityPicked(e: CustomEvent<ActivityComponent>){
+  async onActivityPicked(e: CustomEvent<ActivityDefinition>){
     await this.designer.addActivity(e.detail);
   }
 
