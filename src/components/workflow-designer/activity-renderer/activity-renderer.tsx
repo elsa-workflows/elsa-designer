@@ -23,6 +23,10 @@ export class ActivityRenderer {
   displayMode: ActivityDisplayMode = ActivityDisplayMode.Design;
 
   render() {
+
+    if(!this.activity || !this.activityDefinition)
+      return null;
+
     switch (this.displayMode) {
       case ActivityDisplayMode.Design:
         return this.renderDesigner();
@@ -50,7 +54,7 @@ export class ActivityRenderer {
     return (
       <Host>
         { properties.map(x => {
-          const propertyValue = activity.state[x.name];
+          const propertyValue = activity.state[x.name] || x.defaultValue ? x.defaultValue() : undefined;
 
           return (<div class="form-group">
             <label htmlFor={ x.name }>{ x.label }</label>

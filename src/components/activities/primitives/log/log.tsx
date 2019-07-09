@@ -1,4 +1,4 @@
-import {Component, Element, Prop} from '@stencil/core';
+import {Component, Prop} from '@stencil/core';
 import activityDefinitionStore from '../../../../services/activity-definition-store';
 import { Activity, ActivityDefinition} from "../../../../models";
 
@@ -8,9 +8,6 @@ import { Activity, ActivityDefinition} from "../../../../models";
 })
 export class Log implements ActivityDefinition {
 
-  @Element()
-  el: HTMLElement;
-
   @Prop({reflect: true})
   type: string = "Log";
 
@@ -18,12 +15,12 @@ export class Log implements ActivityDefinition {
   displayName: string = "Log";
 
   @Prop({reflect: true})
-  description: string = "Log a message";
+  description: string = "Log a message.";
 
   @Prop({reflect: true})
   category: string = "Primitives";
 
-  public componentDidLoad() {
+  public componentWillLoad() {
     activityDefinitionStore.addActivity(this);
   }
 

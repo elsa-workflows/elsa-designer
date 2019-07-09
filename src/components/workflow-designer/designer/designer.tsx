@@ -1,4 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Method, Prop } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Method, Prop} from '@stencil/core';
 import { Connection as JsPlumbConnection, DragEventCallbackOptions, Endpoint, EndpointOptions, jsPlumb } from "jsplumb";
 import { CssMap } from "../../../utils";
 import { JsPlumbUtils } from "./jsplumb-utils";
@@ -6,9 +6,9 @@ import { Activity as ActivityInstance } from "../activity/activity";
 import { Connection as ConnectionComponent } from "../connection/connection";
 import { ActivityModel } from "./models";
 import uuid from 'uuid-browser/v4';
-import activityDefinitionStore from '../../../services/activity-definition-store';
 import { Activity, ActivityDefinition, ActivityDisplayMode, Workflow } from "../../../models";
 import { Point } from "../../../models";
+import { ActivityMap } from "../../../services/activity-definition-store";
 
 @Component({
   tag: 'wf-designer',
@@ -25,6 +25,9 @@ export class Designer {
     activities: [],
     connections: []
   };
+
+  @Prop()
+  activityDefinitions: ActivityMap = {};
 
   @Event({ eventName: 'edit-activity' })
   private editActivityEvent: EventEmitter;
@@ -56,7 +59,6 @@ export class Designer {
   }
 
   private jsPlumb = JsPlumbUtils.createInstance(this.el);
-  private activityModels: ActivityModel[] = [];
   private lastClickedLocation: Point = null;
   private activityContextMenu: HTMLWfContextMenuElement;
   private selectedActivity: Activity;
@@ -68,10 +70,6 @@ export class Designer {
     this.workflow = { ...this.workflow, activities, connections };
   }
 
-  public async componentWillRender() {
-    await this.createActivityModels();
-  }
-
   public componentDidLoad() {
     this.setupJsPlumb();
   }
@@ -81,8 +79,10 @@ export class Designer {
     this.setupJsPlumb();
   }
 
+  public findActivityByType = (type: string): ActivityDefinition => this.activityDefinitions[type];
+
   public render() {
-    const activities = this.activityModels;
+    const activities = this.createActivityModels();
     return (
       <div class="workflow-canvas">
         { activities.map((model: ActivityModel) => {
@@ -110,20 +110,16 @@ export class Designer {
     this.workflow = { ...this.workflow, activities };
   };
 
-  private async createActivityModels() {
-    this.activityModels = await Promise.all(this.workflow.activities.map(async (activity: Activity) => {
-      const definition = activityDefinitionStore.findActivityByType(activity.type);
+  private createActivityModels(): Array<ActivityModel> {
+    return this.workflow.activities.map((activity: Activity) => {
 
-      if (!definition) {
-        console.error(`Activity type ${ activity.type } not found.`);
-        throw Error();
-      }
+      const definition = this.findActivityByType(activity.type);
 
       return {
         activity,
         definition
       };
-    }));
+    });
   }
 
   private setupJsPlumb = () => {
@@ -175,7 +171,7 @@ export class Designer {
 
   private setupOutcomes(element: Element) {
     const activity = this.findActivityByElement(element);
-    const definition = activityDefinitionStore.findActivityByType(activity.type);
+    const definition = this.findActivityByType(activity.type);
     const outcomes = definition.getOutcomes(activity);
 
     for (let outcome of outcomes) {

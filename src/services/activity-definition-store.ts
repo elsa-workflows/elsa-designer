@@ -1,6 +1,6 @@
 import { ActivityDefinition } from "../models";
 
-type ActivityMap = {
+export type ActivityMap = {
   [typeName: string]: ActivityDefinition
 };
 
@@ -9,6 +9,11 @@ export class ActivityDefinitionStore {
   private activities: Array<ActivityDefinition> = [];
 
   public getActivities = (): Array<ActivityDefinition> => [...this.activities];
+
+  public getActivityLookup = (): ActivityMap => {
+    return { ...this.lookup };
+  };
+
   public findActivityByType = (type: string): ActivityDefinition => this.lookup[type];
   public getCategories = (): Array<string> => [...new Set(this.activities.map(x => x.category))];
 

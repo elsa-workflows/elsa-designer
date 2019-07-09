@@ -1,4 +1,4 @@
-import { Component, Element, Prop } from '@stencil/core';
+import { Component, Prop } from '@stencil/core';
 import activityDefinitionStore from '../../../../services/activity-definition-store';
 import { Activity, ActivityDefinition} from "../../../../models";
 
@@ -8,9 +8,6 @@ import { Activity, ActivityDefinition} from "../../../../models";
 })
 export class ReadLine implements ActivityDefinition {
 
-  @Element()
-  el: HTMLElement;
-
   @Prop({ reflect: true })
   type: string = "ReadLine";
 
@@ -18,7 +15,7 @@ export class ReadLine implements ActivityDefinition {
   displayName: string = "Read Line";
 
   @Prop({ reflect: true })
-  description: string = "Read text from standard in";
+  description: string = "Read text from standard in.";
 
   @Prop({ reflect: true })
   category: string = "Console";
@@ -31,6 +28,7 @@ export class ReadLine implements ActivityDefinition {
   }];
 
   public componentDidLoad() {
+    console.debug('registering ReadLine');
     activityDefinitionStore.addActivity(this);
   }
 

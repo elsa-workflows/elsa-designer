@@ -37,11 +37,13 @@
     <wf-read-line></wf-read-line>
     <wf-log></wf-log>
     <wf-set-variable></wf-set-variable>
-    <wf-activity-definition type="HttpRequestTrigger" category="HTTP" display-name="HTTP Request Event" description="Triggers the workflow when an incoming HTTP request is received." outcomes="Done">
-      <wf-activity-definition-property name="path" type="uri" label="Path" hint="The relative path that triggers this activity."></wf-activity-definition-property>
-      <wf-activity-definition-property name="method" type="string" label="Method" hint="The HTTP method that triggers this activity."></wf-activity-definition-property>
-      <wf-activity-definition-property name=readContent" type="boolean" label="Read Content" hint="Check if the HTTP request content body should be read and stored as part of the HTTP request model. The stored format depends on the content-type header."></wf-activity-definition-property>
-    </wf-activity-definition>
+    <wf-http-request-event></wf-http-request-event>
+    <wf-http-response-task></wf-http-response-task>
+    <wf-send-masstransit-message></wf-send-masstransit-message>
+    <wf-receive-masstransit-message></wf-receive-masstransit-message>
+    <wf-fork></wf-fork>
+    <wf-send-email></wf-send-email>
+    <wf-timer-event></wf-timer-event>
   </wf-activity-library>
 
   <!-- Activity Editor -->

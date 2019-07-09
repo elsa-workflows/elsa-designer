@@ -1,4 +1,4 @@
-import {Component, Element, Prop} from '@stencil/core';
+import {Component, Prop} from '@stencil/core';
 import activityDefinitionStore from '../../../../services/activity-definition-store';
 import { Activity, ActivityDefinition } from "../../../../models";
 
@@ -8,9 +8,6 @@ import { Activity, ActivityDefinition } from "../../../../models";
 })
 export class WriteLine implements ActivityDefinition {
 
-  @Element()
-  el: HTMLElement;
-
   @Prop({reflect: true})
   type: string = "WriteLine";
 
@@ -18,7 +15,7 @@ export class WriteLine implements ActivityDefinition {
   displayName: string = "Write Line";
 
   @Prop({reflect: true})
-  description: string = "Write text to standard out";
+  description: string = "Write text to standard out.";
 
   @Prop({reflect: true})
   category: string = "Console";

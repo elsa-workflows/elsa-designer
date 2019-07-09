@@ -65,9 +65,7 @@ export class ActivityEditorModal {
   render() {
     const activity = this.activity;
     const activityDefinition = this.activityDefinition;
-
-    if(!activityDefinition)
-      return null;
+    const displayName = !!activityDefinition ? activityDefinition.displayName : '';
 
     return (
       <div>
@@ -76,7 +74,7 @@ export class ActivityEditorModal {
             <div class="modal-content">
               <form onSubmit={ e => this.onSubmit(e) }>
                 <div class="modal-header">
-                  <h5 class="modal-title">Edit { activityDefinition.displayName }</h5>
+                  <h5 class="modal-title">Edit { displayName }</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>

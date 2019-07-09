@@ -1,4 +1,4 @@
-import { Component, Element, Prop } from '@stencil/core';
+import { Component, Prop } from '@stencil/core';
 import activityDefinitionStore from '../../../../services/activity-definition-store';
 import { Activity, ActivityDefinition} from "../../../../models";
 
@@ -8,9 +8,6 @@ import { Activity, ActivityDefinition} from "../../../../models";
 })
 export class SetVariable implements ActivityDefinition {
 
-  @Element()
-  el: HTMLElement;
-
   @Prop({ reflect: true })
   type: string = "SetVariable";
 
@@ -18,7 +15,7 @@ export class SetVariable implements ActivityDefinition {
   displayName: string = "Set Variable";
 
   @Prop({ reflect: true })
-  description: string = "Set a variable on the workflow";
+  description: string = "Set a variable on the workflow.";
 
   @Prop({ reflect: true })
   category: string = "Primitives";
