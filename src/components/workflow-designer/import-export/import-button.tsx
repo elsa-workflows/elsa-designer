@@ -3,7 +3,7 @@ import {WorkflowFormat} from "../../../models";
 
 @Component({
   tag: 'wf-import-button',
-  styleUrl: 'import-export-button.scss',
+  styleUrl: 'buttons.scss',
   shadow: false
 })
 export class ImportButton {

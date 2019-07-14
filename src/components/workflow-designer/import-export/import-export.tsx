@@ -18,7 +18,7 @@ export class ImportExport {
       window.URL.revokeObjectURL(blobUrl)
     }
 
-    const workflow = await designer.workflow;
+    const workflow = await designer.getWorkflow();
     const data = this.serialize(workflow, formatDescriptor.format);
     const blob = new Blob([data], {type: formatDescriptor.mimeType});
 
@@ -35,7 +35,9 @@ export class ImportExport {
 
   @Method()
   async import(designer: HTMLWfDesignerElement, data: ImportedWorkflowData) {
-    designer.workflow = JSON.parse(data.data) as Workflow;
+    const workflow = JSON.parse(data.data) as Workflow;
+
+    await designer.loadWorkflow(workflow);
   }
 
   blobUrl: string;

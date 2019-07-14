@@ -8,12 +8,12 @@
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
   Activity,
-  ActivityComponent,
+  ActivityDefinition,
+  ActivityDisplayMode,
   ImportedWorkflowData,
   Workflow,
   WorkflowFormatDescriptor,
 } from './models';
-
 
 export namespace Components {
   interface WfActivity {
@@ -23,17 +23,35 @@ export namespace Components {
     'top': number;
     'type': string;
   }
+  interface WfActivityDefinition {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'outcomes': string;
+    'type': string;
+  }
+  interface WfActivityDefinitionProperty {
+    'hint': string;
+    'label': string;
+    'name': string;
+    'type': string;
+  }
   interface WfActivityEditorModal {
     'activity': Activity;
     'hide': () => Promise<void>;
     'show': () => Promise<void>;
   }
   interface WfActivityLibrary {
-    'registerActivity': (activity: ActivityComponent) => Promise<void>;
+    'registerActivity': (activityDefinition: ActivityDefinition) => Promise<void>;
   }
   interface WfActivityPicker {
     'hide': () => Promise<void>;
     'show': () => Promise<void>;
+  }
+  interface WfActivityRenderer {
+    'activity': Activity;
+    'activityDefinition': ActivityDefinition;
+    'displayMode': ActivityDisplayMode;
   }
   interface WfConnection {
     'destinationActivityId': string;
@@ -48,20 +66,33 @@ export namespace Components {
   interface WfContextMenuItem {
     'text': any;
   }
-  interface WfCustomActivity {
-    'category': string;
-    'description': string;
-    'displayName': string;
-    'outcomes': string;
-    'type': string;
-  }
   interface WfDesigner {
-    'addActivity': (activityDefinition: ActivityComponent) => Promise<void>;
+    'addActivity': (activityDefinition: ActivityDefinition) => Promise<void>;
+    'getWorkflow': () => Promise<{ activities: Activity[]; connections: import("C:/Projects/Elsa/elsa-designer-html/src/models/connection").Connection[]; }>;
+    'loadWorkflow': (workflow: Workflow) => Promise<void>;
+    'newWorkflow': () => Promise<void>;
     'updateActivity': (activity: Activity) => Promise<void>;
-    'workflow': Workflow;
   }
   interface WfDesignerHost {}
   interface WfExportButton {}
+  interface WfFork {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
+  interface WfHttpRequestEvent {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
+  interface WfHttpResponseTask {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
   interface WfImportButton {}
   interface WfImportExport {
     'export': (designer: HTMLWfDesignerElement, formatDescriptor: WorkflowFormatDescriptor) => Promise<void>;
@@ -73,13 +104,38 @@ export namespace Components {
     'displayName': string;
     'type': string;
   }
+  interface WfNewWorkflowButton {}
   interface WfReadLine {
     'category': string;
     'description': string;
     'displayName': string;
     'type': string;
   }
+  interface WfReceiveMasstransitMessage {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
+  interface WfSendEmail {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
+  interface WfSendMasstransitMessage {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
   interface WfSetVariable {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
+  interface WfTimerEvent {
     'category': string;
     'description': string;
     'displayName': string;
@@ -102,6 +158,18 @@ declare global {
     new (): HTMLWfActivityElement;
   };
 
+  interface HTMLWfActivityDefinitionElement extends Components.WfActivityDefinition, HTMLStencilElement {}
+  var HTMLWfActivityDefinitionElement: {
+    prototype: HTMLWfActivityDefinitionElement;
+    new (): HTMLWfActivityDefinitionElement;
+  };
+
+  interface HTMLWfActivityDefinitionPropertyElement extends Components.WfActivityDefinitionProperty, HTMLStencilElement {}
+  var HTMLWfActivityDefinitionPropertyElement: {
+    prototype: HTMLWfActivityDefinitionPropertyElement;
+    new (): HTMLWfActivityDefinitionPropertyElement;
+  };
+
   interface HTMLWfActivityEditorModalElement extends Components.WfActivityEditorModal, HTMLStencilElement {}
   var HTMLWfActivityEditorModalElement: {
     prototype: HTMLWfActivityEditorModalElement;
@@ -118,6 +186,12 @@ declare global {
   var HTMLWfActivityPickerElement: {
     prototype: HTMLWfActivityPickerElement;
     new (): HTMLWfActivityPickerElement;
+  };
+
+  interface HTMLWfActivityRendererElement extends Components.WfActivityRenderer, HTMLStencilElement {}
+  var HTMLWfActivityRendererElement: {
+    prototype: HTMLWfActivityRendererElement;
+    new (): HTMLWfActivityRendererElement;
   };
 
   interface HTMLWfConnectionElement extends Components.WfConnection, HTMLStencilElement {}
@@ -138,12 +212,6 @@ declare global {
     new (): HTMLWfContextMenuItemElement;
   };
 
-  interface HTMLWfCustomActivityElement extends Components.WfCustomActivity, HTMLStencilElement {}
-  var HTMLWfCustomActivityElement: {
-    prototype: HTMLWfCustomActivityElement;
-    new (): HTMLWfCustomActivityElement;
-  };
-
   interface HTMLWfDesignerElement extends Components.WfDesigner, HTMLStencilElement {}
   var HTMLWfDesignerElement: {
     prototype: HTMLWfDesignerElement;
@@ -160,6 +228,24 @@ declare global {
   var HTMLWfExportButtonElement: {
     prototype: HTMLWfExportButtonElement;
     new (): HTMLWfExportButtonElement;
+  };
+
+  interface HTMLWfForkElement extends Components.WfFork, HTMLStencilElement {}
+  var HTMLWfForkElement: {
+    prototype: HTMLWfForkElement;
+    new (): HTMLWfForkElement;
+  };
+
+  interface HTMLWfHttpRequestEventElement extends Components.WfHttpRequestEvent, HTMLStencilElement {}
+  var HTMLWfHttpRequestEventElement: {
+    prototype: HTMLWfHttpRequestEventElement;
+    new (): HTMLWfHttpRequestEventElement;
+  };
+
+  interface HTMLWfHttpResponseTaskElement extends Components.WfHttpResponseTask, HTMLStencilElement {}
+  var HTMLWfHttpResponseTaskElement: {
+    prototype: HTMLWfHttpResponseTaskElement;
+    new (): HTMLWfHttpResponseTaskElement;
   };
 
   interface HTMLWfImportButtonElement extends Components.WfImportButton, HTMLStencilElement {}
@@ -180,16 +266,46 @@ declare global {
     new (): HTMLWfLogElement;
   };
 
+  interface HTMLWfNewWorkflowButtonElement extends Components.WfNewWorkflowButton, HTMLStencilElement {}
+  var HTMLWfNewWorkflowButtonElement: {
+    prototype: HTMLWfNewWorkflowButtonElement;
+    new (): HTMLWfNewWorkflowButtonElement;
+  };
+
   interface HTMLWfReadLineElement extends Components.WfReadLine, HTMLStencilElement {}
   var HTMLWfReadLineElement: {
     prototype: HTMLWfReadLineElement;
     new (): HTMLWfReadLineElement;
   };
 
+  interface HTMLWfReceiveMasstransitMessageElement extends Components.WfReceiveMasstransitMessage, HTMLStencilElement {}
+  var HTMLWfReceiveMasstransitMessageElement: {
+    prototype: HTMLWfReceiveMasstransitMessageElement;
+    new (): HTMLWfReceiveMasstransitMessageElement;
+  };
+
+  interface HTMLWfSendEmailElement extends Components.WfSendEmail, HTMLStencilElement {}
+  var HTMLWfSendEmailElement: {
+    prototype: HTMLWfSendEmailElement;
+    new (): HTMLWfSendEmailElement;
+  };
+
+  interface HTMLWfSendMasstransitMessageElement extends Components.WfSendMasstransitMessage, HTMLStencilElement {}
+  var HTMLWfSendMasstransitMessageElement: {
+    prototype: HTMLWfSendMasstransitMessageElement;
+    new (): HTMLWfSendMasstransitMessageElement;
+  };
+
   interface HTMLWfSetVariableElement extends Components.WfSetVariable, HTMLStencilElement {}
   var HTMLWfSetVariableElement: {
     prototype: HTMLWfSetVariableElement;
     new (): HTMLWfSetVariableElement;
+  };
+
+  interface HTMLWfTimerEventElement extends Components.WfTimerEvent, HTMLStencilElement {}
+  var HTMLWfTimerEventElement: {
+    prototype: HTMLWfTimerEventElement;
+    new (): HTMLWfTimerEventElement;
   };
 
   interface HTMLWfWriteLineElement extends Components.WfWriteLine, HTMLStencilElement {}
@@ -199,21 +315,31 @@ declare global {
   };
   interface HTMLElementTagNameMap {
     'wf-activity': HTMLWfActivityElement;
+    'wf-activity-definition': HTMLWfActivityDefinitionElement;
+    'wf-activity-definition-property': HTMLWfActivityDefinitionPropertyElement;
     'wf-activity-editor-modal': HTMLWfActivityEditorModalElement;
     'wf-activity-library': HTMLWfActivityLibraryElement;
     'wf-activity-picker': HTMLWfActivityPickerElement;
+    'wf-activity-renderer': HTMLWfActivityRendererElement;
     'wf-connection': HTMLWfConnectionElement;
     'wf-context-menu': HTMLWfContextMenuElement;
     'wf-context-menu-item': HTMLWfContextMenuItemElement;
-    'wf-custom-activity': HTMLWfCustomActivityElement;
     'wf-designer': HTMLWfDesignerElement;
     'wf-designer-host': HTMLWfDesignerHostElement;
     'wf-export-button': HTMLWfExportButtonElement;
+    'wf-fork': HTMLWfForkElement;
+    'wf-http-request-event': HTMLWfHttpRequestEventElement;
+    'wf-http-response-task': HTMLWfHttpResponseTaskElement;
     'wf-import-button': HTMLWfImportButtonElement;
     'wf-import-export': HTMLWfImportExportElement;
     'wf-log': HTMLWfLogElement;
+    'wf-new-workflow-button': HTMLWfNewWorkflowButtonElement;
     'wf-read-line': HTMLWfReadLineElement;
+    'wf-receive-masstransit-message': HTMLWfReceiveMasstransitMessageElement;
+    'wf-send-email': HTMLWfSendEmailElement;
+    'wf-send-masstransit-message': HTMLWfSendMasstransitMessageElement;
     'wf-set-variable': HTMLWfSetVariableElement;
+    'wf-timer-event': HTMLWfTimerEventElement;
     'wf-write-line': HTMLWfWriteLineElement;
   }
 }
@@ -226,6 +352,19 @@ declare namespace LocalJSX {
     'top'?: number;
     'type'?: string;
   }
+  interface WfActivityDefinition extends JSXBase.HTMLAttributes<HTMLWfActivityDefinitionElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'outcomes'?: string;
+    'type'?: string;
+  }
+  interface WfActivityDefinitionProperty extends JSXBase.HTMLAttributes<HTMLWfActivityDefinitionPropertyElement> {
+    'hint'?: string;
+    'label'?: string;
+    'name'?: string;
+    'type'?: string;
+  }
   interface WfActivityEditorModal extends JSXBase.HTMLAttributes<HTMLWfActivityEditorModalElement> {
     'activity'?: Activity;
     'onUpdate-activity'?: (event: CustomEvent<any>) => void;
@@ -233,6 +372,11 @@ declare namespace LocalJSX {
   interface WfActivityLibrary extends JSXBase.HTMLAttributes<HTMLWfActivityLibraryElement> {}
   interface WfActivityPicker extends JSXBase.HTMLAttributes<HTMLWfActivityPickerElement> {
     'onActivity-picked'?: (event: CustomEvent<any>) => void;
+  }
+  interface WfActivityRenderer extends JSXBase.HTMLAttributes<HTMLWfActivityRendererElement> {
+    'activity'?: Activity;
+    'activityDefinition'?: ActivityDefinition;
+    'displayMode'?: ActivityDisplayMode;
   }
   interface WfConnection extends JSXBase.HTMLAttributes<HTMLWfConnectionElement> {
     'destinationActivityId'?: string;
@@ -247,21 +391,31 @@ declare namespace LocalJSX {
   interface WfContextMenuItem extends JSXBase.HTMLAttributes<HTMLWfContextMenuItemElement> {
     'text'?: any;
   }
-  interface WfCustomActivity extends JSXBase.HTMLAttributes<HTMLWfCustomActivityElement> {
-    'category'?: string;
-    'description'?: string;
-    'displayName'?: string;
-    'outcomes'?: string;
-    'type'?: string;
-  }
   interface WfDesigner extends JSXBase.HTMLAttributes<HTMLWfDesignerElement> {
     'onAdd-activity'?: (event: CustomEvent<any>) => void;
     'onEdit-activity'?: (event: CustomEvent<any>) => void;
-    'workflow'?: Workflow;
   }
   interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {}
   interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {
     'onExport-workflow'?: (event: CustomEvent<any>) => void;
+  }
+  interface WfFork extends JSXBase.HTMLAttributes<HTMLWfForkElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
+  }
+  interface WfHttpRequestEvent extends JSXBase.HTMLAttributes<HTMLWfHttpRequestEventElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
+  }
+  interface WfHttpResponseTask extends JSXBase.HTMLAttributes<HTMLWfHttpResponseTaskElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
   }
   interface WfImportButton extends JSXBase.HTMLAttributes<HTMLWfImportButtonElement> {
     'onImport-workflow'?: (event: CustomEvent<any>) => void;
@@ -273,13 +427,40 @@ declare namespace LocalJSX {
     'displayName'?: string;
     'type'?: string;
   }
+  interface WfNewWorkflowButton extends JSXBase.HTMLAttributes<HTMLWfNewWorkflowButtonElement> {
+    'onNew-workflow'?: (event: CustomEvent<any>) => void;
+  }
   interface WfReadLine extends JSXBase.HTMLAttributes<HTMLWfReadLineElement> {
     'category'?: string;
     'description'?: string;
     'displayName'?: string;
     'type'?: string;
   }
+  interface WfReceiveMasstransitMessage extends JSXBase.HTMLAttributes<HTMLWfReceiveMasstransitMessageElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
+  }
+  interface WfSendEmail extends JSXBase.HTMLAttributes<HTMLWfSendEmailElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
+  }
+  interface WfSendMasstransitMessage extends JSXBase.HTMLAttributes<HTMLWfSendMasstransitMessageElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
+  }
   interface WfSetVariable extends JSXBase.HTMLAttributes<HTMLWfSetVariableElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
+  }
+  interface WfTimerEvent extends JSXBase.HTMLAttributes<HTMLWfTimerEventElement> {
     'category'?: string;
     'description'?: string;
     'displayName'?: string;
@@ -294,21 +475,31 @@ declare namespace LocalJSX {
 
   interface IntrinsicElements {
     'wf-activity': WfActivity;
+    'wf-activity-definition': WfActivityDefinition;
+    'wf-activity-definition-property': WfActivityDefinitionProperty;
     'wf-activity-editor-modal': WfActivityEditorModal;
     'wf-activity-library': WfActivityLibrary;
     'wf-activity-picker': WfActivityPicker;
+    'wf-activity-renderer': WfActivityRenderer;
     'wf-connection': WfConnection;
     'wf-context-menu': WfContextMenu;
     'wf-context-menu-item': WfContextMenuItem;
-    'wf-custom-activity': WfCustomActivity;
     'wf-designer': WfDesigner;
     'wf-designer-host': WfDesignerHost;
     'wf-export-button': WfExportButton;
+    'wf-fork': WfFork;
+    'wf-http-request-event': WfHttpRequestEvent;
+    'wf-http-response-task': WfHttpResponseTask;
     'wf-import-button': WfImportButton;
     'wf-import-export': WfImportExport;
     'wf-log': WfLog;
+    'wf-new-workflow-button': WfNewWorkflowButton;
     'wf-read-line': WfReadLine;
+    'wf-receive-masstransit-message': WfReceiveMasstransitMessage;
+    'wf-send-email': WfSendEmail;
+    'wf-send-masstransit-message': WfSendMasstransitMessage;
     'wf-set-variable': WfSetVariable;
+    'wf-timer-event': WfTimerEvent;
     'wf-write-line': WfWriteLine;
   }
 }

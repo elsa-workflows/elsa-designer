@@ -5,24 +5,11 @@
 <!-- Auto Generated Below -->
 
 
-## Properties
+## Events
 
-| Property   | Attribute | Description | Type                    | Default     |
-| ---------- | --------- | ----------- | ----------------------- | ----------- |
-| `designer` | --        |             | `HTMLWfDesignerElement` | `undefined` |
-
-
-## Methods
-
-### `export(format: WorkflowFormat) => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
+| Event          | Description | Type               |
+| -------------- | ----------- | ------------------ |
+| `new-workflow` |             | `CustomEvent<any>` |
 
 
 ----------------------------------------------

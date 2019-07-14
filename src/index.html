@@ -37,56 +37,13 @@
     <wf-read-line></wf-read-line>
     <wf-log></wf-log>
     <wf-set-variable></wf-set-variable>
-
-    <!-- Custom declarative activity -->
-    <wf-custom-activity type="State" display-name="State" category="State Machine" description="Represents a state in a state machine workflow" outcomes="A, B">
-      <div slot="editor">
-        <div class="form-group">
-          <label for="stateName">Name</label>
-          <input id="stateName" name="stateName" type="text" class="form-control" value="{{stateName}}" />
-        </div>
-        <div class="form-group">
-          <label for="possibleOutcomes">Possible Outcomes</label>
-          <input id="possibleOutcomes" name="possibleOutcomes" type="text" class="form-control" value="{{possibleOutcomes}}" />
-        </div>
-      </div>
-      <div slot="display">
-        <h5>State</h5>
-        <p>{{stateName}}</p>
-      </div>
-    </wf-custom-activity>
-
-    <wf-custom-activity type="Cron" display-name="Cron" category="Timers" description="Triggers based on a Crontab interval" outcomes="Next">
-      <div slot="editor">
-        <div class="form-group">
-          <label for="cronExpression">Cron Expression</label>
-          <input id="cronExpression" name="cronExpression" type="text" class="form-control" value="{{cronExpression}}" />
-        </div>
-      </div>
-      <div slot="display">
-        <h5>{{definition.displayName}}</h5>
-        <p>{{cronExpression}}</p>
-      </div>
-    </wf-custom-activity>
-
-    <wf-custom-activity type="Start" display-name="Start" category="State Machine" description="A starting point of any state machine" outcomes="Branch 1, Branch 2">
-      <div slot="display">
-        <h5>{{definition.displayName}}</h5>
-      </div>
-    </wf-custom-activity>
-
-    <wf-custom-activity type="UserInRole" display-name="Is User In Role" category="Identity" description="Returns whether the current user is in the specified role" outcomes="True, False">
-      <div slot="editor">
-        <div class="form-group">
-          <label for="roles">Roles</label>
-          <input id="roles" name="roles" type="text" class="form-control" value="{{roles}}" />
-        </div>
-      </div>
-      <div slot="display">
-        <h5>{{definition.displayName}}</h5>
-        <p>User is in any of the following roles: {{roles}}</p>
-      </div>
-    </wf-custom-activity>
+    <wf-http-request-event></wf-http-request-event>
+    <wf-http-response-task></wf-http-response-task>
+    <wf-send-masstransit-message></wf-send-masstransit-message>
+    <wf-receive-masstransit-message></wf-receive-masstransit-message>
+    <wf-fork></wf-fork>
+    <wf-send-email></wf-send-email>
+    <wf-timer-event></wf-timer-event>
   </wf-activity-library>
 
   <!-- Activity Editor -->
@@ -94,7 +51,6 @@
 
   <div id="header" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-dark border-bottom shadow-sm">
     <h5 class="my-0 mr-md-auto font-weight-normal">Workflow Designer</h5>
-
 
     <ul class="nav">
       <li class="nav-item">
@@ -106,61 +62,18 @@
       <li class="nav-item">
         <wf-import-button></wf-import-button>
       </li>
+      <li class="nav-item">
+        <wf-new-workflow-button></wf-new-workflow-button>
+      </li>
     </ul>
   </div>
 
   <!-- Workflow Designer -->
-  <wf-designer id="workflowDesigner">
-    <wf-activity activity-id="1" left="50" top="50" type="WriteLine" state='{ "textExpression": "Hello World!" }'></wf-activity>
-    <wf-activity activity-id="2" left="430" top="190" type="ReadLine" state='{ "variableName": "firstName" }'></wf-activity>
-    <wf-activity activity-id="3" left="280" top="490" type="Log" state='{ "messageExpression": "Something to log." }' ></wf-activity>
-    <wf-connection source-id="2" destination-id="3" outcome="next"></wf-connection>
-    <wf-connection source-id="1" destination-id="2" outcome="next"></wf-connection>
-  </wf-designer>
+  <wf-designer id="workflowDesigner"></wf-designer>
 
   <!-- Import/Export -->
   <wf-import-export></wf-import-export>
 </wf-designer-host>
-
-<script type="text/javascript">
-
-  // Temporary workaround until I figure out how to make "componentOnReady" work with stencil-generated-web components.
-  // According to the docs, the web component should have a `componentOnReady` function available.
-  // However, this function is only available after the component has been hydrated.
-  function initialize(component, callback) {
-    var handle = setInterval(function () {
-      if (component.componentOnReady) {
-        clearInterval(handle);
-        callback(component);
-      }
-    }, 100);
-  }
-
-  // Programmatically add custom activities.
-  initialize(document.querySelector('wf-activity-library'), function (component) {
-    addActivities(component);
-  });
-
-  function addActivities(activityLibrary) {
-    activityLibrary.registerActivity({
-      type: "MyProgrammaticActivity",
-      displayName: "My Programmatic Activity",
-      category: "Custom",
-      description: "A programmatically declared custom activity",
-      getOutcomes: function (activity) { return ['next'];},
-      editorTemplate: function (activity) {
-        return '<div>' +
-          '  <div class="form-group">\n' +
-          '  <label for="age">Age</label>\n' +
-          '  <input id="age" name="age" type="text" class="form-control" value="{{age}}"/>\n' +
-          '  </div>' +
-          '</div>';
-      },
-      displayTemplate: null // Optionally provide a custom display.
-    });
-  }
-
-</script>
 
 </body>
 </html>

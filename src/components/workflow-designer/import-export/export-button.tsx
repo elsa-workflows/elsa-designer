@@ -3,7 +3,7 @@ import {WorkflowFormatDescriptor, WorkflowFormatDescriptors} from "../../../mode
 
 @Component({
   tag: 'wf-export-button',
-  styleUrl: 'import-export-button.scss',
+  styleUrl: 'buttons.scss',
   shadow: false
 })
 export class ExportButton {

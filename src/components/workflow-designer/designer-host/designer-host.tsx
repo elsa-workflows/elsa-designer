@@ -1,5 +1,13 @@
-import {Component, Element, h, Listen} from '@stencil/core';
-import {Activity, ActivityComponent, ImportedWorkflowData, WorkflowFormatDescriptor} from "../../../models";
+import { Component, Element, h, Listen, Prop } from '@stencil/core';
+import {
+  Activity,
+  ActivityDefinition,
+  ImportedWorkflowData,
+  WorkflowFormatDescriptor
+} from "../../../models";
+import { configureStore } from "../../../redux/store";
+import '@stencil/redux'
+import { Store } from "@stencil/redux";
 
 @Component({
   tag: 'wf-designer-host',
@@ -10,8 +18,11 @@ export class DesignerHost {
   @Element()
   el: HTMLElement;
 
+  @Prop({ context: 'store' })
+  store: Store;
+
   @Listen('activity-picked')
-  async onActivityPicked(e: CustomEvent<ActivityComponent>){
+  async onActivityPicked(e: CustomEvent<ActivityDefinition>){
     await this.designer.addActivity(e.detail);
   }
 
@@ -47,10 +58,25 @@ export class DesignerHost {
     await this.importExport.import(this.designer, e.detail);
   }
 
+  @Listen('new-workflow')
+  async onNewWorkflow(){
+    await this.designer.newWorkflow();
+  }
+
   activityPicker: HTMLWfActivityPickerElement;
   activityEditor: HTMLWfActivityEditorModalElement;
   designer: HTMLWfDesignerElement;
   importExport: HTMLWfImportExportElement;
+
+  componentWillLoad() {
+    this.store.setStore(configureStore({
+      activityDefinitions: [],
+      workflow: {
+        activities: [],
+        connections: []
+      }
+    }));
+  }
 
   async componentDidLoad(){
     this.activityPicker = this.el.querySelector<HTMLWfActivityPickerElement>('wf-activity-picker');
