@@ -60,10 +60,7 @@ export class DesignerHost {
 
   @Listen('new-workflow')
   async onNewWorkflow(){
-    this.designer.workflow = {
-      activities: [],
-      connections: []
-    };
+    await this.designer.newWorkflow();
   }
 
   activityPicker: HTMLWfActivityPickerElement;
@@ -72,7 +69,13 @@ export class DesignerHost {
   importExport: HTMLWfImportExportElement;
 
   componentWillLoad() {
-    this.store.setStore(configureStore({}));
+    this.store.setStore(configureStore({
+      activityDefinitions: [],
+      workflow: {
+        activities: [],
+        connections: []
+      }
+    }));
   }
 
   async componentDidLoad(){

@@ -68,8 +68,10 @@ export namespace Components {
   }
   interface WfDesigner {
     'addActivity': (activityDefinition: ActivityDefinition) => Promise<void>;
+    'getWorkflow': () => Promise<{ activities: Activity[]; connections: import("C:/Projects/Elsa/elsa-designer-html/src/models/connection").Connection[]; }>;
+    'loadWorkflow': (workflow: Workflow) => Promise<void>;
+    'newWorkflow': () => Promise<void>;
     'updateActivity': (activity: Activity) => Promise<void>;
-    'workflow': Workflow;
   }
   interface WfDesignerHost {}
   interface WfExportButton {}
@@ -392,7 +394,6 @@ declare namespace LocalJSX {
   interface WfDesigner extends JSXBase.HTMLAttributes<HTMLWfDesignerElement> {
     'onAdd-activity'?: (event: CustomEvent<any>) => void;
     'onEdit-activity'?: (event: CustomEvent<any>) => void;
-    'workflow'?: Workflow;
   }
   interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {}
   interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {

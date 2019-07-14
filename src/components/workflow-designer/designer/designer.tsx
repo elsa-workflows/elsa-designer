@@ -7,7 +7,15 @@ import { Activity as ActivityInstance } from "../activity/activity";
 import { Connection as ConnectionComponent } from "../connection/connection";
 import { ActivityModel } from "./models";
 import uuid from 'uuid-browser/v4';
-import { Activity, ActivityDefinition, ActivityDisplayMode, Workflow, Point, ActivityDefinitionMap } from "../../../models";
+import {
+  Activity,
+  ActivityDefinition,
+  ActivityDisplayMode,
+  Workflow,
+  Point,
+  ActivityDefinitionMap
+} from "../../../models";
+import { addActivity, loadWorkflow, newWorkflow } from "../../../redux/actions";
 
 @Component({
   tag: 'wf-designer',
@@ -25,20 +33,29 @@ export class Designer {
   @State()
   activityDefinitions: ActivityDefinitionMap = {};
 
-  @Prop()
-  public workflow: Workflow = {
+  @State()
+  workflow: Workflow = {
     activities: [],
     connections: []
   };
 
-  @Event({ eventName: 'edit-activity' })
-  private editActivityEvent: EventEmitter;
-
-  @Event({ eventName: 'add-activity' })
-  private addActivityEvent: EventEmitter;
+  @Method()
+  async newWorkflow() {
+    this.newWorkflowInternal();
+  }
 
   @Method()
-  public async addActivity(activityDefinition: ActivityDefinition) {
+  async getWorkflow() {
+    return { ...this.workflow };
+  }
+
+  @Method()
+  async loadWorkflow(workflow: Workflow) {
+    this.loadWorkflowInternal(workflow);
+  }
+
+  @Method()
+  async addActivity(activityDefinition: ActivityDefinition) {
     const left = !!this.lastClickedLocation ? this.lastClickedLocation.left : 150;
     const top = !!this.lastClickedLocation ? this.lastClickedLocation.top : 150;
 
@@ -51,53 +68,60 @@ export class Designer {
     };
 
     this.lastClickedLocation = null;
-    const activities = [...this.workflow.activities, activity];
-    this.workflow = { ...this.workflow, activities };
+    //const activities = [...this.workflow.activities, activity];
+    //this.workflow = { ...this.workflow, activities };
+    this.addActivityInternal(activity);
   }
 
   @Method()
-  public async updateActivity(activity: Activity) {
+  async updateActivity(activity: Activity) {
     this.updateActivityInternal(activity);
   }
 
-  private jsPlumb = JsPlumbUtils.createInstance(this.el);
-  private lastClickedLocation: Point = null;
-  private activityContextMenu: HTMLWfContextMenuElement;
-  private selectedActivity: Activity;
+  @Event({ eventName: 'edit-activity' })
+  private editActivityEvent: EventEmitter;
 
-  public async componentWillLoad() {
+  @Event({ eventName: 'add-activity' })
+  private addActivityEvent: EventEmitter;
+
+  jsPlumb = JsPlumbUtils.createInstance(this.el);
+  lastClickedLocation: Point = null;
+  activityContextMenu: HTMLWfContextMenuElement;
+  selectedActivity: Activity;
+
+  addActivityInternal!: typeof addActivity;
+  newWorkflowInternal!: typeof newWorkflow;
+  loadWorkflowInternal!: typeof loadWorkflow;
+
+  async componentWillLoad() {
     const activities = Array.from(this.el.querySelectorAll('wf-activity')).map(x => ActivityInstance.getModel(x));
     const connections = Array.from(this.el.querySelectorAll('wf-connection')).map(x => ConnectionComponent.getModel(x));
 
     this.workflow = { ...this.workflow, activities, connections };
-  }
-
-  public componentDidLoad() {
-
-    this.store.mapStateToProps(this, state => {
-
-      const lookup: ActivityDefinitionMap = {};
-
-      for (const activityDefinition of state.activityDefinitions) {
-        lookup[activityDefinition.type] = activityDefinition;
-      }
-
-      return {
-        activityDefinitions: lookup
-      }
+    this.store.mapDispatchToProps(this, {
+      addActivityInternal: addActivity,
+      newWorkflowInternal: newWorkflow,
+      loadWorkflowInternal: loadWorkflow
     });
 
+    this.store.mapStateToProps(this, state => {
+      return {
+        activityDefinitions: this.createActivityDefinitionLookup(state.activityDefinitions),
+        workflow: state.workflow
+      }
+    });
+  }
+
+  componentDidLoad() {
     this.setupJsPlumb();
   }
 
-  public componentDidUpdate() {
+  componentDidUpdate() {
     this.jsPlumb.reset();
     this.setupJsPlumb();
   }
 
-  public findActivityByType = (type: string): ActivityDefinition => this.activityDefinitions[type];
-
-  public render() {
+  render() {
     const activities = this.createActivityModels();
     return (
       <div class="workflow-canvas">
@@ -121,12 +145,21 @@ export class Designer {
     );
   }
 
+  private findActivityByType = (type: string): ActivityDefinition => this.activityDefinitions[type];
+
+  private createActivityDefinitionLookup = definitions => {
+    const lookup: ActivityDefinitionMap = {};
+
+    for (const definition of definitions) {
+      lookup[definition.type] = definition;
+    }
+
+    return lookup;
+  };
+
   private deleteActivity = (activity: Activity) => {
     const activities = this.workflow.activities.filter(x => x.id !== activity.id);
     const connections = this.workflow.connections.filter(x => x.sourceActivityId != activity.id && x.destinationActivityId != activity.id);
-
-    console.debug('pruned connections:');
-    console.debug(connections);
 
     this.workflow = { ...this.workflow, activities, connections };
   };
