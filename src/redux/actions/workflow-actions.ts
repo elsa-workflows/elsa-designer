@@ -30,9 +30,11 @@ export interface RemoveConnection {
 }
 
 export interface NewWorkflow {
+  type: string;
 }
 
 export interface LoadWorkflow {
+  type: string;
   workflow: Workflow
 }
 
@@ -67,11 +69,14 @@ export function removeConnection(sourceActivityId: string, destinationActivityId
 }
 
 export function newWorkflow(): NewWorkflow {
-  return {};
+  return {
+    type: NEW_WORKFLOW
+  };
 }
 
 export function loadWorkflow(workflow: Workflow): LoadWorkflow {
   return {
+    type: LOAD_WORKFLOW,
     workflow: workflow
   };
 }
