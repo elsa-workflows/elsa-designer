@@ -7,7 +7,7 @@
 
 ## Methods
 
-### `registerActivity(activity: ActivityDefinition) => Promise<void>`
+### `registerActivity(activityDefinition: ActivityDefinition) => Promise<void>`
 
 
 

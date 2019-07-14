@@ -24,7 +24,7 @@ export class ActivityRenderer {
 
   render() {
 
-    if(!this.activity || !this.activityDefinition)
+    if (!this.activity || !this.activityDefinition)
       return null;
 
     switch (this.displayMode) {
@@ -51,10 +51,16 @@ export class ActivityRenderer {
     const definition = this.activityDefinition;
     const properties = definition.properties;
 
+    console.debug(`activity: ${activity.id}`);
+    console.debug(activity.state);
+
     return (
       <Host>
         { properties.map(x => {
-          const propertyValue = activity.state[x.name] || x.defaultValue ? x.defaultValue() : undefined;
+          let propertyValue = activity.state[x.name];
+
+          if (!propertyValue && !!x.defaultValue)
+            propertyValue = x.defaultValue();
 
           return (<div class="form-group">
             <label htmlFor={ x.name }>{ x.label }</label>

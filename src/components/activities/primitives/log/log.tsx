@@ -1,12 +1,17 @@
 import {Component, Prop} from '@stencil/core';
-import activityDefinitionStore from '../../../../services/activity-definition-store';
-import { Activity, ActivityDefinition} from "../../../../models";
+import { Activity} from "../../../../models";
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../../redux/reducers";
+import { Action, addActivityDefinition } from "../../../../redux/actions";
 
 @Component({
   tag: 'wf-log',
   shadow: true
 })
-export class Log implements ActivityDefinition {
+export class Log {
+
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
 
   @Prop({reflect: true})
   type: string = "Log";
@@ -20,18 +25,28 @@ export class Log implements ActivityDefinition {
   @Prop({reflect: true})
   category: string = "Primitives";
 
-  public componentWillLoad() {
-    activityDefinitionStore.addActivity(this);
+  addActivityDefinition!: typeof addActivityDefinition;
+
+  componentWillLoad() {
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 
-  getOutcomes(_: Activity): string[] {
-    return ['Done'];
+  componentDidLoad() {
+    this.addActivityDefinition({
+        type: this.type,
+        displayName: this.displayName,
+        description: this.description,
+        category: this.category,
+        properties: [{
+          name: 'message',
+          type: 'text',
+          label: 'Message',
+          hint: 'The text to log.'
+        }],
+        getOutcomes: (_: Activity): string[] => {
+          return ['Done'];
+        }
+      }
+    );
   }
-
-  properties = [{
-    name: 'message',
-    type: 'text',
-    label: 'Message',
-    hint: 'The text to log.'
-  }];
 }

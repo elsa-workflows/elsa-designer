@@ -1,12 +1,17 @@
 import { Component, Prop } from '@stencil/core';
-import activityDefinitionStore from '../../../../services/activity-definition-store';
-import { Activity, ActivityDefinition} from "../../../../models";
+import { Activity} from "../../../../models";
+import { Store } from "@stencil/redux";
+import { Action, addActivityDefinition } from "../../../../redux/actions";
+import { RootState } from "../../../../redux/reducers";
 
 @Component({
   tag: 'wf-read-line',
   shadow: true
 })
-export class ReadLine implements ActivityDefinition {
+export class ReadLine {
+
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
 
   @Prop({ reflect: true })
   type: string = "ReadLine";
@@ -20,18 +25,28 @@ export class ReadLine implements ActivityDefinition {
   @Prop({ reflect: true })
   category: string = "Console";
 
-  properties = [{
-    name: 'variableName',
-    type: 'text',
-    label: 'Variable Name',
-    hint: 'The name of the variable to store the value into.'
-  }];
+  addActivityDefinition!: typeof addActivityDefinition;
 
-  public componentDidLoad() {
-    activityDefinitionStore.addActivity(this);
+  componentWillLoad(){
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 
-  getOutcomes(_: Activity): string[] {
-    return ['Done'];
+  componentDidLoad() {
+    this.addActivityDefinition({
+        type: this.type,
+        displayName: this.displayName,
+        description: this.description,
+        category: this.category,
+        properties: [{
+          name: 'variableName',
+          type: 'text',
+          label: 'Variable Name',
+          hint: 'The name of the variable to store the value into.'
+        }],
+        getOutcomes: (_: Activity): string[] => {
+          return ['Done'];
+        }
+      }
+    );
   }
 }

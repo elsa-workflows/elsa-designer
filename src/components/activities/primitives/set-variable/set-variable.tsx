@@ -1,12 +1,17 @@
 import { Component, Prop } from '@stencil/core';
-import activityDefinitionStore from '../../../../services/activity-definition-store';
-import { Activity, ActivityDefinition} from "../../../../models";
+import { Activity} from "../../../../models";
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../../redux/reducers";
+import { Action, addActivityDefinition } from "../../../../redux/actions";
 
 @Component({
   tag: 'wf-set-variable',
   shadow: true
 })
-export class SetVariable implements ActivityDefinition {
+export class SetVariable {
+
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
 
   @Prop({ reflect: true })
   type: string = "SetVariable";
@@ -20,23 +25,33 @@ export class SetVariable implements ActivityDefinition {
   @Prop({ reflect: true })
   category: string = "Primitives";
 
-  public componentDidLoad() {
-    activityDefinitionStore.addActivity(this);
+  addActivityDefinition!: typeof addActivityDefinition;
+
+  componentWillLoad() {
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 
-  getOutcomes(_: Activity): string[] {
-    return ['Done'];
+  componentDidLoad() {
+    this.addActivityDefinition({
+        type: this.type,
+        displayName: this.displayName,
+        description: this.description,
+        category: this.category,
+        properties: [{
+          name: 'variableName',
+          type: 'text',
+          label: 'Variable Name',
+          hint: 'The name of the variable to store the value into.'
+        }, {
+          name: 'variableExpression',
+          type: 'text',
+          label: 'Variable Expression',
+          hint: 'An expression that evaluates to the value to store in the variable.'
+        }],
+        getOutcomes: (_: Activity): string[] => {
+          return ['Done'];
+        }
+      }
+    );
   }
-
-  properties = [{
-    name: 'variableName',
-    type: 'text',
-    label: 'Variable Name',
-    hint: 'The name of the variable to store the value into.'
-  }, {
-    name: 'variableExpression',
-    type: 'text',
-    label: 'Variable Expression',
-    hint: 'An expression that evaluates to the value to store in the variable.'
-  }];
 }

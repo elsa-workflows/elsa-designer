@@ -1,12 +1,17 @@
 import { Component, Prop } from '@stencil/core';
-import activityDefinitionStore from '../../../../services/activity-definition-store';
-import { Activity, ActivityDefinition } from "../../../../models";
+import { Activity } from "../../../../models";
+import { Action, addActivityDefinition } from "../../../../redux/actions";
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../../redux/reducers";
 
 @Component({
   tag: 'wf-receive-masstransit-message',
   shadow: true
 })
-export class ReceiveMassTransitMessage implements ActivityDefinition {
+export class ReceiveMassTransitMessage {
+
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
 
   @Prop({ reflect: true })
   type: string = 'ReceiveMassTransitMessage';
@@ -20,18 +25,28 @@ export class ReceiveMassTransitMessage implements ActivityDefinition {
   @Prop({ reflect: true })
   category: string = 'MassTransit';
 
-  public componentDidLoad() {
-    activityDefinitionStore.addActivity(this);
+  addActivityDefinition!: typeof addActivityDefinition;
+
+  componentWillLoad() {
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 
-  getOutcomes(_: Activity): string[] {
-    return ['Done'];
+  componentDidLoad() {
+    this.addActivityDefinition({
+        type: this.type,
+        displayName: this.displayName,
+        description: this.description,
+        category: this.category,
+        properties: [{
+          name: 'messageType',
+          type: 'text',
+          label: 'Message Type',
+          hint: 'The assembly-qualified type name of the message to receive.'
+        }],
+        getOutcomes: (_: Activity): string[] => {
+          return ['Done'];
+        }
+      }
+    );
   }
-
-  properties = [{
-    name: 'messageType',
-    type: 'text',
-    label: 'Message Type',
-    hint: 'The assembly-qualified type name of the message to receive.'
-  }];
 }

@@ -1,12 +1,17 @@
 import { Component, Prop } from '@stencil/core';
-import activityDefinitionStore from '../../../../services/activity-definition-store';
-import { Activity, ActivityDefinition} from "../../../../models";
+import { Activity } from "../../../../models";
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../../redux/reducers";
+import { Action, addActivityDefinition } from "../../../../redux/actions";
 
 @Component({
   tag: 'wf-fork',
   shadow: true
 })
-export class Fork implements ActivityDefinition {
+export class Fork {
+
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
 
   @Prop({ reflect: true })
   type: string = "Fork";
@@ -20,21 +25,31 @@ export class Fork implements ActivityDefinition {
   @Prop({ reflect: true })
   category: string = "Control Flow";
 
-  properties = [{
-    name: 'branches',
-    type: 'text',
-    label: 'Branches',
-    hint: 'Enter one or more names representing branches, separated with a comma. Example: Branch 1, Branch 2'
-  }];
+  addActivityDefinition!: typeof addActivityDefinition;
 
-  public componentDidLoad() {
-    activityDefinitionStore.addActivity(this);
+  componentWillLoad(){
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 
-  getOutcomes(activity: Activity): string[] {
-    const state = activity.state;
-    const branchesText = state.branches;
-    const branches = !!state.branches ? branchesText.split(',').map(x => x.trim()) : [];
-    return [...branches];
+  componentDidLoad() {
+    this.addActivityDefinition({
+        type: this.type,
+        displayName: this.displayName,
+        description: this.description,
+        category: this.category,
+        properties: [{
+          name: 'branches',
+          type: 'text',
+          label: 'Branches',
+          hint: 'Enter one or more names representing branches, separated with a comma. Example: Branch 1, Branch 2'
+        }],
+        getOutcomes: (activity: Activity): string[] => {
+          const state = activity.state;
+          const branchesText = state.branches;
+          const branches = !!state.branches ? branchesText.split(',').map(x => x.trim()) : [];
+          return [...branches];
+        }
+      }
+    );
   }
 }

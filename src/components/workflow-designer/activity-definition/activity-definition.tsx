@@ -1,6 +1,8 @@
 import {Component, Element, Prop} from '@stencil/core';
 import { ActivityDefinition as ActivityDefinitionModel, ActivityPropertyDescriptor } from "../../../models";
-import activityDefinitionStore from '../../../services/activity-definition-store';
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../redux/reducers";
+import { Action, addActivityDefinition } from "../../../redux/actions";
 
 @Component({
   tag: 'wf-activity-definition',
@@ -26,10 +28,19 @@ export class ActivityDefinition implements ActivityDefinitionModel {
   @Prop({reflect: true})
   outcomes: string = "Done";
 
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
+
   properties: Array<ActivityPropertyDescriptor> = [];
+
+  addActivityDefinition!: typeof addActivityDefinition;
 
   getOutcomes(){
     return this.outcomes.split(',').map(x => x.trim());
+  }
+
+  componentWillLoad(){
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 
   componentDidLoad() {
@@ -39,6 +50,6 @@ export class ActivityDefinition implements ActivityDefinitionModel {
       this.properties.push(value);
     });
 
-    activityDefinitionStore.addActivity(this);
+    addActivityDefinition(this);
   }
 }

@@ -1,4 +1,5 @@
-import { Component, Element, Event, EventEmitter, h, Method, Prop} from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Method, Prop, State } from '@stencil/core';
+import { Store } from '@stencil/redux';
 import { Connection as JsPlumbConnection, DragEventCallbackOptions, Endpoint, EndpointOptions, jsPlumb } from "jsplumb";
 import { CssMap } from "../../../utils";
 import { JsPlumbUtils } from "./jsplumb-utils";
@@ -6,9 +7,7 @@ import { Activity as ActivityInstance } from "../activity/activity";
 import { Connection as ConnectionComponent } from "../connection/connection";
 import { ActivityModel } from "./models";
 import uuid from 'uuid-browser/v4';
-import { Activity, ActivityDefinition, ActivityDisplayMode, Workflow } from "../../../models";
-import { Point } from "../../../models";
-import { ActivityMap } from "../../../services/activity-definition-store";
+import { Activity, ActivityDefinition, ActivityDisplayMode, Workflow, Point, ActivityDefinitionMap } from "../../../models";
 
 @Component({
   tag: 'wf-designer',
@@ -20,14 +19,17 @@ export class Designer {
   @Element()
   private el: HTMLElement;
 
+  @Prop({ context: 'store' })
+  store: Store;
+
+  @State()
+  activityDefinitions: ActivityDefinitionMap = {};
+
   @Prop()
   public workflow: Workflow = {
     activities: [],
     connections: []
   };
-
-  @Prop()
-  activityDefinitions: ActivityMap = {};
 
   @Event({ eventName: 'edit-activity' })
   private editActivityEvent: EventEmitter;
@@ -71,11 +73,24 @@ export class Designer {
   }
 
   public componentDidLoad() {
+
+    this.store.mapStateToProps(this, state => {
+
+      const lookup: ActivityDefinitionMap = {};
+
+      for (const activityDefinition of state.activityDefinitions) {
+        lookup[activityDefinition.type] = activityDefinition;
+      }
+
+      return {
+        activityDefinitions: lookup
+      }
+    });
+
     this.setupJsPlumb();
   }
 
   public componentDidUpdate() {
-    console.debug('component did update');
     this.jsPlumb.reset();
     this.setupJsPlumb();
   }

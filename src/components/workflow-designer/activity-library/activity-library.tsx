@@ -1,6 +1,8 @@
-import { Component, Method} from '@stencil/core';
-import activityDefinitionStore from '../../../services/activity-definition-store';
+import { Component, Method, Prop } from '@stencil/core';
 import { ActivityDefinition } from "../../../models";
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../redux/reducers";
+import { Action, addActivityDefinition } from "../../../redux/actions";
 
 @Component({
   tag: 'wf-activity-library',
@@ -8,8 +10,17 @@ import { ActivityDefinition } from "../../../models";
 })
 export class ActivityLibrary {
 
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
+
+  addActivityDefinition!: typeof addActivityDefinition;
+
   @Method()
-  async registerActivity(activity: ActivityDefinition) {
-    activityDefinitionStore.addActivity(activity);
+  async registerActivity(activityDefinition: ActivityDefinition) {
+    this.addActivityDefinition(activityDefinition);
+  }
+
+  componentWillLoad(){
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 }

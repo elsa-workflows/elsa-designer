@@ -1,12 +1,17 @@
 import { Component, Prop } from '@stencil/core';
-import activityDefinitionStore from '../../../../services/activity-definition-store';
-import { Activity, ActivityDefinition } from "../../../../models";
+import { Activity } from "../../../../models";
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../../redux/reducers";
+import { Action, addActivityDefinition } from "../../../../redux/actions";
 
 @Component({
   tag: 'wf-http-request-event',
   shadow: true
 })
-export class HttpRequestEvent implements ActivityDefinition {
+export class HttpRequestEvent {
+
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
 
   @Prop({ reflect: true })
   type: string = "HttpRequestEvent";
@@ -20,30 +25,40 @@ export class HttpRequestEvent implements ActivityDefinition {
   @Prop({ reflect: true })
   category: string = "HTTP";
 
-  public componentDidLoad() {
-    activityDefinitionStore.addActivity(this);
+  addActivityDefinition!: typeof addActivityDefinition;
+
+  componentWillLoad() {
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 
-  getOutcomes(_: Activity): string[] {
-    return ['Done'];
+  componentDidLoad() {
+    this.addActivityDefinition({
+        type: this.type,
+        displayName: this.displayName,
+        description: this.description,
+        category: this.category,
+        properties: [{
+          name: 'path',
+          type: 'uri',
+          label: 'Path',
+          hint: 'The relative path that triggers this activity.'
+        },
+          {
+            name: 'method',
+            type: 'string',
+            label: 'Method',
+            hint: 'The HTTP method that triggers this activity.'
+          },
+          {
+            name: 'readContent',
+            type: 'boolean',
+            label: 'Read Content',
+            hint: 'Check if the HTTP request content body should be read and stored as part of the HTTP request model. The stored format depends on the content-type header.'
+          }],
+        getOutcomes: (_: Activity): string[] => {
+          return ['Done'];
+        }
+      }
+    );
   }
-
-  properties = [{
-    name: 'path',
-    type: 'uri',
-    label: 'Path',
-    hint: 'The relative path that triggers this activity.'
-  },
-    {
-      name: 'method',
-      type: 'string',
-      label: 'Method',
-      hint: 'The HTTP method that triggers this activity.'
-    },
-    {
-      name: 'readContent',
-      type: 'boolean',
-      label: 'Read Content',
-      hint: 'Check if the HTTP request content body should be read and stored as part of the HTTP request model. The stored format depends on the content-type header.'
-    }];
 }

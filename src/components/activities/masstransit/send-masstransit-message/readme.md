@@ -7,12 +7,12 @@
 
 ## Properties
 
-| Property      | Attribute      | Description | Type     | Default           |
-| ------------- | -------------- | ----------- | -------- | ----------------- |
-| `category`    | `category`     |             | `string` | `"Primitives"`    |
-| `description` | `description`  |             | `string` | `"Log a message"` |
-| `displayName` | `display-name` |             | `string` | `"Log"`           |
-| `type`        | `type`         |             | `string` | `"Log"`           |
+| Property      | Attribute      | Description | Type     | Default                             |
+| ------------- | -------------- | ----------- | -------- | ----------------------------------- |
+| `category`    | `category`     |             | `string` | `'MassTransit'`                     |
+| `description` | `description`  |             | `string` | `'Send a message via MassTransit.'` |
+| `displayName` | `display-name` |             | `string` | `'Send Message'`                    |
+| `type`        | `type`         |             | `string` | `'SendMassTransitMessage'`          |
 
 
 ----------------------------------------------

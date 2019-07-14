@@ -1,12 +1,17 @@
 import { Component, Prop } from '@stencil/core';
-import activityDefinitionStore from '../../../../services/activity-definition-store';
-import { Activity, ActivityDefinition } from "../../../../models";
+import { Activity} from "../../../../models";
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../../redux/reducers";
+import { Action, addActivityDefinition } from "../../../../redux/actions";
 
 @Component({
   tag: 'wf-send-masstransit-message',
   shadow: true
 })
-export class SendMassTransitMessage implements ActivityDefinition {
+export class SendMassTransitMessage {
+
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
 
   @Prop({ reflect: true })
   type: string = 'SendMassTransitMessage';
@@ -20,24 +25,34 @@ export class SendMassTransitMessage implements ActivityDefinition {
   @Prop({ reflect: true })
   category: string = 'MassTransit';
 
-  public componentDidLoad() {
-    activityDefinitionStore.addActivity(this);
+  addActivityDefinition!: typeof addActivityDefinition;
+
+  componentWillLoad() {
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 
-  getOutcomes(_: Activity): string[] {
-    return ['Done'];
+  componentDidLoad() {
+    this.addActivityDefinition({
+        type: this.type,
+        displayName: this.displayName,
+        description: this.description,
+        category: this.category,
+        properties: [{
+          name: 'messageType',
+          type: 'text',
+          label: 'Message Type',
+          hint: 'The assembly-qualified type name of the message to send.'
+        },
+          {
+            name: 'message',
+            type: 'workflow-expression',
+            label: 'Message',
+            hint: 'An expression that evaluates to the message to send.'
+          }],
+        getOutcomes: (_: Activity): string[] => {
+          return ['Done'];
+        }
+      }
+    );
   }
-
-  properties = [{
-    name: 'messageType',
-    type: 'text',
-    label: 'Message Type',
-    hint: 'The assembly-qualified type name of the message to send.'
-  },
-    {
-      name: 'message',
-      type: 'workflow-expression',
-      label: 'Message',
-      hint: 'An expression that evaluates to the message to send.'
-    }];
 }

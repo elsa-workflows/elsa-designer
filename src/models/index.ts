@@ -1,4 +1,5 @@
 export * from './activity';
+export * from './activity-definition-map';
 export * from './activity-display-modes';
 export * from './activity-component';
 export * from './activity-descriptor';

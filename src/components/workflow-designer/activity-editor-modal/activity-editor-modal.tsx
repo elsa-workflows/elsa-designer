@@ -1,10 +1,11 @@
-import { Component, Element, h, Method, Event, EventEmitter, Prop, Watch } from '@stencil/core';
-//import Handlebars from 'handlebars/dist/handlebars';
-import activityDefinitionStore from '../../../services/activity-definition-store';
+import { Component, Element, h, Method, Event, EventEmitter, Prop, State } from '@stencil/core';
 import { Activity, ActivityDefinition, ActivityDisplayMode } from "../../../models";
 import { FormUpdater } from "../../../utils";
 import $ from "jquery";
 import 'bootstrap';
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../redux/reducers";
+import { Action } from "../../../redux/actions";
 
 @Component({
   tag: 'wf-activity-editor-modal',
@@ -16,13 +17,14 @@ export class ActivityEditorModal {
   @Element()
   el: HTMLElement;
 
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
+
   @Prop()
   activity: Activity;
 
-  @Watch('activity')
-  activityChangeHandler(newValue: Activity) {
-    this.activityDefinition = activityDefinitionStore.findActivityByType(newValue.type);
-  }
+  @State()
+  activityDefinitions: Array<ActivityDefinition>;
 
   @Method()
   async show() {
@@ -37,19 +39,15 @@ export class ActivityEditorModal {
   @Event({ eventName: 'update-activity' })
   submit: EventEmitter;
 
-  activityDefinition: ActivityDefinition;
-
-  public componentWillRender() {
-    if (!this.activity)
-      return;
-
-    if (!this.activityDefinition) {
-      console.log(`No activity of type ${ this.activity.type } exists in the library.`);
-      return;
-    }
-  }
-
   modal: HTMLElement;
+
+  componentDidLoad() {
+    this.store.mapStateToProps(this, state => {
+      return {
+        activityDefinitions: state.activityDefinitions
+      }
+    });
+  }
 
   async onSubmit(e: Event) {
     e.preventDefault();
@@ -64,8 +62,18 @@ export class ActivityEditorModal {
 
   render() {
     const activity = this.activity;
-    const activityDefinition = this.activityDefinition;
-    const displayName = !!activityDefinition ? activityDefinition.displayName : '';
+
+    if(!activity)
+      return null;
+
+    const activityDefinition = this.activityDefinitions.find(x => x.type === activity.type);
+
+    if (!activityDefinition) {
+      console.error(`No activity of type ${ this.activity.type } exists in the library.`);
+      return;
+    }
+
+    const displayName = activityDefinition.displayName;
 
     return (
       <div>

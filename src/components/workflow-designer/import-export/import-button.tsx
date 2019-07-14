@@ -3,7 +3,7 @@ import {WorkflowFormat} from "../../../models";
 
 @Component({
   tag: 'wf-import-button',
-  styleUrl: 'import-export-button.scss',
+  styleUrl: 'buttons.scss',
   shadow: false
 })
 export class ImportButton {
@@ -30,8 +30,6 @@ export class ImportButton {
   };
 
   private importWorkflow = () => {
-    console.debug('file selected');
-
     const file = this.fileInput.files[0];
     const reader = new FileReader();
 
@@ -40,7 +38,6 @@ export class ImportButton {
       const format: WorkflowFormat = 'json';
 
       this.importEvent.emit({ data, format });
-      (this.fileInput as any).val('');
     };
 
     reader.readAsText(file);

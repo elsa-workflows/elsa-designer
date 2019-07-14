@@ -14,9 +14,6 @@ import {
   Workflow,
   WorkflowFormatDescriptor,
 } from './models';
-import {
-  ActivityMap,
-} from './services/activity-definition-store';
 
 export namespace Components {
   interface WfActivity {
@@ -45,7 +42,7 @@ export namespace Components {
     'show': () => Promise<void>;
   }
   interface WfActivityLibrary {
-    'registerActivity': (activity: ActivityDefinition) => Promise<void>;
+    'registerActivity': (activityDefinition: ActivityDefinition) => Promise<void>;
   }
   interface WfActivityPicker {
     'hide': () => Promise<void>;
@@ -70,7 +67,6 @@ export namespace Components {
     'text': any;
   }
   interface WfDesigner {
-    'activityDefinitions': ActivityMap;
     'addActivity': (activityDefinition: ActivityDefinition) => Promise<void>;
     'updateActivity': (activity: Activity) => Promise<void>;
     'workflow': Workflow;
@@ -106,6 +102,7 @@ export namespace Components {
     'displayName': string;
     'type': string;
   }
+  interface WfNewWorkflowButton {}
   interface WfReadLine {
     'category': string;
     'description': string;
@@ -267,6 +264,12 @@ declare global {
     new (): HTMLWfLogElement;
   };
 
+  interface HTMLWfNewWorkflowButtonElement extends Components.WfNewWorkflowButton, HTMLStencilElement {}
+  var HTMLWfNewWorkflowButtonElement: {
+    prototype: HTMLWfNewWorkflowButtonElement;
+    new (): HTMLWfNewWorkflowButtonElement;
+  };
+
   interface HTMLWfReadLineElement extends Components.WfReadLine, HTMLStencilElement {}
   var HTMLWfReadLineElement: {
     prototype: HTMLWfReadLineElement;
@@ -328,6 +331,7 @@ declare global {
     'wf-import-button': HTMLWfImportButtonElement;
     'wf-import-export': HTMLWfImportExportElement;
     'wf-log': HTMLWfLogElement;
+    'wf-new-workflow-button': HTMLWfNewWorkflowButtonElement;
     'wf-read-line': HTMLWfReadLineElement;
     'wf-receive-masstransit-message': HTMLWfReceiveMasstransitMessageElement;
     'wf-send-email': HTMLWfSendEmailElement;
@@ -386,7 +390,6 @@ declare namespace LocalJSX {
     'text'?: any;
   }
   interface WfDesigner extends JSXBase.HTMLAttributes<HTMLWfDesignerElement> {
-    'activityDefinitions'?: ActivityMap;
     'onAdd-activity'?: (event: CustomEvent<any>) => void;
     'onEdit-activity'?: (event: CustomEvent<any>) => void;
     'workflow'?: Workflow;
@@ -422,6 +425,9 @@ declare namespace LocalJSX {
     'description'?: string;
     'displayName'?: string;
     'type'?: string;
+  }
+  interface WfNewWorkflowButton extends JSXBase.HTMLAttributes<HTMLWfNewWorkflowButtonElement> {
+    'onNew-workflow'?: (event: CustomEvent<any>) => void;
   }
   interface WfReadLine extends JSXBase.HTMLAttributes<HTMLWfReadLineElement> {
     'category'?: string;
@@ -486,6 +492,7 @@ declare namespace LocalJSX {
     'wf-import-button': WfImportButton;
     'wf-import-export': WfImportExport;
     'wf-log': WfLog;
+    'wf-new-workflow-button': WfNewWorkflowButton;
     'wf-read-line': WfReadLine;
     'wf-receive-masstransit-message': WfReceiveMasstransitMessage;
     'wf-send-email': WfSendEmail;

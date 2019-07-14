@@ -1,12 +1,17 @@
 import { Component, Prop } from '@stencil/core';
-import activityDefinitionStore from '../../../../services/activity-definition-store';
-import { Activity, ActivityDefinition } from "../../../../models";
+import { Activity} from "../../../../models";
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../../redux/reducers";
+import { Action, addActivityDefinition } from "../../../../redux/actions";
 
 @Component({
   tag: 'wf-send-email',
   shadow: true
 })
-export class SendEmail implements ActivityDefinition {
+export class SendEmail {
+
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
 
   @Prop({ reflect: true })
   type: string = "SendEmail";
@@ -20,37 +25,47 @@ export class SendEmail implements ActivityDefinition {
   @Prop({ reflect: true })
   category: string = "Email";
 
-  public componentDidLoad() {
-    activityDefinitionStore.addActivity(this);
+  addActivityDefinition!: typeof addActivityDefinition;
+
+  componentWillLoad(){
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 
-  getOutcomes(_: Activity): string[] {
-    return ['Done'];
+  componentDidLoad() {
+    this.addActivityDefinition({
+        type: this.type,
+        displayName: this.displayName,
+        description: this.description,
+        category: this.category,
+        properties: [
+          {
+            name: 'from',
+            type: 'workflow-expression',
+            label: 'From',
+            hint: 'The sender\'s email address'
+          },
+          {
+            name: 'to',
+            type: 'workflow-expression',
+            label: 'To',
+            hint: 'The recipient\'s email address'
+          },
+          {
+            name: 'subject',
+            type: 'workflow-expression',
+            label: 'Subject',
+            hint: 'The subject of the email message.'
+          },
+          {
+            name: 'body',
+            type: 'workflow-expression',
+            label: 'Body',
+            hint: 'The body of the email message.'
+          }],
+        getOutcomes: (_: Activity): string[] => {
+          return ['Done'];
+        }
+      }
+    );
   }
-
-  properties = [
-    {
-      name: 'from',
-      type: 'workflow-expression',
-      label: 'From',
-      hint: 'The sender\'s email address'
-    },
-    {
-      name: 'to',
-      type: 'workflow-expression',
-      label: 'To',
-      hint: 'The recipient\'s email address'
-    },
-    {
-      name: 'subject',
-      type: 'workflow-expression',
-      label: 'Subject',
-      hint: 'The subject of the email message.'
-    },
-    {
-      name: 'body',
-      type: 'workflow-expression',
-      label: 'Body',
-      hint: 'The body of the email message.'
-    }];
 }

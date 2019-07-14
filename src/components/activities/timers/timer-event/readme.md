@@ -7,12 +7,12 @@
 
 ## Properties
 
-| Property      | Attribute      | Description | Type     | Default           |
-| ------------- | -------------- | ----------- | -------- | ----------------- |
-| `category`    | `category`     |             | `string` | `"Primitives"`    |
-| `description` | `description`  |             | `string` | `"Log a message"` |
-| `displayName` | `display-name` |             | `string` | `"Log"`           |
-| `type`        | `type`         |             | `string` | `"Log"`           |
+| Property      | Attribute      | Description | Type     | Default                                        |
+| ------------- | -------------- | ----------- | -------- | ---------------------------------------------- |
+| `category`    | `category`     |             | `string` | `"Timers"`                                     |
+| `description` | `description`  |             | `string` | `"Triggers after a specified amount of time."` |
+| `displayName` | `display-name` |             | `string` | `"Timer"`                                      |
+| `type`        | `type`         |             | `string` | `"TimerEvent"`                                 |
 
 
 ----------------------------------------------

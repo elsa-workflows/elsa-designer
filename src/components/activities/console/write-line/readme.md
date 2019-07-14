@@ -7,12 +7,12 @@
 
 ## Properties
 
-| Property      | Attribute      | Description | Type     | Default                        |
-| ------------- | -------------- | ----------- | -------- | ------------------------------ |
-| `category`    | `category`     |             | `string` | `"Console"`                    |
-| `description` | `description`  |             | `string` | `"Write text to standard out"` |
-| `displayName` | `display-name` |             | `string` | `"Write Line"`                 |
-| `type`        | `type`         |             | `string` | `"WriteLine"`                  |
+| Property      | Attribute      | Description | Type     | Default                         |
+| ------------- | -------------- | ----------- | -------- | ------------------------------- |
+| `category`    | `category`     |             | `string` | `"Console"`                     |
+| `description` | `description`  |             | `string` | `"Write text to standard out."` |
+| `displayName` | `display-name` |             | `string` | `"Write Line"`                  |
+| `type`        | `type`         |             | `string` | `"WriteLine"`                   |
 
 
 ----------------------------------------------

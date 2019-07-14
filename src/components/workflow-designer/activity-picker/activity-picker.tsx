@@ -1,8 +1,10 @@
-import {Component, Element, h, Method, Event, EventEmitter, State} from '@stencil/core';
-import activityDefinitionStore from '../../../services/activity-definition-store';
+import { Component, Element, h, Method, Event, EventEmitter, State, Prop } from '@stencil/core';
 import { ActivityDefinition } from '../../../models';
 import $ from "jquery";
 import 'bootstrap';
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../redux/reducers";
+import { Action } from "../../../redux/actions";
 
 @Component({
   tag: 'wf-activity-picker',
@@ -14,8 +16,14 @@ export class ActivityPicker {
   @Element()
   el: HTMLElement;
 
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
+
   @State()
   isVisible: boolean;
+
+  @State()
+  activityDefinitions: Array<ActivityDefinition> = [];
 
   @Method()
   async show() {
@@ -39,9 +47,18 @@ export class ActivityPicker {
     await this.hide();
   }
 
+  componentDidLoad() {
+
+    this.store.mapStateToProps(this, state => {
+      return {
+        activityDefinitions: state.activityDefinitions
+      }
+    });
+  }
+
   render() {
-    const categories: string[] = activityDefinitionStore.getCategories();
-    const activities = activityDefinitionStore.getActivities();
+    const categories: string[] = [...new Set(this.activityDefinitions.map(x => x.category))];
+    const activities = this.activityDefinitions;
 
     return (
       <div>

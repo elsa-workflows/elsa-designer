@@ -1,37 +1,52 @@
-import {Component, Prop} from '@stencil/core';
-import activityDefinitionStore from '../../../../services/activity-definition-store';
-import { Activity, ActivityDefinition } from "../../../../models";
+import { Component, Prop } from '@stencil/core';
+import { Activity } from "../../../../models";
+import { Store } from "@stencil/redux";
+import { RootState } from "../../../../redux/reducers";
+import { Action, addActivityDefinition } from "../../../../redux/actions";
 
 @Component({
   tag: 'wf-write-line',
   shadow: true
 })
-export class WriteLine implements ActivityDefinition {
+export class WriteLine {
 
-  @Prop({reflect: true})
+  @Prop({ context: 'store' })
+  store: Store<RootState, Action>;
+
+  @Prop({ reflect: true })
   type: string = "WriteLine";
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   displayName: string = "Write Line";
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   description: string = "Write text to standard out.";
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   category: string = "Console";
 
-  properties = [{
-    name: 'textExpression',
-    type: 'text',
-    label: 'Text',
-    hint: 'The text to write.'
-  }];
+  addActivityDefinition!: typeof addActivityDefinition;
 
-  public componentDidLoad() {
-    activityDefinitionStore.addActivity(this);
+  componentWillLoad() {
+    this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 
-  getOutcomes(_: Activity): string[] {
-    return ['Done'];
+  componentDidLoad() {
+    this.addActivityDefinition({
+        type: this.type,
+        displayName: this.displayName,
+        description: this.description,
+        category: this.category,
+        properties: [{
+          name: 'textExpression',
+          type: 'text',
+          label: 'Text',
+          hint: 'The text to write.'
+        }],
+        getOutcomes: (_: Activity): string[] => {
+          return ['Done'];
+        }
+      }
+    );
   }
 }

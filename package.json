@@ -37,8 +37,10 @@
   },
   "devDependencies": {
     "@types/node": "^12.6.1",
-    "@stencil/core": "^1.1.5",
-    "@stencil/sass": "^1.0.1"
+    "@stencil/core": "^1.1.6",
+    "@stencil/sass": "^1.0.1",
+    "@types/jquery": "^3.3.30",
+    "@stencil/redux": "^0.1.1"
   },
   "license": "BSD-3-Clause",
   "dependencies": {
@@ -47,7 +49,9 @@
     "jquery": "^3.4.1",
     "jsplumb": "^2.10.0",
     "popper.js": "^1.15.0",
-    "uuid-browser": "^3.1.0"
+    "uuid-browser": "^3.1.0",
+    "redux": "^4.0.4",
+    "redux-thunk": "^2.3.0"
   },
   "directories": {
     "doc": "doc"

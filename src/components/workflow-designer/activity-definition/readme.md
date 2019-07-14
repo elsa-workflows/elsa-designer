@@ -7,13 +7,12 @@
 
 ## Properties
 
-| Property     | Attribute     | Description | Type     | Default     |
-| ------------ | ------------- | ----------- | -------- | ----------- |
-| `activityId` | `activity-id` |             | `string` | `undefined` |
-| `left`       | `left`        |             | `number` | `undefined` |
-| `state`      | `state`       |             | `string` | `undefined` |
-| `top`        | `top`         |             | `number` | `undefined` |
-| `type`       | `type`        |             | `string` | `undefined` |
+| Property | Attribute | Description | Type     | Default     |
+| -------- | --------- | ----------- | -------- | ----------- |
+| `hint`   | `hint`    |             | `string` | `undefined` |
+| `label`  | `label`   |             | `string` | `undefined` |
+| `name`   | `name`    |             | `string` | `undefined` |
+| `type`   | `type`    |             | `string` | `undefined` |
 
 
 ----------------------------------------------
