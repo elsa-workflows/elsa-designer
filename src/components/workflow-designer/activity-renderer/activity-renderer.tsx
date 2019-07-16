@@ -1,10 +1,12 @@
 import { Component, h, Host, Prop } from '@stencil/core';
 import {
-  Activity, ActivityDefinition,
+  Activity,
+  ActivityDefinition,
   ActivityDisplayMode,
   ActivityPropertyDescriptor,
   RenderResult
 } from "../../../models";
+import ActivityManager from '../../../services/activity-manager';
 
 @Component({
   tag: 'wf-activity-renderer',
@@ -36,12 +38,15 @@ export class ActivityRenderer {
   }
 
   renderDesigner() {
+    const activity = this.activity;
     const definition = this.activityDefinition;
+
+    const result = ActivityManager.renderDesigner(activity, definition);
 
     return (
       <div>
         <h5>{ definition.displayName }</h5>
-        <p>{ definition.description }</p>
+        <p innerHTML={ result.description }/>
       </div>
     );
   }
