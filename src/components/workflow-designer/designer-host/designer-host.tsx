@@ -11,7 +11,7 @@ import { Store } from "@stencil/redux";
 
 @Component({
   tag: 'wf-designer-host',
-  shadow: true
+  shadow: false
 })
 export class DesignerHost {
 

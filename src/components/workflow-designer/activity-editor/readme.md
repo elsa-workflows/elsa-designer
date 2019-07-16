@@ -10,6 +10,7 @@
 | Property   | Attribute | Description | Type       | Default     |
 | ---------- | --------- | ----------- | ---------- | ----------- |
 | `activity` | --        |             | `Activity` | `undefined` |
+| `show`     | `show`    |             | `boolean`  | `undefined` |
 
 
 ## Events
@@ -17,29 +18,6 @@
 | Event             | Description | Type               |
 | ----------------- | ----------- | ------------------ |
 | `update-activity` |             | `CustomEvent<any>` |
-
-
-## Methods
-
-### `hide() => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
-### `show() => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
 
 
 ## Dependencies

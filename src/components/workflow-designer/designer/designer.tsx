@@ -1,6 +1,12 @@
 import { Component, Element, Event, EventEmitter, h, Method, Prop, State } from '@stencil/core';
 import { Store } from '@stencil/redux';
-import { Connection as JsPlumbConnection, DragEventCallbackOptions, Endpoint, EndpointOptions} from "jsplumb";
+import {
+  Connection as JsPlumbConnection,
+  DragEventCallbackOptions,
+  Endpoint,
+  EndpointOptions,
+  jsPlumbInstance
+} from "jsplumb";
 import { CssMap } from "../../../utils";
 import { JsPlumbUtils } from "./jsplumb-utils";
 import { Activity as ActivityInstance } from "../activity/activity";
@@ -23,6 +29,10 @@ import { addActivity, loadWorkflow, newWorkflow } from "../../../redux/actions";
   shadow: false
 })
 export class Designer {
+
+  constructor(){
+    this.jsPlumb = JsPlumbUtils.createInstance(this.elem());
+  }
 
   @Element()
   private el: HTMLElement;
@@ -68,8 +78,7 @@ export class Designer {
     };
 
     this.lastClickedLocation = null;
-    //const activities = [...this.workflow.activities, activity];
-    //this.workflow = { ...this.workflow, activities };
+
     this.addActivityInternal(activity);
   }
 
@@ -84,7 +93,7 @@ export class Designer {
   @Event({ eventName: 'add-activity' })
   private addActivityEvent: EventEmitter;
 
-  jsPlumb = JsPlumbUtils.createInstance(this.el);
+  jsPlumb: jsPlumbInstance;
   lastClickedLocation: Point = null;
   activityContextMenu: HTMLWfContextMenuElement;
   selectedActivity: Activity;
@@ -93,11 +102,12 @@ export class Designer {
   newWorkflowInternal!: typeof newWorkflow;
   loadWorkflowInternal!: typeof loadWorkflow;
 
-  async componentWillLoad() {
-    const activities = Array.from(this.el.querySelectorAll('wf-activity')).map(x => ActivityInstance.getModel(x));
-    const connections = Array.from(this.el.querySelectorAll('wf-connection')).map(x => ConnectionComponent.getModel(x));
+  private elem = (): HTMLElement => this.el;
 
-    this.workflow = { ...this.workflow, activities, connections };
+  async componentWillLoad() {
+    const activities = Array.from(this.elem().querySelectorAll('wf-activity')).map(x => ActivityInstance.getModel(x));
+    const connections = Array.from(this.elem().querySelectorAll('wf-connection')).map(x => ConnectionComponent.getModel(x));
+
     this.store.mapDispatchToProps(this, {
       addActivityInternal: addActivity,
       newWorkflowInternal: newWorkflow,
@@ -110,13 +120,11 @@ export class Designer {
         workflow: state.workflow
       }
     });
+
+    await this.loadWorkflow({ ...this.workflow, activities, connections });
   }
 
-  componentDidLoad() {
-    this.setupJsPlumb();
-  }
-
-  componentDidUpdate() {
+  componentDidRender() {
     this.setupJsPlumb();
   }
 
@@ -133,7 +141,7 @@ export class Designer {
               <wf-activity-renderer activity={ activity } activityDefinition={ model.definition } displayMode={ ActivityDisplayMode.Design } />
             </div>);
         }) }
-        <wf-context-menu target={ this.el }>
+        <wf-context-menu target={ this.elem() }>
           <wf-context-menu-item text="Add Activity" onClick={ this.onAddActivityClick } />
         </wf-context-menu>
         <wf-context-menu ref={ (el) => this.activityContextMenu = el }>
@@ -181,19 +189,16 @@ export class Designer {
       this.getActivityElements().forEach(this.setupActivityElement);
       this.setupConnections();
     });
-    this.jsPlumb.revalidate(this.el);
-    this.jsPlumb.recalculateOffsets(this.el);
-    this.jsPlumb.repaint(this.el);
-    this.jsPlumb.repaintEverything();
   };
 
-  private setupActivityElement = async (element: Element) => {
-    await this.setupDragDrop(element);
+  private setupActivityElement = (element: Element) => {
+    this.setupDragDrop(element);
     this.setupTargets(element);
     this.setupOutcomes(element);
+    this.jsPlumb.revalidate(element);
   };
 
-  private setupDragDrop = async (element: Element) => {
+  private setupDragDrop = (element: Element) => {
     let dragStart: any = null;
     let hasDragged: boolean = false;
 
@@ -250,7 +255,7 @@ export class Designer {
   };
 
   private getActivityElements(): NodeListOf<HTMLElement> {
-    return this.el.querySelectorAll(".activity");
+    return this.elem().querySelectorAll(".activity");
   }
 
   private static getActivityId(element: Element): string {
@@ -270,8 +275,7 @@ export class Designer {
 
     activities[index] = {...activity};
 
-    const workflow = { ...this.workflow, activities };
-    await this.loadWorkflow(workflow);
+    await this.loadWorkflow({ ...this.workflow, activities });
   };
 
   private setupJsPlumbEventHandlers = () => {
@@ -300,20 +304,17 @@ export class Designer {
         outcome: outcome
       }];
 
-      const workflow = { ...this.workflow, connections };
-      await this.loadWorkflow(workflow);
+      await this.loadWorkflow({ ...this.workflow, connections });
     }
   };
 
   private connectionDetached = async (info: any) => {
-    console.debug(`Connection detached`);
     const sourceEndpoint: any = info.sourceEndpoint;
     const outcome: string = sourceEndpoint.getParameter('outcome');
     const sourceActivity: Activity = this.findActivityByElement(info.source);
     const destinationActivity: Activity = this.findActivityByElement(info.target);
     const connections = this.workflow.connections.filter(x => !(x.sourceActivityId === sourceActivity.id && x.destinationActivityId === destinationActivity.id && x.outcome === outcome));
 
-    console.debug(connections);
     const workflow = { ...this.workflow, connections };
     await this.loadWorkflow(workflow);
   };
@@ -323,9 +324,10 @@ export class Designer {
   }
 
   private onAddActivityClick = (e: MouseEvent) => {
+    const el = this.elem() as HTMLElement;
     this.lastClickedLocation = {
-      left: e.pageX - this.el.offsetLeft,
-      top: e.pageY - this.el.offsetTop
+      left: e.pageX - el.offsetLeft,
+      top: e.pageY - el.offsetTop
     };
     this.addActivityEvent.emit();
   };
