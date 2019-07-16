@@ -1,11 +1,11 @@
 import { Component, Element, h, Event, EventEmitter, Prop, State } from '@stencil/core';
 import { Activity, ActivityDefinition, ActivityDisplayMode } from "../../../models";
-import { FormUpdater } from "../../../utils";
 import $ from "jquery";
 import 'bootstrap';
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../redux/reducers";
 import { Action } from "../../../redux/actions";
+import ActivityManager from '../../../services/activity-manager';
 
 @Component({
   tag: 'wf-activity-editor',
@@ -47,8 +47,7 @@ export class ActivityEditor {
 
     const form: any = e.target;
     const formData = new FormData(form);
-    const updateEditor = FormUpdater.updateEditor;
-    const updatedActivity: Activity = updateEditor(this.activity, formData);
+    const updatedActivity: Activity = ActivityManager.updateEditor(this.activity, formData);
     this.submit.emit(updatedActivity);
     this.show = false;
   }

@@ -1,5 +1,6 @@
 import { Activity, ActivityDefinition, ActivityHandlerMap, RenderDesignerResult } from "../models";
 import { ActivityHandler } from "./activity-handler";
+import { FormUpdater } from "../utils";
 
 export class ActivityManager {
   constructor(){
@@ -21,6 +22,15 @@ export class ActivityManager {
       };
 
     return handler.renderDesigner(activity, definition);
+  };
+
+  public updateEditor = (activity: Activity, formData: FormData): Activity => {
+    const handler = this.handlers[activity.type];
+
+    if(!handler || !handler.updateEditor)
+      FormUpdater.updateEditor(activity, formData);
+
+    return handler.updateEditor(activity, formData);
   }
 }
 

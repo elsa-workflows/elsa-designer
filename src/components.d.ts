@@ -142,6 +142,12 @@ export namespace Components {
     'displayName': string;
     'type': string;
   }
+  interface WfSwitch {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
   interface WfTimerEvent {
     'category': string;
     'description': string;
@@ -315,6 +321,12 @@ declare global {
     new (): HTMLWfSetVariableElement;
   };
 
+  interface HTMLWfSwitchElement extends Components.WfSwitch, HTMLStencilElement {}
+  var HTMLWfSwitchElement: {
+    prototype: HTMLWfSwitchElement;
+    new (): HTMLWfSwitchElement;
+  };
+
   interface HTMLWfTimerEventElement extends Components.WfTimerEvent, HTMLStencilElement {}
   var HTMLWfTimerEventElement: {
     prototype: HTMLWfTimerEventElement;
@@ -353,6 +365,7 @@ declare global {
     'wf-send-email': HTMLWfSendEmailElement;
     'wf-send-masstransit-message': HTMLWfSendMasstransitMessageElement;
     'wf-set-variable': HTMLWfSetVariableElement;
+    'wf-switch': HTMLWfSwitchElement;
     'wf-timer-event': HTMLWfTimerEventElement;
     'wf-write-line': HTMLWfWriteLineElement;
   }
@@ -486,6 +499,12 @@ declare namespace LocalJSX {
     'displayName'?: string;
     'type'?: string;
   }
+  interface WfSwitch extends JSXBase.HTMLAttributes<HTMLWfSwitchElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
+  }
   interface WfTimerEvent extends JSXBase.HTMLAttributes<HTMLWfTimerEventElement> {
     'category'?: string;
     'description'?: string;
@@ -526,6 +545,7 @@ declare namespace LocalJSX {
     'wf-send-email': WfSendEmail;
     'wf-send-masstransit-message': WfSendMasstransitMessage;
     'wf-set-variable': WfSetVariable;
+    'wf-switch': WfSwitch;
     'wf-timer-event': WfTimerEvent;
     'wf-write-line': WfWriteLine;
   }

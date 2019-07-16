@@ -13,7 +13,7 @@ Elsa Designer is a standalone client-side web component that you can embed in yo
 
 ### Script tag
 
-- Put a script tag similar to this `<script src='https://unpkg.com/@elsa-workflows/elsa-workflow-designer@0.0.6/dist/elsa-workflow-designer.js'></script>` in the head of your index.html
+- Put a script tag similar to this `<script src='https://unpkg.com/@elsa-workflows/elsa-workflow-designer@0.0.8/dist/elsa-workflow-designer.js'></script>` in the head of your index.html
 - Then you can use the element anywhere in your template, JSX, html etc
 
 ### Node Modules
@@ -51,15 +51,18 @@ Example:
     <wf-set-variable></wf-set-variable>
   </wf-activity-library>
 
+<!-- Activity Picker -->
+<wf-activity-picker></wf-activity-picker>
+
   <!-- Activity Editor -->
-  <wf-activity-editor-modal></wf-activity-editor-modal>
+  <wf-activity-editor></wf-activity-editor>
 
   <div id="header" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-dark border-bottom shadow-sm">
     <h5 class="my-0 mr-md-auto font-weight-normal">Workflow Designer</h5>
 
-    <!-- Activity Picker -->
-    <wf-activity-picker></wf-activity-picker>
+    <!-- Activity Picker Button-->
   </div>
+    <wf-activity-picker-button></wf-activity-picker-button>
 
   <!-- Designer -->
   <wf-designer id="workflowDesigner">

@@ -65,8 +65,7 @@ export class ActivityRenderer {
             propertyValue = x.defaultValue();
 
           return (<div class="form-group">
-            <label htmlFor={ x.name }>{ x.label }</label>
-            <input id={ x.name } name={ x.name } type="text" class="form-control" value={ propertyValue } />
+            { this.renderInput(activity, x, propertyValue) }
             { this.renderHint(x) }
           </div>);
         })
@@ -75,10 +74,25 @@ export class ActivityRenderer {
     );
   }
 
-  renderHint(propertyDescriptor: ActivityPropertyDescriptor): RenderResult {
+  renderInput = (activity: Activity, property: ActivityPropertyDescriptor, propertyValue: any) : RenderResult => {
+    switch(property.type)
+    {
+      case 'expression':
+      case 'text':
+      default:
+        return this.renderTextInput(activity, property, propertyValue);
+    }
+  };
+
+  renderTextInput = (_: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
+    return [<label htmlFor={ property.name }>{ property.label }</label>,
+      <input id={ property.name } name={ property.name } type="text" class="form-control" value={ propertyValue } />];
+  };
+
+  renderHint = (propertyDescriptor: ActivityPropertyDescriptor): RenderResult => {
     if (!propertyDescriptor.hint)
       return null;
 
     return <small class="form-text text-muted">{ propertyDescriptor.hint }</small>;
-  }
+  };
 }
