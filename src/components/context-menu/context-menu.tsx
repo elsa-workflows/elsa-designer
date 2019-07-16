@@ -5,7 +5,7 @@ import {Point} from "../../models";
 @Component({
   tag: 'wf-context-menu',
   styleUrl: 'context-menu.scss',
-  shadow: true
+  shadow: false
 })
 export class ContextMenu {
 
@@ -13,7 +13,7 @@ export class ContextMenu {
   el: HTMLElement;
 
   @Prop()
-  target: HTMLElement;
+  target: HTMLElement | ShadowRoot;
 
   @Prop({reflect: true, attribute: 'target'})
   targetSelector: string;
@@ -35,7 +35,7 @@ export class ContextMenu {
 
   @Watch('targetSelector')
   targetSelectorChangeHandler(newValue: string) {
-    this.target = document.querySelector(newValue);
+    this.target = document.querySelector(newValue) as HTMLElement;
   }
 
   @Listen('click', {target: 'body'})
@@ -73,7 +73,7 @@ export class ContextMenu {
     )
   }
 
-  private setupTarget(value: HTMLElement) {
+  private setupTarget(value: HTMLElement | ShadowRoot) {
     if (!!value) {
       value.addEventListener('contextmenu', this.onContextMenu, {capture: false});
     }

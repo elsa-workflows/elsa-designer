@@ -18,13 +18,13 @@
 
 ### Used by
 
- - [wf-activity-editor-modal](..\activity-editor-modal)
+ - [wf-activity-editor](..\activity-editor)
  - [wf-designer](..\designer)
 
 ### Graph
 ```mermaid
 graph TD;
-  wf-activity-editor-modal --> wf-activity-renderer
+  wf-activity-editor --> wf-activity-renderer
   wf-designer --> wf-activity-renderer
   style wf-activity-renderer fill:#f9f,stroke:#333,stroke-width:4px
 ```

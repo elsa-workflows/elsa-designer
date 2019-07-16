@@ -1,3 +1,3 @@
 interface JQuery {
-  modal(options: any): void;
+  modal(options?: any): void;
 }

@@ -1,5 +1,5 @@
 import {Component, Element, Prop} from '@stencil/core';
-import { ActivityDefinition as ActivityDefinitionModel, ActivityPropertyDescriptor } from "../../../models";
+import { Activity, ActivityPropertyDescriptor } from "../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../redux/actions";
@@ -8,7 +8,7 @@ import { Action, addActivityDefinition } from "../../../redux/actions";
   tag: 'wf-activity-definition',
   shadow: true
 })
-export class ActivityDefinition implements ActivityDefinitionModel {
+export class ActivityDefinition {
 
   @Element()
   el: HTMLElement;
@@ -31,13 +31,7 @@ export class ActivityDefinition implements ActivityDefinitionModel {
   @Prop({ context: 'store' })
   store: Store<RootState, Action>;
 
-  properties: Array<ActivityPropertyDescriptor> = [];
-
   addActivityDefinition!: typeof addActivityDefinition;
-
-  getOutcomes(){
-    return this.outcomes.split(',').map(x => x.trim());
-  }
 
   componentWillLoad(){
     this.store.mapDispatchToProps(this, { addActivityDefinition });
@@ -45,11 +39,21 @@ export class ActivityDefinition implements ActivityDefinitionModel {
 
   componentDidLoad() {
     const propertyElements = this.el.querySelectorAll('wf-activity-definition-property') as NodeListOf<HTMLWfActivityDefinitionPropertyElement>;
+    const properties: Array<ActivityPropertyDescriptor> = [];
+    const outcomes = this.outcomes.split(',').map(x => x.trim());
 
     propertyElements.forEach(value => {
-      this.properties.push(value);
+      properties.push(value);
     });
 
-    addActivityDefinition(this);
+    this.addActivityDefinition({
+        type: this.type,
+        displayName: this.displayName,
+        description: this.description,
+        category: this.category,
+        properties: properties,
+        getOutcomes: (_: Activity): string[] => outcomes
+      }
+    );
   }
 }

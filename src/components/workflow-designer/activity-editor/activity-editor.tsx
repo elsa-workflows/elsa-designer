@@ -1,4 +1,4 @@
-import { Component, Element, h, Method, Event, EventEmitter, Prop, State } from '@stencil/core';
+import { Component, Element, h, Event, EventEmitter, Prop, State } from '@stencil/core';
 import { Activity, ActivityDefinition, ActivityDisplayMode } from "../../../models";
 import { FormUpdater } from "../../../utils";
 import $ from "jquery";
@@ -8,11 +8,11 @@ import { RootState } from "../../../redux/reducers";
 import { Action } from "../../../redux/actions";
 
 @Component({
-  tag: 'wf-activity-editor-modal',
-  styleUrl: 'activity-editor-modal.scss',
+  tag: 'wf-activity-editor',
+  styleUrl: 'activity-editor.scss',
   shadow: true
 })
-export class ActivityEditorModal {
+export class ActivityEditor {
 
   @Element()
   el: HTMLElement;
@@ -26,15 +26,8 @@ export class ActivityEditorModal {
   @State()
   activityDefinitions: Array<ActivityDefinition>;
 
-  @Method()
-  async show() {
-    $(this.modal).modal('show');
-  }
-
-  @Method()
-  async hide() {
-    $(this.modal).modal('hide');
-  }
+  @Prop({ mutable: true })
+  show: boolean;
 
   @Event({ eventName: 'update-activity' })
   submit: EventEmitter;
@@ -57,14 +50,21 @@ export class ActivityEditorModal {
     const updateEditor = FormUpdater.updateEditor;
     const updatedActivity: Activity = updateEditor(this.activity, formData);
     this.submit.emit(updatedActivity);
-    await this.hide();
+    this.show = false;
+  }
+
+  componentDidRender(){
+    const modal = $(this.el.shadowRoot.querySelector('.modal'));
+    const action = this.show ? 'show' : 'hide';
+    modal.modal(action);
   }
 
   render() {
     const activity = this.activity;
 
-    if(!activity)
+    if (!activity) {
       return null;
+    }
 
     const activityDefinition = this.activityDefinitions.find(x => x.type === activity.type);
 
@@ -77,7 +77,7 @@ export class ActivityEditorModal {
 
     return (
       <div>
-        <div class="modal" tabindex="-1" role="dialog" ref={ el => this.modal = el as HTMLElement }>
+        <div class="modal" tabindex="-1" role="dialog">
           <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
               <form onSubmit={ e => this.onSubmit(e) }>

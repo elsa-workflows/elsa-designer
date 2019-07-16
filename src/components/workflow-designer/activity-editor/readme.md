@@ -10,6 +10,7 @@
 | Property   | Attribute | Description | Type       | Default     |
 | ---------- | --------- | ----------- | ---------- | ----------- |
 | `activity` | --        |             | `Activity` | `undefined` |
+| `show`     | `show`    |             | `boolean`  | `undefined` |
 
 
 ## Events
@@ -17,29 +18,6 @@
 | Event             | Description | Type               |
 | ----------------- | ----------- | ------------------ |
 | `update-activity` |             | `CustomEvent<any>` |
-
-
-## Methods
-
-### `hide() => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
-
-### `show() => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
-
-
 
 
 ## Dependencies
@@ -51,8 +29,8 @@ Type: `Promise<void>`
 ### Graph
 ```mermaid
 graph TD;
-  wf-activity-editor-modal --> wf-activity-renderer
-  style wf-activity-editor-modal fill:#f9f,stroke:#333,stroke-width:4px
+  wf-activity-editor --> wf-activity-renderer
+  style wf-activity-editor fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------
