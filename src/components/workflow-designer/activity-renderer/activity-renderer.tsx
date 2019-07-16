@@ -51,9 +51,6 @@ export class ActivityRenderer {
     const definition = this.activityDefinition;
     const properties = definition.properties;
 
-    console.debug(`activity: ${activity.id}`);
-    console.debug(activity.state);
-
     return (
       <Host>
         { properties.map(x => {

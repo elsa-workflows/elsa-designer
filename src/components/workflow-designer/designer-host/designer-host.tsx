@@ -21,6 +21,9 @@ export class DesignerHost {
   @Prop({ context: 'store' })
   store: Store;
 
+  @Prop({ attribute: 'onready' })
+  onReady: any;
+
   @Listen('activity-picked')
   async onActivityPicked(e: CustomEvent<ActivityDefinition>){
     await this.designer.addActivity(e.detail);
@@ -29,7 +32,7 @@ export class DesignerHost {
   @Listen('edit-activity')
   async onEditActivity(e: CustomEvent<Activity>){
     this.activityEditor.activity = e.detail;
-    await this.activityEditor.show();
+    this.activityEditor.show = true;
   }
 
   @Listen('add-activity')
@@ -63,9 +66,16 @@ export class DesignerHost {
     await this.designer.newWorkflow();
   }
 
+  @Prop()
   activityPicker: HTMLWfActivityPickerElement;
-  activityEditor: HTMLWfActivityEditorModalElement;
+
+  @Prop()
+  activityEditor: HTMLWfActivityEditorElement;
+
+  @Prop()
   designer: HTMLWfDesignerElement;
+
+  @Prop()
   importExport: HTMLWfImportExportElement;
 
   componentWillLoad() {
@@ -80,9 +90,12 @@ export class DesignerHost {
 
   async componentDidLoad(){
     this.activityPicker = this.el.querySelector<HTMLWfActivityPickerElement>('wf-activity-picker');
-    this.activityEditor = this.el.querySelector<HTMLWfActivityEditorModalElement>('wf-activity-editor-modal');
+    this.activityEditor = this.el.querySelector<HTMLWfActivityEditorElement>('wf-activity-editor');
     this.designer = this.el.querySelector<HTMLWfDesignerElement>('wf-designer');
     this.importExport = this.el.querySelector<HTMLWfImportExportElement>('wf-import-export');
+
+    if(!!this.onReady)
+      eval(this.onReady);
   }
 
   render(){

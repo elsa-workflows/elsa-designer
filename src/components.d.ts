@@ -36,18 +36,19 @@ export namespace Components {
     'name': string;
     'type': string;
   }
-  interface WfActivityEditorModal {
+  interface WfActivityEditor {
     'activity': Activity;
-    'hide': () => Promise<void>;
-    'show': () => Promise<void>;
+    'show': boolean;
   }
   interface WfActivityLibrary {
+    'onReady': any;
     'registerActivity': (activityDefinition: ActivityDefinition) => Promise<void>;
   }
   interface WfActivityPicker {
     'hide': () => Promise<void>;
     'show': () => Promise<void>;
   }
+  interface WfActivityPickerButton {}
   interface WfActivityRenderer {
     'activity': Activity;
     'activityDefinition': ActivityDefinition;
@@ -60,7 +61,7 @@ export namespace Components {
   }
   interface WfContextMenu {
     'handleContextMenuEvent': (e: MouseEvent) => Promise<void>;
-    'target': HTMLElement;
+    'target': HTMLElement | ShadowRoot;
     'targetSelector': string;
   }
   interface WfContextMenuItem {
@@ -73,7 +74,13 @@ export namespace Components {
     'newWorkflow': () => Promise<void>;
     'updateActivity': (activity: Activity) => Promise<void>;
   }
-  interface WfDesignerHost {}
+  interface WfDesignerHost {
+    'activityEditor': HTMLWfActivityEditorElement;
+    'activityPicker': HTMLWfActivityPickerElement;
+    'designer': HTMLWfDesignerElement;
+    'importExport': HTMLWfImportExportElement;
+    'onReady': any;
+  }
   interface WfExportButton {}
   interface WfFork {
     'category': string;
@@ -170,10 +177,10 @@ declare global {
     new (): HTMLWfActivityDefinitionPropertyElement;
   };
 
-  interface HTMLWfActivityEditorModalElement extends Components.WfActivityEditorModal, HTMLStencilElement {}
-  var HTMLWfActivityEditorModalElement: {
-    prototype: HTMLWfActivityEditorModalElement;
-    new (): HTMLWfActivityEditorModalElement;
+  interface HTMLWfActivityEditorElement extends Components.WfActivityEditor, HTMLStencilElement {}
+  var HTMLWfActivityEditorElement: {
+    prototype: HTMLWfActivityEditorElement;
+    new (): HTMLWfActivityEditorElement;
   };
 
   interface HTMLWfActivityLibraryElement extends Components.WfActivityLibrary, HTMLStencilElement {}
@@ -186,6 +193,12 @@ declare global {
   var HTMLWfActivityPickerElement: {
     prototype: HTMLWfActivityPickerElement;
     new (): HTMLWfActivityPickerElement;
+  };
+
+  interface HTMLWfActivityPickerButtonElement extends Components.WfActivityPickerButton, HTMLStencilElement {}
+  var HTMLWfActivityPickerButtonElement: {
+    prototype: HTMLWfActivityPickerButtonElement;
+    new (): HTMLWfActivityPickerButtonElement;
   };
 
   interface HTMLWfActivityRendererElement extends Components.WfActivityRenderer, HTMLStencilElement {}
@@ -317,9 +330,10 @@ declare global {
     'wf-activity': HTMLWfActivityElement;
     'wf-activity-definition': HTMLWfActivityDefinitionElement;
     'wf-activity-definition-property': HTMLWfActivityDefinitionPropertyElement;
-    'wf-activity-editor-modal': HTMLWfActivityEditorModalElement;
+    'wf-activity-editor': HTMLWfActivityEditorElement;
     'wf-activity-library': HTMLWfActivityLibraryElement;
     'wf-activity-picker': HTMLWfActivityPickerElement;
+    'wf-activity-picker-button': HTMLWfActivityPickerButtonElement;
     'wf-activity-renderer': HTMLWfActivityRendererElement;
     'wf-connection': HTMLWfConnectionElement;
     'wf-context-menu': HTMLWfContextMenuElement;
@@ -365,13 +379,19 @@ declare namespace LocalJSX {
     'name'?: string;
     'type'?: string;
   }
-  interface WfActivityEditorModal extends JSXBase.HTMLAttributes<HTMLWfActivityEditorModalElement> {
+  interface WfActivityEditor extends JSXBase.HTMLAttributes<HTMLWfActivityEditorElement> {
     'activity'?: Activity;
     'onUpdate-activity'?: (event: CustomEvent<any>) => void;
+    'show'?: boolean;
   }
-  interface WfActivityLibrary extends JSXBase.HTMLAttributes<HTMLWfActivityLibraryElement> {}
+  interface WfActivityLibrary extends JSXBase.HTMLAttributes<HTMLWfActivityLibraryElement> {
+    'onReady'?: any;
+  }
   interface WfActivityPicker extends JSXBase.HTMLAttributes<HTMLWfActivityPickerElement> {
     'onActivity-picked'?: (event: CustomEvent<any>) => void;
+  }
+  interface WfActivityPickerButton extends JSXBase.HTMLAttributes<HTMLWfActivityPickerButtonElement> {
+    'onAdd-activity'?: (event: CustomEvent<any>) => void;
   }
   interface WfActivityRenderer extends JSXBase.HTMLAttributes<HTMLWfActivityRendererElement> {
     'activity'?: Activity;
@@ -385,7 +405,7 @@ declare namespace LocalJSX {
   }
   interface WfContextMenu extends JSXBase.HTMLAttributes<HTMLWfContextMenuElement> {
     'onContext-menu'?: (event: CustomEvent<any>) => void;
-    'target'?: HTMLElement;
+    'target'?: HTMLElement | ShadowRoot;
     'targetSelector'?: string;
   }
   interface WfContextMenuItem extends JSXBase.HTMLAttributes<HTMLWfContextMenuItemElement> {
@@ -395,7 +415,13 @@ declare namespace LocalJSX {
     'onAdd-activity'?: (event: CustomEvent<any>) => void;
     'onEdit-activity'?: (event: CustomEvent<any>) => void;
   }
-  interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {}
+  interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {
+    'activityEditor'?: HTMLWfActivityEditorElement;
+    'activityPicker'?: HTMLWfActivityPickerElement;
+    'designer'?: HTMLWfDesignerElement;
+    'importExport'?: HTMLWfImportExportElement;
+    'onReady'?: any;
+  }
   interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {
     'onExport-workflow'?: (event: CustomEvent<any>) => void;
   }
@@ -477,9 +503,10 @@ declare namespace LocalJSX {
     'wf-activity': WfActivity;
     'wf-activity-definition': WfActivityDefinition;
     'wf-activity-definition-property': WfActivityDefinitionProperty;
-    'wf-activity-editor-modal': WfActivityEditorModal;
+    'wf-activity-editor': WfActivityEditor;
     'wf-activity-library': WfActivityLibrary;
     'wf-activity-picker': WfActivityPicker;
+    'wf-activity-picker-button': WfActivityPickerButton;
     'wf-activity-renderer': WfActivityRenderer;
     'wf-connection': WfConnection;
     'wf-context-menu': WfContextMenu;

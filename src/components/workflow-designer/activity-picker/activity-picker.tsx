@@ -62,7 +62,6 @@ export class ActivityPicker {
 
     return (
       <div>
-        <button class="btn btn-primary" onClick={() => this.show()}>Add Activity</button>
         <div class="modal" tabindex="-1" role="dialog" ref={el => this.modal = el as HTMLElement}>
           <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">

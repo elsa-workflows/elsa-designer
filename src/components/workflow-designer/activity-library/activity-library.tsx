@@ -13,6 +13,9 @@ export class ActivityLibrary {
   @Prop({ context: 'store' })
   store: Store<RootState, Action>;
 
+  @Prop({ attribute: 'onready' })
+  onReady: any;
+
   addActivityDefinition!: typeof addActivityDefinition;
 
   @Method()
@@ -20,7 +23,12 @@ export class ActivityLibrary {
     this.addActivityDefinition(activityDefinition);
   }
 
-  componentWillLoad(){
+  componentWillLoad() {
     this.store.mapDispatchToProps(this, { addActivityDefinition });
+  }
+
+  componentDidLoad() {
+    if (!!this.onReady)
+      eval(this.onReady);
   }
 }

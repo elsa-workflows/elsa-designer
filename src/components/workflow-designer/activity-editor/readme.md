@@ -51,8 +51,8 @@ Type: `Promise<void>`
 ### Graph
 ```mermaid
 graph TD;
-  wf-activity-editor-modal --> wf-activity-renderer
-  style wf-activity-editor-modal fill:#f9f,stroke:#333,stroke-width:4px
+  wf-activity-editor --> wf-activity-renderer
+  style wf-activity-editor fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

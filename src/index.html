@@ -29,10 +29,10 @@
 </head>
 <body>
 
-<wf-designer-host id="designerHost">
+<wf-designer-host id="designerHost" onready="initDesigner(this)">
 
   <!-- Activity Library -->
-  <wf-activity-library id="activityLibrary">
+  <wf-activity-library id="activityLibrary" onready="initLibrary(this)">
     <wf-write-line></wf-write-line>
     <wf-read-line></wf-read-line>
     <wf-log></wf-log>
@@ -46,15 +46,21 @@
     <wf-timer-event></wf-timer-event>
   </wf-activity-library>
 
+  <!-- Activity Picker -->
+  <wf-activity-picker id="activityPicker"></wf-activity-picker>
+
   <!-- Activity Editor -->
-  <wf-activity-editor-modal></wf-activity-editor-modal>
+  <wf-activity-editor></wf-activity-editor>
+
+  <!-- Import/Export -->
+  <wf-import-export></wf-import-export>
 
   <div id="header" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-dark border-bottom shadow-sm">
     <h5 class="my-0 mr-md-auto font-weight-normal">Workflow Designer</h5>
 
     <ul class="nav">
       <li class="nav-item">
-        <wf-activity-picker></wf-activity-picker>
+        <wf-activity-picker-button>Add Activity</wf-activity-picker-button>
       </li>
       <li class="nav-item">
         <wf-export-button></wf-export-button>
@@ -69,11 +75,32 @@
   </div>
 
   <!-- Workflow Designer -->
-  <wf-designer id="workflowDesigner"></wf-designer>
-
-  <!-- Import/Export -->
-  <wf-import-export></wf-import-export>
+  <wf-designer></wf-designer>
 </wf-designer-host>
+
+<script type="text/javascript">
+
+  function initDesigner(host) {
+    host.activityPicker.show();
+  }
+
+  function initLibrary(library) {
+    library.registerActivity({
+      type: 'Custom',
+      displayName: 'Custom Activity',
+      description: 'My custom Activity',
+      category: 'Custom',
+      properties: [{
+        name: 'property1',
+        type: 'text',
+        label: 'Property 1',
+        hint: 'Some helpful hint about this property'
+      }],
+      getOutcomes: function(a) { return ['Outcome 1', 'Outcome 2'] }
+    });
+  }
+
+</script>
 
 </body>
 </html>

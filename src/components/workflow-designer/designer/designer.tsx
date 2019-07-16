@@ -1,6 +1,6 @@
 import { Component, Element, Event, EventEmitter, h, Method, Prop, State } from '@stencil/core';
 import { Store } from '@stencil/redux';
-import { Connection as JsPlumbConnection, DragEventCallbackOptions, Endpoint, EndpointOptions, jsPlumb } from "jsplumb";
+import { Connection as JsPlumbConnection, DragEventCallbackOptions, Endpoint, EndpointOptions} from "jsplumb";
 import { CssMap } from "../../../utils";
 import { JsPlumbUtils } from "./jsplumb-utils";
 import { Activity as ActivityInstance } from "../activity/activity";
@@ -75,7 +75,7 @@ export class Designer {
 
   @Method()
   async updateActivity(activity: Activity) {
-    this.updateActivityInternal(activity);
+    await this.updateActivityInternal(activity);
   }
 
   @Event({ eventName: 'edit-activity' })
@@ -117,7 +117,6 @@ export class Designer {
   }
 
   componentDidUpdate() {
-    this.jsPlumb.reset();
     this.setupJsPlumb();
   }
 
@@ -145,8 +144,6 @@ export class Designer {
     );
   }
 
-  private findActivityByType = (type: string): ActivityDefinition => this.activityDefinitions[type];
-
   private createActivityDefinitionLookup = definitions => {
     const lookup: ActivityDefinitionMap = {};
 
@@ -157,17 +154,18 @@ export class Designer {
     return lookup;
   };
 
-  private deleteActivity = (activity: Activity) => {
+  private deleteActivity = async (activity: Activity) => {
     const activities = this.workflow.activities.filter(x => x.id !== activity.id);
     const connections = this.workflow.connections.filter(x => x.sourceActivityId != activity.id && x.destinationActivityId != activity.id);
+    const workflow = { ...this.workflow, activities, connections };
 
-    this.workflow = { ...this.workflow, activities, connections };
+    await this.loadWorkflow(workflow);
   };
 
   private createActivityModels(): Array<ActivityModel> {
     return this.workflow.activities.map((activity: Activity) => {
 
-      const definition = this.findActivityByType(activity.type);
+      const definition = this.activityDefinitions[activity.type];
 
       return {
         activity,
@@ -177,21 +175,25 @@ export class Designer {
   }
 
   private setupJsPlumb = () => {
+    this.jsPlumb.reset();
     this.setupJsPlumbEventHandlers();
     this.jsPlumb.batch(() => {
       this.getActivityElements().forEach(this.setupActivityElement);
       this.setupConnections();
     });
+    this.jsPlumb.revalidate(this.el);
+    this.jsPlumb.recalculateOffsets(this.el);
+    this.jsPlumb.repaint(this.el);
+    this.jsPlumb.repaintEverything();
   };
 
-  private setupActivityElement = (element: Element) => {
-    this.setupDragDrop(element);
+  private setupActivityElement = async (element: Element) => {
+    await this.setupDragDrop(element);
     this.setupTargets(element);
     this.setupOutcomes(element);
-    jsPlumb.revalidate(element);
   };
 
-  private setupDragDrop(element: Element) {
+  private setupDragDrop = async (element: Element) => {
     let dragStart: any = null;
     let hasDragged: boolean = false;
 
@@ -200,20 +202,20 @@ export class Designer {
       start: (params: DragEventCallbackOptions) => {
         dragStart = { left: params.e.screenX, top: params.e.screenY };
       },
-      stop: (params: DragEventCallbackOptions) => {
+      stop: async (params: DragEventCallbackOptions) => {
         hasDragged = dragStart.left !== params.e.screenX || dragStart.top !== params.e.screenY;
 
         if (!hasDragged)
           return;
 
-        const activity = this.findActivityByElement(element);
+        const activity = {...this.findActivityByElement(element)};
         activity.left = params.pos[0];
         activity.top = params.pos[1];
 
-        this.updateActivityInternal(activity);
+        await this.updateActivityInternal(activity);
       }
     });
-  }
+  };
 
   private setupTargets(element: Element) {
     this.jsPlumb.makeTarget(element, {
@@ -225,7 +227,7 @@ export class Designer {
 
   private setupOutcomes(element: Element) {
     const activity = this.findActivityByElement(element);
-    const definition = this.findActivityByType(activity.type);
+    const definition = this.activityDefinitions[activity.type];
     const outcomes = definition.getOutcomes(activity);
 
     for (let outcome of outcomes) {
@@ -262,21 +264,22 @@ export class Designer {
 
   private findActivityById = (id: string): Activity => this.workflow.activities.find(x => x.id === id);
 
-  private updateActivityInternal(activity: Activity) {
+  private updateActivityInternal = async (activity: Activity) => {
     const activities = [...this.workflow.activities];
     const index = activities.findIndex(x => x.id == activity.id);
 
-    activities[index] = activity;
+    activities[index] = {...activity};
 
-    this.workflow = { ...this.workflow, activities };
-  }
+    const workflow = { ...this.workflow, activities };
+    await this.loadWorkflow(workflow);
+  };
 
   private setupJsPlumbEventHandlers = () => {
     this.jsPlumb.bind('connection', this.connectionCreated);
     this.jsPlumb.bind('connectionDetached', this.connectionDetached);
   };
 
-  private connectionCreated = (info: any) => {
+  private connectionCreated = async (info: any) => {
     const connection: JsPlumbConnection = info.connection;
     const sourceEndpoint: any = info.sourceEndpoint;
     const outcome: string = sourceEndpoint.getParameter('outcome');
@@ -297,11 +300,12 @@ export class Designer {
         outcome: outcome
       }];
 
-      this.workflow = { ...this.workflow, connections };
+      const workflow = { ...this.workflow, connections };
+      await this.loadWorkflow(workflow);
     }
   };
 
-  private connectionDetached = (info: any) => {
+  private connectionDetached = async (info: any) => {
     console.debug(`Connection detached`);
     const sourceEndpoint: any = info.sourceEndpoint;
     const outcome: string = sourceEndpoint.getParameter('outcome');
@@ -310,7 +314,8 @@ export class Designer {
     const connections = this.workflow.connections.filter(x => !(x.sourceActivityId === sourceActivity.id && x.destinationActivityId === destinationActivity.id && x.outcome === outcome));
 
     console.debug(connections);
-    this.workflow = { ...this.workflow, connections };
+    const workflow = { ...this.workflow, connections };
+    await this.loadWorkflow(workflow);
   };
 
   private onEditActivity(activity: Activity) {
@@ -325,8 +330,8 @@ export class Designer {
     this.addActivityEvent.emit();
   };
 
-  private onDeleteActivityClick = () => {
-    this.deleteActivity(this.selectedActivity);
+  private onDeleteActivityClick = async () => {
+    await this.deleteActivity(this.selectedActivity);
   };
 
   private onEditActivityClick = () => {
