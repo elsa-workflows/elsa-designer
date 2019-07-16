@@ -1,8 +1,9 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity } from "../../../../models";
+import { Activity, ActivityDefinition, RenderDesignerResult } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
+import ActivityManager from '../../../../services/activity-manager';
 
 @Component({
   tag: 'wf-write-line',
@@ -27,8 +28,22 @@ export class WriteLine {
 
   addActivityDefinition!: typeof addActivityDefinition;
 
+  static onRenderDesigner(activity: Activity, definition: ActivityDefinition): RenderDesignerResult {
+    const textExpression = activity.state.textExpression;
+
+    return {
+      description: !!textExpression
+        ? `Write <strong>${ textExpression }</strong> to standard out.`
+        : definition.description
+    };
+  }
+
   componentWillLoad() {
     this.store.mapDispatchToProps(this, { addActivityDefinition });
+
+    ActivityManager.addHandler(this.type, {
+      renderDesigner: WriteLine.onRenderDesigner
+    })
   }
 
   componentDidLoad() {

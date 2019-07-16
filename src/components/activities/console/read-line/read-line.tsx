@@ -1,8 +1,9 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity} from "../../../../models";
+import { Activity, ActivityDefinition, RenderDesignerResult } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import { RootState } from "../../../../redux/reducers";
+import ActivityManager from '../../../../services/activity-manager';
 
 @Component({
   tag: 'wf-read-line',
@@ -16,7 +17,7 @@ export class ReadLine {
   @Prop({ reflect: true })
   type: string = "ReadLine";
 
-  @Prop({reflect: true, attribute: 'display-name'})
+  @Prop({ reflect: true, attribute: 'display-name' })
   displayName: string = "Read Line";
 
   @Prop({ reflect: true })
@@ -25,10 +26,24 @@ export class ReadLine {
   @Prop({ reflect: true })
   category: string = "Console";
 
+  static onRenderDesigner(activity: Activity, definition: ActivityDefinition): RenderDesignerResult {
+    const variableName = activity.state.variableName;
+
+    return {
+      description: !!variableName
+        ? `Read text from standard in and store into <strong>${ variableName }</strong>.`
+        : definition.description
+    };
+  }
+
   addActivityDefinition!: typeof addActivityDefinition;
 
-  componentWillLoad(){
+  componentWillLoad() {
     this.store.mapDispatchToProps(this, { addActivityDefinition });
+
+    ActivityManager.addHandler(this.type, {
+      renderDesigner: ReadLine.onRenderDesigner
+    })
   }
 
   componentDidLoad() {

@@ -1,8 +1,9 @@
 import {Component, Prop} from '@stencil/core';
-import { Activity} from "../../../../models";
+import { Activity, ActivityDefinition, RenderDesignerResult } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
+import ActivityManager from '../../../../services/activity-manager';
 
 @Component({
   tag: 'wf-log',
@@ -27,8 +28,22 @@ export class Log {
 
   addActivityDefinition!: typeof addActivityDefinition;
 
+  static onRenderDesigner(activity: Activity, definition: ActivityDefinition): RenderDesignerResult {
+    const message = activity.state.message;
+
+    return {
+      description: !!message
+        ? `Log <strong>${ message }</strong>.`
+        : definition.description
+    };
+  }
+
   componentWillLoad() {
     this.store.mapDispatchToProps(this, { addActivityDefinition });
+
+    ActivityManager.addHandler(this.type, {
+      renderDesigner: Log.onRenderDesigner
+    })
   }
 
   componentDidLoad() {
