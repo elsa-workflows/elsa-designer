@@ -10,6 +10,7 @@ import {
   Activity,
   ActivityDefinition,
   ActivityDisplayMode,
+  ActivityPropertyDescriptor,
   ImportedWorkflowData,
   Workflow,
   WorkflowFormatDescriptor,
@@ -82,6 +83,14 @@ export namespace Components {
     'onReady': any;
   }
   interface WfExportButton {}
+  interface WfFieldEditorExpression {
+    'propertyDescriptor': ActivityPropertyDescriptor;
+    'propertyValue': any;
+  }
+  interface WfFieldEditorText {
+    'propertyDescriptor': ActivityPropertyDescriptor;
+    'propertyValue': any;
+  }
   interface WfFork {
     'category': string;
     'description': string;
@@ -95,6 +104,12 @@ export namespace Components {
     'type': string;
   }
   interface WfHttpResponseTask {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
+  interface WfIfElse {
     'category': string;
     'description': string;
     'displayName': string;
@@ -249,6 +264,18 @@ declare global {
     new (): HTMLWfExportButtonElement;
   };
 
+  interface HTMLWfFieldEditorExpressionElement extends Components.WfFieldEditorExpression, HTMLStencilElement {}
+  var HTMLWfFieldEditorExpressionElement: {
+    prototype: HTMLWfFieldEditorExpressionElement;
+    new (): HTMLWfFieldEditorExpressionElement;
+  };
+
+  interface HTMLWfFieldEditorTextElement extends Components.WfFieldEditorText, HTMLStencilElement {}
+  var HTMLWfFieldEditorTextElement: {
+    prototype: HTMLWfFieldEditorTextElement;
+    new (): HTMLWfFieldEditorTextElement;
+  };
+
   interface HTMLWfForkElement extends Components.WfFork, HTMLStencilElement {}
   var HTMLWfForkElement: {
     prototype: HTMLWfForkElement;
@@ -265,6 +292,12 @@ declare global {
   var HTMLWfHttpResponseTaskElement: {
     prototype: HTMLWfHttpResponseTaskElement;
     new (): HTMLWfHttpResponseTaskElement;
+  };
+
+  interface HTMLWfIfElseElement extends Components.WfIfElse, HTMLStencilElement {}
+  var HTMLWfIfElseElement: {
+    prototype: HTMLWfIfElseElement;
+    new (): HTMLWfIfElseElement;
   };
 
   interface HTMLWfImportButtonElement extends Components.WfImportButton, HTMLStencilElement {}
@@ -353,9 +386,12 @@ declare global {
     'wf-designer': HTMLWfDesignerElement;
     'wf-designer-host': HTMLWfDesignerHostElement;
     'wf-export-button': HTMLWfExportButtonElement;
+    'wf-field-editor-expression': HTMLWfFieldEditorExpressionElement;
+    'wf-field-editor-text': HTMLWfFieldEditorTextElement;
     'wf-fork': HTMLWfForkElement;
     'wf-http-request-event': HTMLWfHttpRequestEventElement;
     'wf-http-response-task': HTMLWfHttpResponseTaskElement;
+    'wf-if-else': HTMLWfIfElseElement;
     'wf-import-button': HTMLWfImportButtonElement;
     'wf-import-export': HTMLWfImportExportElement;
     'wf-log': HTMLWfLogElement;
@@ -438,6 +474,14 @@ declare namespace LocalJSX {
   interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {
     'onExport-workflow'?: (event: CustomEvent<any>) => void;
   }
+  interface WfFieldEditorExpression extends JSXBase.HTMLAttributes<HTMLWfFieldEditorExpressionElement> {
+    'propertyDescriptor'?: ActivityPropertyDescriptor;
+    'propertyValue'?: any;
+  }
+  interface WfFieldEditorText extends JSXBase.HTMLAttributes<HTMLWfFieldEditorTextElement> {
+    'propertyDescriptor'?: ActivityPropertyDescriptor;
+    'propertyValue'?: any;
+  }
   interface WfFork extends JSXBase.HTMLAttributes<HTMLWfForkElement> {
     'category'?: string;
     'description'?: string;
@@ -451,6 +495,12 @@ declare namespace LocalJSX {
     'type'?: string;
   }
   interface WfHttpResponseTask extends JSXBase.HTMLAttributes<HTMLWfHttpResponseTaskElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
+  }
+  interface WfIfElse extends JSXBase.HTMLAttributes<HTMLWfIfElseElement> {
     'category'?: string;
     'description'?: string;
     'displayName'?: string;
@@ -533,9 +583,12 @@ declare namespace LocalJSX {
     'wf-designer': WfDesigner;
     'wf-designer-host': WfDesignerHost;
     'wf-export-button': WfExportButton;
+    'wf-field-editor-expression': WfFieldEditorExpression;
+    'wf-field-editor-text': WfFieldEditorText;
     'wf-fork': WfFork;
     'wf-http-request-event': WfHttpRequestEvent;
     'wf-http-response-task': WfHttpResponseTask;
+    'wf-if-else': WfIfElse;
     'wf-import-button': WfImportButton;
     'wf-import-export': WfImportExport;
     'wf-log': WfLog;

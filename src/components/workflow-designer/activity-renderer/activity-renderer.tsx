@@ -46,7 +46,7 @@ export class ActivityRenderer {
     return (
       <div>
         <h5>{ definition.displayName }</h5>
-        <p innerHTML={ result.description }/>
+        <p innerHTML={ result.description } />
       </div>
     );
   }
@@ -64,29 +64,34 @@ export class ActivityRenderer {
           if (!propertyValue && !!x.defaultValue)
             propertyValue = x.defaultValue();
 
-          return (<div class="form-group">
-            { this.renderInput(activity, x, propertyValue) }
-            { this.renderHint(x) }
-          </div>);
+          return (
+            <div class="form-group">
+              { this.renderInput(activity, x, propertyValue) }
+              { this.renderHint(x) }
+            </div>
+          );
         })
         }
       </Host>
     );
   }
 
-  renderInput = (activity: Activity, property: ActivityPropertyDescriptor, propertyValue: any) : RenderResult => {
-    switch(property.type)
-    {
+  renderInput = (activity: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
+    switch (property.type) {
       case 'expression':
+        return this.renderExpressionInput(activity, property, propertyValue);
       case 'text':
       default:
         return this.renderTextInput(activity, property, propertyValue);
     }
   };
 
+  renderExpressionInput = (_: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
+    return (<wf-field-editor-expression propertyDescriptor={ property } propertyValue={ propertyValue } />);
+  };
+
   renderTextInput = (_: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
-    return [<label htmlFor={ property.name }>{ property.label }</label>,
-      <input id={ property.name } name={ property.name } type="text" class="form-control" value={ propertyValue } />];
+    return (<wf-field-editor-text propertyDescriptor={ property } propertyValue={ propertyValue } />);
   };
 
   renderHint = (propertyDescriptor: ActivityPropertyDescriptor): RenderResult => {

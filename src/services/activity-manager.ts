@@ -26,9 +26,13 @@ export class ActivityManager {
 
   public updateEditor = (activity: Activity, formData: FormData): Activity => {
     const handler = this.handlers[activity.type];
+    let updater = () => FormUpdater.updateEditor(activity, formData);
 
-    if(!handler || !handler.updateEditor)
-      FormUpdater.updateEditor(activity, formData);
+    if(!handler)
+      return updater();
+
+    if(!handler.updateEditor)
+      return updater();
 
     return handler.updateEditor(activity, formData);
   }

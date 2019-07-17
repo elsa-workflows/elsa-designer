@@ -1,7 +1,5 @@
 import { Component, Element, h, Event, EventEmitter, Prop, State } from '@stencil/core';
 import { Activity, ActivityDefinition, ActivityDisplayMode } from "../../../models";
-import $ from "jquery";
-import 'bootstrap';
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../redux/reducers";
 import { Action } from "../../../redux/actions";
@@ -10,7 +8,7 @@ import ActivityManager from '../../../services/activity-manager';
 @Component({
   tag: 'wf-activity-editor',
   styleUrl: 'activity-editor.scss',
-  shadow: true
+  shadow: false
 })
 export class ActivityEditor {
 
@@ -53,7 +51,7 @@ export class ActivityEditor {
   }
 
   componentDidRender(){
-    const modal = $(this.el.shadowRoot.querySelector('.modal'));
+    const modal = $(this.el.querySelector('.modal'));
     const action = this.show ? 'show' : 'hide';
     modal.modal(action);
   }

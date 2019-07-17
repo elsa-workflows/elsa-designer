@@ -80,6 +80,8 @@ graph TD;
   wf-designer --> wf-activity-renderer
   wf-designer --> wf-context-menu
   wf-designer --> wf-context-menu-item
+  wf-activity-renderer --> wf-field-editor-expression
+  wf-activity-renderer --> wf-field-editor-text
   style wf-designer fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
