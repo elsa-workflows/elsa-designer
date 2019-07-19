@@ -2,27 +2,29 @@ import { Component, h, Host, Prop } from '@stencil/core';
 import { ActivityPropertyDescriptor } from "../../../models";
 
 @Component({
-  tag: 'wf-property-editor-text',
-  styleUrl: 'text.scss',
+  tag: 'wf-field-editor-list',
+  styleUrl: 'list.scss',
   shadow: false
 })
-export class TextPropertyEditor {
+export class FieldEditorList {
 
   @Prop()
-  propertyValue: any;
+  propertyValue: Array<any>;
 
   @Prop()
   propertyDescriptor: ActivityPropertyDescriptor;
 
   render() {
+    debugger;
     const property = this.propertyDescriptor;
     const name = property.name;
     const label = property.label;
-    const value = this.propertyValue;
+    const items = this.propertyValue as Array<any> || [];
+    const value = items.join(', ');
 
     return (
       <Host>
-        <label htmlFor={ name }>{ label }</label>,
+        <label htmlFor={ name }>{ label }</label>
         <input id={ name } name={ name } type="text" class="form-control" value={ value } />
       </Host>);
   }

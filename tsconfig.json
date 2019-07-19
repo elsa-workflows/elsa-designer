@@ -2,6 +2,8 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
+    "allowUnusedLabels": true,
+    "forceConsistentCasingInFileNames": true,
     "declaration": false,
     "experimentalDecorators": true,
     "lib": [
@@ -11,8 +13,8 @@
     "moduleResolution": "node",
     "module": "esnext",
     "target": "es2017",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "jsx": "react",
     "jsxFactory": "h",
     "typeRoots": ["node_modules/@types", "src/shared/@types"]

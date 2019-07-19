@@ -88,7 +88,7 @@ export class DesignerHost {
     }));
   }
 
-  async componentDidLoad(){
+  componentDidLoad(){
     this.activityPicker = this.el.querySelector<HTMLWfActivityPickerElement>('wf-activity-picker');
     this.activityEditor = this.el.querySelector<HTMLWfActivityEditorElement>('wf-activity-editor');
     this.designer = this.el.querySelector<HTMLWfDesignerElement>('wf-designer');

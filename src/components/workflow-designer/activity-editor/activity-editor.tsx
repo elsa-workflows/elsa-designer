@@ -4,6 +4,7 @@ import { Store } from "@stencil/redux";
 import { RootState } from "../../../redux/reducers";
 import { Action } from "../../../redux/actions";
 import ActivityManager from '../../../services/activity-manager';
+import { ComponentHelper } from "../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-activity-editor',
@@ -31,8 +32,11 @@ export class ActivityEditor {
   submit: EventEmitter;
 
   modal: HTMLElement;
+  renderer: HTMLWfActivityRendererElement;
 
-  componentDidLoad() {
+  async componentWillLoad() {
+    await ComponentHelper.rootComponentReady();
+
     this.store.mapStateToProps(this, state => {
       return {
         activityDefinitions: state.activityDefinitions
@@ -45,7 +49,8 @@ export class ActivityEditor {
 
     const form: any = e.target;
     const formData = new FormData(form);
-    const updatedActivity: Activity = ActivityManager.updateEditor(this.activity, formData);
+    debugger;
+    const updatedActivity = await this.renderer.updateEditor(formData);
     this.submit.emit(updatedActivity);
     this.show = false;
   }
@@ -85,7 +90,7 @@ export class ActivityEditor {
                   </button>
                 </div>
                 <div class="modal-body">
-                  <wf-activity-renderer activity={ activity } activityDefinition={ activityDefinition } displayMode={ ActivityDisplayMode.Edit } />
+                  <wf-activity-renderer activity={ activity } activityDefinition={ activityDefinition } displayMode={ ActivityDisplayMode.Edit }  ref={x => this.renderer = x} />
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

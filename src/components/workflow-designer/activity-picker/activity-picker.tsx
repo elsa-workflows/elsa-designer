@@ -1,15 +1,12 @@
 import { Component, Element, h, Method, Event, EventEmitter, State, Prop } from '@stencil/core';
 import { ActivityDefinition } from '../../../models';
-import $ from "jquery";
-import 'bootstrap';
 import { Store } from "@stencil/redux";
-import { RootState } from "../../../redux/reducers";
-import { Action } from "../../../redux/actions";
+import { ComponentHelper } from "../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-activity-picker',
   styleUrl: 'activity-picker.scss',
-  shadow: true
+  shadow: false
 })
 export class ActivityPicker {
 
@@ -17,7 +14,7 @@ export class ActivityPicker {
   el: HTMLElement;
 
   @Prop({ context: 'store' })
-  store: Store<RootState, Action>;
+  store: Store;
 
   @State()
   isVisible: boolean;
@@ -37,7 +34,7 @@ export class ActivityPicker {
     this.isVisible = false;
   }
 
-  @Event({eventName: 'activity-picked'})
+  @Event({ eventName: 'activity-picked' })
   activitySelected: EventEmitter;
 
   private modal: any;
@@ -47,7 +44,8 @@ export class ActivityPicker {
     await this.hide();
   }
 
-  componentDidLoad() {
+  async componentWillLoad() {
+    await ComponentHelper.rootComponentReady();
 
     this.store.mapStateToProps(this, state => {
       return {
@@ -62,7 +60,7 @@ export class ActivityPicker {
 
     return (
       <div>
-        <div class="modal" tabindex="-1" role="dialog" ref={el => this.modal = el as HTMLElement}>
+        <div class="modal" tabindex="-1" role="dialog" ref={ el => this.modal = el as HTMLElement }>
           <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
               <div class="modal-header">
@@ -81,26 +79,26 @@ export class ActivityPicker {
                       <li class="nav-item">
                         <a class="nav-link active" href="#all" data-toggle="pill">All</a>
                       </li>
-                      {categories.map(category => (
-                        <li class="nav-item" data-category={category}>
-                          <a class="nav-link" href="#" data-toggle="pill">{category}</a>
+                      { categories.map(category => (
+                        <li class="nav-item" data-category={ category }>
+                          <a class="nav-link" href="#" data-toggle="pill">{ category }</a>
                         </li>
-                      ))}
+                      )) }
                     </ul>
                   </div>
                   <div class="col-sm-9 col-md-9 col-lg-10">
                     <div class="card-columns tab-content">
-                      {activities.map(activity => (
+                      { activities.map(activity => (
                         <div class="card activity">
                           <div class="card-body">
-                            <h4 class="card-title"><i class="far fa-envelope" />{activity.displayName}</h4>
-                            <p>{activity.description}</p>
+                            <h4 class="card-title"><i class="far fa-envelope" />{ activity.displayName }</h4>
+                            <p>{ activity.description }</p>
                           </div>
                           <div class="card-footer text-muted text-xs-right">
-                            <a class="btn btn-primary btn-sm" href="#" onClick={() => this.onActivitySelected(activity)}>Select</a>
+                            <a class="btn btn-primary btn-sm" href="#" onClick={ () => this.onActivitySelected(activity) }>Select</a>
                           </div>
                         </div>
-                      ))}
+                      )) }
                     </div>
                   </div>
                 </div>

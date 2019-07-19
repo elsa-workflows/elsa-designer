@@ -1,4 +1,4 @@
-import { Component, h, Host, Prop } from '@stencil/core';
+import { Component, h, Host, Method, Prop } from '@stencil/core';
 import {
   Activity,
   ActivityDefinition,
@@ -76,13 +76,45 @@ export class ActivityRenderer {
     );
   }
 
+  @Method()
+  async updateEditor(formData: FormData) : Promise<Activity> {
+    const activity = this.activity;
+    const definition = this.activityDefinition;
+    const properties = definition.properties;
+    const newState = {...activity.state};
+
+    for(const property of properties)
+    {
+      this.updateProperty(newState, property, formData);
+    }
+
+    debugger;
+    return { ...activity, state: newState }
+  }
+
   renderInput = (activity: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
     switch (property.type) {
       case 'expression':
         return this.renderExpressionInput(activity, property, propertyValue);
+      case 'list':
+        return this.renderListInput(activity, property, propertyValue);
       case 'text':
       default:
         return this.renderTextInput(activity, property, propertyValue);
+    }
+  };
+
+  updateProperty = (state: any, property: ActivityPropertyDescriptor, formData: FormData) => {
+    switch (property.type) {
+      case 'expression':
+        this.updateExpressionInput(state, property, formData);
+        break;
+      case 'list':
+        this.updateListInput(state, property, formData);
+        break;
+      case 'text':
+      default:
+        this.updateTextInput(state, property, formData);
     }
   };
 
@@ -90,8 +122,31 @@ export class ActivityRenderer {
     return (<wf-field-editor-expression propertyDescriptor={ property } propertyValue={ propertyValue } />);
   };
 
+  updateExpressionInput = (state: any, property: ActivityPropertyDescriptor, formData: FormData) => {
+    const expressionPropertyName = `${property.name}_expression`;
+    const syntaxPropertyName = `${property.name}_syntax`;
+
+    state[expressionPropertyName] = formData.get(expressionPropertyName);
+    state[syntaxPropertyName] = formData.get(syntaxPropertyName);
+  };
+
   renderTextInput = (_: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
-    return (<wf-field-editor-text propertyDescriptor={ property } propertyValue={ propertyValue } />);
+    return (<wf-property-editor-text propertyDescriptor={ property } propertyValue={ propertyValue } />);
+  };
+
+  updateTextInput = (state: any, property: ActivityPropertyDescriptor, formData: FormData) => {
+    state[property.name] = formData.get(property.name);
+  };
+
+  renderListInput = (_: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
+    debugger;
+    return (<wf-field-editor-list propertyDescriptor={ property } propertyValue={ propertyValue } />);
+  };
+
+  updateListInput = (state: any, property: ActivityPropertyDescriptor, formData: FormData) => {
+    const formValue = formData.get(property.name);
+    const value = formValue ? formValue.toString() : '';
+    state[property.name] = value.split(',').map(x => x.trim());
   };
 
   renderHint = (propertyDescriptor: ActivityPropertyDescriptor): RenderResult => {

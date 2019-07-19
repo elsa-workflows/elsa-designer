@@ -3,7 +3,7 @@ import {Component, Element, h, Prop} from '@stencil/core';
 @Component({
   tag: 'wf-context-menu-item',
   styleUrl: 'context-menu-item.scss',
-  shadow: true
+  shadow: false
 })
 export class ContextMenuItem {
 

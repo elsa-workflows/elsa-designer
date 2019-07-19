@@ -10,7 +10,7 @@
 | Property             | Attribute | Description | Type                         | Default     |
 | -------------------- | --------- | ----------- | ---------------------------- | ----------- |
 | `propertyDescriptor` | --        |             | `ActivityPropertyDescriptor` | `undefined` |
-| `propertyValue`      | --        |             | `WorkflowExpression`         | `undefined` |
+| `propertyValue`      | --        |             | `any[]`                      | `undefined` |
 
 
 ## Dependencies
@@ -22,8 +22,8 @@
 ### Graph
 ```mermaid
 graph TD;
-  wf-activity-renderer --> wf-field-editor-expression
-  style wf-field-editor-expression fill:#f9f,stroke:#333,stroke-width:4px
+  wf-activity-renderer --> wf-field-editor-list
+  style wf-field-editor-list fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
 ----------------------------------------------

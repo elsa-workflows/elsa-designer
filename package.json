@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@types/node": "^12.6.1",
-    "@stencil/core": "^1.1.6",
+    "@stencil/core": "1.1.7",
     "@stencil/sass": "^1.0.1",
     "@types/jquery": "^3.3.30",
     "@stencil/redux": "^0.1.1"

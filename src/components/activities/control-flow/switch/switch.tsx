@@ -4,7 +4,6 @@ import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import ActivityManager from '../../../../services/activity-manager';
-import { FieldEditorExpression } from "../../../field-editors/expression/expression";
 
 @Component({
   tag: 'wf-switch',
@@ -39,21 +38,11 @@ export class Switch {
     };
   }
 
-  static updateEditor(activity: Activity, formData: FormData): Activity {
-    const newState = { ...activity.state };
-
-    newState.expression = FieldEditorExpression.ReadValue('expression', formData);
-    newState.cases = formData.get('cases').toString().split(',').map(x => x.trim());
-
-    return { ...activity, state: newState };
-  }
-
   componentWillLoad() {
     this.store.mapDispatchToProps(this, { addActivityDefinition });
 
     ActivityManager.addHandler(this.type, {
       renderDesigner: Switch.onRenderDesigner,
-      updateEditor: Switch.updateEditor
     })
   }
 
@@ -71,7 +60,7 @@ export class Switch {
         },
           {
             name: 'cases',
-            type: 'expression',
+            type: 'list',
             label: 'Cases',
             hint: 'A comma-separated list of possible outcomes of the expression.'
           }],

@@ -13,6 +13,7 @@ import {
   ActivityPropertyDescriptor,
   ImportedWorkflowData,
   Workflow,
+  WorkflowExpression,
   WorkflowFormatDescriptor,
 } from './models';
 
@@ -54,6 +55,7 @@ export namespace Components {
     'activity': Activity;
     'activityDefinition': ActivityDefinition;
     'displayMode': ActivityDisplayMode;
+    'updateEditor': (formData: FormData) => Promise<Activity>;
   }
   interface WfConnection {
     'destinationActivityId': string;
@@ -85,11 +87,11 @@ export namespace Components {
   interface WfExportButton {}
   interface WfFieldEditorExpression {
     'propertyDescriptor': ActivityPropertyDescriptor;
-    'propertyValue': any;
+    'propertyValue': WorkflowExpression;
   }
-  interface WfFieldEditorText {
+  interface WfFieldEditorList {
     'propertyDescriptor': ActivityPropertyDescriptor;
-    'propertyValue': any;
+    'propertyValue': Array<any>;
   }
   interface WfFork {
     'category': string;
@@ -127,6 +129,10 @@ export namespace Components {
     'type': string;
   }
   interface WfNewWorkflowButton {}
+  interface WfPropertyEditorText {
+    'propertyDescriptor': ActivityPropertyDescriptor;
+    'propertyValue': any;
+  }
   interface WfReadLine {
     'category': string;
     'description': string;
@@ -270,10 +276,10 @@ declare global {
     new (): HTMLWfFieldEditorExpressionElement;
   };
 
-  interface HTMLWfFieldEditorTextElement extends Components.WfFieldEditorText, HTMLStencilElement {}
-  var HTMLWfFieldEditorTextElement: {
-    prototype: HTMLWfFieldEditorTextElement;
-    new (): HTMLWfFieldEditorTextElement;
+  interface HTMLWfFieldEditorListElement extends Components.WfFieldEditorList, HTMLStencilElement {}
+  var HTMLWfFieldEditorListElement: {
+    prototype: HTMLWfFieldEditorListElement;
+    new (): HTMLWfFieldEditorListElement;
   };
 
   interface HTMLWfForkElement extends Components.WfFork, HTMLStencilElement {}
@@ -322,6 +328,12 @@ declare global {
   var HTMLWfNewWorkflowButtonElement: {
     prototype: HTMLWfNewWorkflowButtonElement;
     new (): HTMLWfNewWorkflowButtonElement;
+  };
+
+  interface HTMLWfPropertyEditorTextElement extends Components.WfPropertyEditorText, HTMLStencilElement {}
+  var HTMLWfPropertyEditorTextElement: {
+    prototype: HTMLWfPropertyEditorTextElement;
+    new (): HTMLWfPropertyEditorTextElement;
   };
 
   interface HTMLWfReadLineElement extends Components.WfReadLine, HTMLStencilElement {}
@@ -387,7 +399,7 @@ declare global {
     'wf-designer-host': HTMLWfDesignerHostElement;
     'wf-export-button': HTMLWfExportButtonElement;
     'wf-field-editor-expression': HTMLWfFieldEditorExpressionElement;
-    'wf-field-editor-text': HTMLWfFieldEditorTextElement;
+    'wf-field-editor-list': HTMLWfFieldEditorListElement;
     'wf-fork': HTMLWfForkElement;
     'wf-http-request-event': HTMLWfHttpRequestEventElement;
     'wf-http-response-task': HTMLWfHttpResponseTaskElement;
@@ -396,6 +408,7 @@ declare global {
     'wf-import-export': HTMLWfImportExportElement;
     'wf-log': HTMLWfLogElement;
     'wf-new-workflow-button': HTMLWfNewWorkflowButtonElement;
+    'wf-property-editor-text': HTMLWfPropertyEditorTextElement;
     'wf-read-line': HTMLWfReadLineElement;
     'wf-receive-masstransit-message': HTMLWfReceiveMasstransitMessageElement;
     'wf-send-email': HTMLWfSendEmailElement;
@@ -476,11 +489,11 @@ declare namespace LocalJSX {
   }
   interface WfFieldEditorExpression extends JSXBase.HTMLAttributes<HTMLWfFieldEditorExpressionElement> {
     'propertyDescriptor'?: ActivityPropertyDescriptor;
-    'propertyValue'?: any;
+    'propertyValue'?: WorkflowExpression;
   }
-  interface WfFieldEditorText extends JSXBase.HTMLAttributes<HTMLWfFieldEditorTextElement> {
+  interface WfFieldEditorList extends JSXBase.HTMLAttributes<HTMLWfFieldEditorListElement> {
     'propertyDescriptor'?: ActivityPropertyDescriptor;
-    'propertyValue'?: any;
+    'propertyValue'?: Array<any>;
   }
   interface WfFork extends JSXBase.HTMLAttributes<HTMLWfForkElement> {
     'category'?: string;
@@ -518,6 +531,10 @@ declare namespace LocalJSX {
   }
   interface WfNewWorkflowButton extends JSXBase.HTMLAttributes<HTMLWfNewWorkflowButtonElement> {
     'onNew-workflow'?: (event: CustomEvent<any>) => void;
+  }
+  interface WfPropertyEditorText extends JSXBase.HTMLAttributes<HTMLWfPropertyEditorTextElement> {
+    'propertyDescriptor'?: ActivityPropertyDescriptor;
+    'propertyValue'?: any;
   }
   interface WfReadLine extends JSXBase.HTMLAttributes<HTMLWfReadLineElement> {
     'category'?: string;
@@ -584,7 +601,7 @@ declare namespace LocalJSX {
     'wf-designer-host': WfDesignerHost;
     'wf-export-button': WfExportButton;
     'wf-field-editor-expression': WfFieldEditorExpression;
-    'wf-field-editor-text': WfFieldEditorText;
+    'wf-field-editor-list': WfFieldEditorList;
     'wf-fork': WfFork;
     'wf-http-request-event': WfHttpRequestEvent;
     'wf-http-response-task': WfHttpResponseTask;
@@ -593,6 +610,7 @@ declare namespace LocalJSX {
     'wf-import-export': WfImportExport;
     'wf-log': WfLog;
     'wf-new-workflow-button': WfNewWorkflowButton;
+    'wf-property-editor-text': WfPropertyEditorText;
     'wf-read-line': WfReadLine;
     'wf-receive-masstransit-message': WfReceiveMasstransitMessage;
     'wf-send-email': WfSendEmail;
