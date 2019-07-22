@@ -37,8 +37,7 @@ export class JsPlumbUtils {
       connector: ['Flowchart', {stub: [40, 60], gap: 0, cornerRadius: 5, alwaysRespectStubs: true}],
       connectorStyle: {
         strokeWidth: 2,
-        stroke: '#999999',
-        fill: 'white',
+        stroke: '#999999'
       },
       hoverPaintStyle: {
         fill: stroke,
@@ -46,8 +45,7 @@ export class JsPlumbUtils {
       },
       connectorHoverStyle: {
         strokeWidth: 3,
-        stroke: stroke,
-        fill: 'white'
+        stroke: stroke
       },
       connectorOverlays: [['Label', {location: [3, -1.5], cssClass: 'endpointSourceLabel'}]],
       dragOptions: {},
