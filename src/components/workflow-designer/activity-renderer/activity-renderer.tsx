@@ -1,4 +1,4 @@
-import { Component, h, Host, Prop } from '@stencil/core';
+import { Component, h, Host, Method, Prop } from '@stencil/core';
 import {
   Activity,
   ActivityDefinition,
@@ -7,6 +7,7 @@ import {
   RenderResult
 } from "../../../models";
 import ActivityManager from '../../../services/activity-manager';
+import DisplayManager from '../../../services/display-manager';
 
 @Component({
   tag: 'wf-activity-renderer',
@@ -46,7 +47,7 @@ export class ActivityRenderer {
     return (
       <div>
         <h5>{ definition.displayName }</h5>
-        <p innerHTML={ result.description }/>
+        <p innerHTML={ result.description } />
       </div>
     );
   }
@@ -58,27 +59,25 @@ export class ActivityRenderer {
 
     return (
       <Host>
-        { properties.map(x => {
-          let propertyValue = activity.state[x.name];
-
-          if (!propertyValue && !!x.defaultValue)
-            propertyValue = x.defaultValue();
-
-          return (<div class="form-group">
-            <label htmlFor={ x.name }>{ x.label }</label>
-            <input id={ x.name } name={ x.name } type="text" class="form-control" value={ propertyValue } />
-            { this.renderHint(x) }
-          </div>);
+        { properties.map(property => {
+          const html = DisplayManager.displayEditor(activity, property);
+          return <div innerHTML={ html } />
         })
         }
       </Host>
     );
   }
 
-  renderHint(propertyDescriptor: ActivityPropertyDescriptor): RenderResult {
-    if (!propertyDescriptor.hint)
-      return null;
+  @Method()
+  async updateEditor(formData: FormData): Promise<Activity> {
+    const activity = { ...this.activity };
+    const definition = this.activityDefinition;
+    const properties = definition.properties;
 
-    return <small class="form-text text-muted">{ propertyDescriptor.hint }</small>;
+    for (const property of properties) {
+      DisplayManager.updateEditor(activity, property, formData);
+    }
+
+    return activity;
   }
 }

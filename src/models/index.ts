@@ -12,3 +12,4 @@ export * from './imported-workflow-data';
 export * from './render-result';
 export * from './render-designer-result';
 export * from './point';
+export * from './workflow-expression';

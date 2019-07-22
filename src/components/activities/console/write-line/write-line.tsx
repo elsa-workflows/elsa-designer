@@ -54,7 +54,7 @@ export class WriteLine {
         category: this.category,
         properties: [{
           name: 'textExpression',
-          type: 'text',
+          type: 'expression',
           label: 'Text',
           hint: 'The text to write.'
         }],

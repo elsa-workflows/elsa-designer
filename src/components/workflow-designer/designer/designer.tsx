@@ -22,6 +22,7 @@ import {
   ActivityDefinitionMap
 } from "../../../models";
 import { addActivity, loadWorkflow, newWorkflow } from "../../../redux/actions";
+import { ComponentHelper } from "../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-designer',
@@ -30,7 +31,7 @@ import { addActivity, loadWorkflow, newWorkflow } from "../../../redux/actions";
 })
 export class Designer {
 
-  constructor(){
+  constructor() {
     this.jsPlumb = JsPlumbUtils.createInstance(this.elem());
   }
 
@@ -105,6 +106,7 @@ export class Designer {
   private elem = (): HTMLElement => this.el;
 
   async componentWillLoad() {
+    await ComponentHelper.rootComponentReady();
     const activities = Array.from(this.elem().querySelectorAll('wf-activity')).map(x => ActivityInstance.getModel(x));
     const connections = Array.from(this.elem().querySelectorAll('wf-connection')).map(x => ConnectionComponent.getModel(x));
 
@@ -140,7 +142,8 @@ export class Designer {
             <div id={ `wf-activity-${ activity.id }` } data-activity-id={ activity.id } class="activity" style={ styles } onDblClick={ () => this.onEditActivity(activity) } onContextMenu={ (e) => this.onActivityContextMenu(e, activity) }>
               <wf-activity-renderer activity={ activity } activityDefinition={ model.definition } displayMode={ ActivityDisplayMode.Design } />
             </div>);
-        }) }
+          })
+        }
         <wf-context-menu target={ this.elem() }>
           <wf-context-menu-item text="Add Activity" onClick={ this.onAddActivityClick } />
         </wf-context-menu>
@@ -213,7 +216,7 @@ export class Designer {
         if (!hasDragged)
           return;
 
-        const activity = {...this.findActivityByElement(element)};
+        const activity = { ...this.findActivityByElement(element) };
         activity.left = params.pos[0];
         activity.top = params.pos[1];
 
@@ -273,7 +276,7 @@ export class Designer {
     const activities = [...this.workflow.activities];
     const index = activities.findIndex(x => x.id == activity.id);
 
-    activities[index] = {...activity};
+    activities[index] = { ...activity };
 
     await this.loadWorkflow({ ...this.workflow, activities });
   };

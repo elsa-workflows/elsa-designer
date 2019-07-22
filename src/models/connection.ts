@@ -1,5 +1,5 @@
 export interface Connection {
-  sourceActivityId: string
-  destinationActivityId: string
-  outcome: string
+  sourceActivityId: string;
+  destinationActivityId: string;
+  outcome: string;
 }

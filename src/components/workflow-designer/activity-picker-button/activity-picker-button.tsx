@@ -3,7 +3,7 @@ import { Component, h, Event, EventEmitter } from '@stencil/core';
 @Component({
   tag: 'wf-activity-picker-button',
   styleUrl: 'activity-picker-button.scss',
-  shadow: true
+  shadow: false
 })
 export class ActivityPicker {
 

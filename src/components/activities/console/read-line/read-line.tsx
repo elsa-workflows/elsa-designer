@@ -17,7 +17,7 @@ export class ReadLine {
   @Prop({ reflect: true })
   type: string = "ReadLine";
 
-  @Prop({ reflect: true, attribute: 'display-name' })
+  @Prop({ reflect: true, attr: 'display-name' })
   displayName: string = "Read Line";
 
   @Prop({ reflect: true })

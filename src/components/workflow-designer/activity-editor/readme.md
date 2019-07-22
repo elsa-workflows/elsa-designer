@@ -30,6 +30,9 @@
 ```mermaid
 graph TD;
   wf-activity-editor --> wf-activity-renderer
+  wf-activity-renderer --> wf-field-editor-expression
+  wf-activity-renderer --> wf-field-editor-text
+  wf-activity-renderer --> wf-field-editor-list
   style wf-activity-editor fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

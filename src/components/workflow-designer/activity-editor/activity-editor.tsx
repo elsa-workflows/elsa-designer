@@ -1,16 +1,15 @@
 import { Component, Element, h, Event, EventEmitter, Prop, State } from '@stencil/core';
 import { Activity, ActivityDefinition, ActivityDisplayMode } from "../../../models";
-import { FormUpdater } from "../../../utils";
-import $ from "jquery";
-import 'bootstrap';
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../redux/reducers";
 import { Action } from "../../../redux/actions";
+import ActivityManager from '../../../services/activity-manager';
+import { ComponentHelper } from "../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-activity-editor',
   styleUrl: 'activity-editor.scss',
-  shadow: true
+  shadow: false
 })
 export class ActivityEditor {
 
@@ -33,8 +32,11 @@ export class ActivityEditor {
   submit: EventEmitter;
 
   modal: HTMLElement;
+  renderer: HTMLWfActivityRendererElement;
 
-  componentDidLoad() {
+  async componentWillLoad() {
+    await ComponentHelper.rootComponentReady();
+
     this.store.mapStateToProps(this, state => {
       return {
         activityDefinitions: state.activityDefinitions
@@ -47,14 +49,13 @@ export class ActivityEditor {
 
     const form: any = e.target;
     const formData = new FormData(form);
-    const updateEditor = FormUpdater.updateEditor;
-    const updatedActivity: Activity = updateEditor(this.activity, formData);
+    const updatedActivity = await this.renderer.updateEditor(formData);
     this.submit.emit(updatedActivity);
     this.show = false;
   }
 
   componentDidRender(){
-    const modal = $(this.el.shadowRoot.querySelector('.modal'));
+    const modal = $(this.el.querySelector('.modal'));
     const action = this.show ? 'show' : 'hide';
     modal.modal(action);
   }
@@ -88,7 +89,7 @@ export class ActivityEditor {
                   </button>
                 </div>
                 <div class="modal-body">
-                  <wf-activity-renderer activity={ activity } activityDefinition={ activityDefinition } displayMode={ ActivityDisplayMode.Edit } />
+                  <wf-activity-renderer activity={ activity } activityDefinition={ activityDefinition } displayMode={ ActivityDisplayMode.Edit }  ref={x => this.renderer = x} />
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

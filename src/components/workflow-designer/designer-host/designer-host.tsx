@@ -8,6 +8,10 @@ import {
 import { configureStore } from "../../../redux/store";
 import '@stencil/redux'
 import { Store } from "@stencil/redux";
+import DisplayManager from '../../../services/display-manager';
+import { TextFieldDriver } from "../../../drivers/text-field-driver";
+import { ExpressionFieldDriver } from "../../../drivers/expression-field-driver";
+import { ListFieldDriver } from "../../../drivers/list-field-driver";
 
 @Component({
   tag: 'wf-designer-host',
@@ -86,9 +90,13 @@ export class DesignerHost {
         connections: []
       }
     }));
+
+    DisplayManager.addDriver('text', new TextFieldDriver());
+    DisplayManager.addDriver('expression', new ExpressionFieldDriver());
+    DisplayManager.addDriver('list', new ListFieldDriver());
   }
 
-  async componentDidLoad(){
+  componentDidLoad(){
     this.activityPicker = this.el.querySelector<HTMLWfActivityPickerElement>('wf-activity-picker');
     this.activityEditor = this.el.querySelector<HTMLWfActivityEditorElement>('wf-activity-editor');
     this.designer = this.el.querySelector<HTMLWfDesignerElement>('wf-designer');

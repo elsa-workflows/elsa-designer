@@ -53,6 +53,7 @@ export namespace Components {
     'activity': Activity;
     'activityDefinition': ActivityDefinition;
     'displayMode': ActivityDisplayMode;
+    'updateEditor': (formData: FormData) => Promise<Activity>;
   }
   interface WfConnection {
     'destinationActivityId': string;
@@ -82,6 +83,13 @@ export namespace Components {
     'onReady': any;
   }
   interface WfExportButton {}
+  interface WfExpressionField {
+    'hint': string;
+    'label': string;
+    'name': string;
+    'syntax': string;
+    'value': string;
+  }
   interface WfFork {
     'category': string;
     'description': string;
@@ -100,10 +108,22 @@ export namespace Components {
     'displayName': string;
     'type': string;
   }
+  interface WfIfElse {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
   interface WfImportButton {}
   interface WfImportExport {
     'export': (designer: HTMLWfDesignerElement, formatDescriptor: WorkflowFormatDescriptor) => Promise<void>;
     'import': (designer: HTMLWfDesignerElement, data: ImportedWorkflowData) => Promise<void>;
+  }
+  interface WfListField {
+    'hint': string;
+    'items': string;
+    'label': string;
+    'name': string;
   }
   interface WfLog {
     'category': string;
@@ -141,6 +161,18 @@ export namespace Components {
     'description': string;
     'displayName': string;
     'type': string;
+  }
+  interface WfSwitch {
+    'category': string;
+    'description': string;
+    'displayName': string;
+    'type': string;
+  }
+  interface WfTextField {
+    'hint': string;
+    'label': string;
+    'name': string;
+    'value': string;
   }
   interface WfTimerEvent {
     'category': string;
@@ -243,6 +275,12 @@ declare global {
     new (): HTMLWfExportButtonElement;
   };
 
+  interface HTMLWfExpressionFieldElement extends Components.WfExpressionField, HTMLStencilElement {}
+  var HTMLWfExpressionFieldElement: {
+    prototype: HTMLWfExpressionFieldElement;
+    new (): HTMLWfExpressionFieldElement;
+  };
+
   interface HTMLWfForkElement extends Components.WfFork, HTMLStencilElement {}
   var HTMLWfForkElement: {
     prototype: HTMLWfForkElement;
@@ -261,6 +299,12 @@ declare global {
     new (): HTMLWfHttpResponseTaskElement;
   };
 
+  interface HTMLWfIfElseElement extends Components.WfIfElse, HTMLStencilElement {}
+  var HTMLWfIfElseElement: {
+    prototype: HTMLWfIfElseElement;
+    new (): HTMLWfIfElseElement;
+  };
+
   interface HTMLWfImportButtonElement extends Components.WfImportButton, HTMLStencilElement {}
   var HTMLWfImportButtonElement: {
     prototype: HTMLWfImportButtonElement;
@@ -271,6 +315,12 @@ declare global {
   var HTMLWfImportExportElement: {
     prototype: HTMLWfImportExportElement;
     new (): HTMLWfImportExportElement;
+  };
+
+  interface HTMLWfListFieldElement extends Components.WfListField, HTMLStencilElement {}
+  var HTMLWfListFieldElement: {
+    prototype: HTMLWfListFieldElement;
+    new (): HTMLWfListFieldElement;
   };
 
   interface HTMLWfLogElement extends Components.WfLog, HTMLStencilElement {}
@@ -315,6 +365,18 @@ declare global {
     new (): HTMLWfSetVariableElement;
   };
 
+  interface HTMLWfSwitchElement extends Components.WfSwitch, HTMLStencilElement {}
+  var HTMLWfSwitchElement: {
+    prototype: HTMLWfSwitchElement;
+    new (): HTMLWfSwitchElement;
+  };
+
+  interface HTMLWfTextFieldElement extends Components.WfTextField, HTMLStencilElement {}
+  var HTMLWfTextFieldElement: {
+    prototype: HTMLWfTextFieldElement;
+    new (): HTMLWfTextFieldElement;
+  };
+
   interface HTMLWfTimerEventElement extends Components.WfTimerEvent, HTMLStencilElement {}
   var HTMLWfTimerEventElement: {
     prototype: HTMLWfTimerEventElement;
@@ -341,11 +403,14 @@ declare global {
     'wf-designer': HTMLWfDesignerElement;
     'wf-designer-host': HTMLWfDesignerHostElement;
     'wf-export-button': HTMLWfExportButtonElement;
+    'wf-expression-field': HTMLWfExpressionFieldElement;
     'wf-fork': HTMLWfForkElement;
     'wf-http-request-event': HTMLWfHttpRequestEventElement;
     'wf-http-response-task': HTMLWfHttpResponseTaskElement;
+    'wf-if-else': HTMLWfIfElseElement;
     'wf-import-button': HTMLWfImportButtonElement;
     'wf-import-export': HTMLWfImportExportElement;
+    'wf-list-field': HTMLWfListFieldElement;
     'wf-log': HTMLWfLogElement;
     'wf-new-workflow-button': HTMLWfNewWorkflowButtonElement;
     'wf-read-line': HTMLWfReadLineElement;
@@ -353,6 +418,8 @@ declare global {
     'wf-send-email': HTMLWfSendEmailElement;
     'wf-send-masstransit-message': HTMLWfSendMasstransitMessageElement;
     'wf-set-variable': HTMLWfSetVariableElement;
+    'wf-switch': HTMLWfSwitchElement;
+    'wf-text-field': HTMLWfTextFieldElement;
     'wf-timer-event': HTMLWfTimerEventElement;
     'wf-write-line': HTMLWfWriteLineElement;
   }
@@ -425,6 +492,13 @@ declare namespace LocalJSX {
   interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {
     'onExport-workflow'?: (event: CustomEvent<any>) => void;
   }
+  interface WfExpressionField extends JSXBase.HTMLAttributes<HTMLWfExpressionFieldElement> {
+    'hint'?: string;
+    'label'?: string;
+    'name'?: string;
+    'syntax'?: string;
+    'value'?: string;
+  }
   interface WfFork extends JSXBase.HTMLAttributes<HTMLWfForkElement> {
     'category'?: string;
     'description'?: string;
@@ -443,10 +517,22 @@ declare namespace LocalJSX {
     'displayName'?: string;
     'type'?: string;
   }
+  interface WfIfElse extends JSXBase.HTMLAttributes<HTMLWfIfElseElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
+  }
   interface WfImportButton extends JSXBase.HTMLAttributes<HTMLWfImportButtonElement> {
     'onImport-workflow'?: (event: CustomEvent<any>) => void;
   }
   interface WfImportExport extends JSXBase.HTMLAttributes<HTMLWfImportExportElement> {}
+  interface WfListField extends JSXBase.HTMLAttributes<HTMLWfListFieldElement> {
+    'hint'?: string;
+    'items'?: string;
+    'label'?: string;
+    'name'?: string;
+  }
   interface WfLog extends JSXBase.HTMLAttributes<HTMLWfLogElement> {
     'category'?: string;
     'description'?: string;
@@ -486,6 +572,18 @@ declare namespace LocalJSX {
     'displayName'?: string;
     'type'?: string;
   }
+  interface WfSwitch extends JSXBase.HTMLAttributes<HTMLWfSwitchElement> {
+    'category'?: string;
+    'description'?: string;
+    'displayName'?: string;
+    'type'?: string;
+  }
+  interface WfTextField extends JSXBase.HTMLAttributes<HTMLWfTextFieldElement> {
+    'hint'?: string;
+    'label'?: string;
+    'name'?: string;
+    'value'?: string;
+  }
   interface WfTimerEvent extends JSXBase.HTMLAttributes<HTMLWfTimerEventElement> {
     'category'?: string;
     'description'?: string;
@@ -514,11 +612,14 @@ declare namespace LocalJSX {
     'wf-designer': WfDesigner;
     'wf-designer-host': WfDesignerHost;
     'wf-export-button': WfExportButton;
+    'wf-expression-field': WfExpressionField;
     'wf-fork': WfFork;
     'wf-http-request-event': WfHttpRequestEvent;
     'wf-http-response-task': WfHttpResponseTask;
+    'wf-if-else': WfIfElse;
     'wf-import-button': WfImportButton;
     'wf-import-export': WfImportExport;
+    'wf-list-field': WfListField;
     'wf-log': WfLog;
     'wf-new-workflow-button': WfNewWorkflowButton;
     'wf-read-line': WfReadLine;
@@ -526,6 +627,8 @@ declare namespace LocalJSX {
     'wf-send-email': WfSendEmail;
     'wf-send-masstransit-message': WfSendMasstransitMessage;
     'wf-set-variable': WfSetVariable;
+    'wf-switch': WfSwitch;
+    'wf-text-field': WfTextField;
     'wf-timer-event': WfTimerEvent;
     'wf-write-line': WfWriteLine;
   }

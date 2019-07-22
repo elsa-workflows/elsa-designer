@@ -1,4 +1,4 @@
-import {Component, Prop} from '@stencil/core';
+import { Component, Prop } from '@stencil/core';
 import { Activity, ActivityDefinition, RenderDesignerResult } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
@@ -7,36 +7,44 @@ import ActivityManager from '../../../../services/activity-manager';
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
 
 @Component({
-  tag: 'wf-log',
+  tag: 'wf-if-else',
   shadow: true
 })
-export class Log {
+export class IfElse {
 
   @Prop({ context: 'store' })
   store: Store<RootState, Action>;
 
-  @Prop({reflect: true})
-  type: string = "Log";
+  @Prop({ reflect: true })
+  type: string = 'IfElse';
 
-  @Prop({reflect: true})
-  displayName: string = "Log";
+  @Prop({ reflect: true })
+  displayName: string = 'If/Else';
 
-  @Prop({reflect: true})
-  description: string = "Log a message.";
+  @Prop({ reflect: true })
+  description: string = 'Evaluate a Boolean expression and continue execution depending on the result.';
 
-  @Prop({reflect: true})
-  category: string = "Primitives";
+  @Prop({ reflect: true })
+  category: string = 'Control Flow';
 
   addActivityDefinition!: typeof addActivityDefinition;
 
   static onRenderDesigner(activity: Activity, definition: ActivityDefinition): RenderDesignerResult {
-    const message = activity.state.message;
+    const expression = activity.state.expression;
 
     return {
-      description: !!message
-        ? `Log <strong>${ message }</strong>.`
+      description: !!expression
+        ? `Evaluate <strong>${expression}</strong> and continue execution depending on the result.`
         : definition.description
     };
+  }
+
+  static updateEditor(activity: Activity, formData: FormData): Activity {
+    const newState = { ...activity.state };
+
+    newState.expression = formData.get('expression');
+
+    return { ...activity, state: newState };
   }
 
   async componentWillLoad() {
@@ -44,7 +52,7 @@ export class Log {
     this.store.mapDispatchToProps(this, { addActivityDefinition });
 
     ActivityManager.addHandler(this.type, {
-      renderDesigner: Log.onRenderDesigner
+      renderDesigner: IfElse.onRenderDesigner,
     })
   }
 
@@ -55,14 +63,12 @@ export class Log {
         description: this.description,
         category: this.category,
         properties: [{
-          name: 'message',
-          type: 'text',
-          label: 'Message',
-          hint: 'The text to log.'
+          name: 'expression',
+          type: 'expression',
+          label: 'Expression',
+          hint: 'The expression to evaluate. The evaluated value will be used to switch on.'
         }],
-        getOutcomes: (_: Activity): string[] => {
-          return ['Done'];
-        }
+        getOutcomes: (_: Activity): string[] => ['True', 'False']
       }
     );
   }

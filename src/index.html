@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0">
   <title>Stencil Component Starter</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <script type="module" src="/build/elsa-workflow-designer.esm.js"></script>
   <script nomodule src="/build/elsa-workflow-designer.js"></script>
 
@@ -29,10 +32,10 @@
 </head>
 <body>
 
-<wf-designer-host id="designerHost" onready="initDesigner(this)">
+<wf-designer-host id="designerHost">
 
   <!-- Activity Library -->
-  <wf-activity-library id="activityLibrary" onready="initLibrary(this)">
+  <wf-activity-library id="activityLibrary">
     <wf-write-line></wf-write-line>
     <wf-read-line></wf-read-line>
     <wf-log></wf-log>
@@ -44,6 +47,8 @@
     <wf-fork></wf-fork>
     <wf-send-email></wf-send-email>
     <wf-timer-event></wf-timer-event>
+    <wf-switch></wf-switch>
+    <wf-if-else></wf-if-else>
   </wf-activity-library>
 
   <!-- Activity Picker -->
@@ -77,30 +82,6 @@
   <!-- Workflow Designer -->
   <wf-designer></wf-designer>
 </wf-designer-host>
-
-<script type="text/javascript">
-
-  function initDesigner(host) {
-    host.activityPicker.show();
-  }
-
-  function initLibrary(library) {
-    library.registerActivity({
-      type: 'Custom',
-      displayName: 'Custom Activity',
-      description: 'My custom Activity',
-      category: 'Custom',
-      properties: [{
-        name: 'property1',
-        type: 'text',
-        label: 'Property 1',
-        hint: 'Some helpful hint about this property'
-      }],
-      getOutcomes: function(a) { return ['Outcome 1', 'Outcome 2'] }
-    });
-  }
-
-</script>
 
 </body>
 </html>
