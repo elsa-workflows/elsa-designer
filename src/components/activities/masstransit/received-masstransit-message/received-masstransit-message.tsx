@@ -3,6 +3,7 @@ import { Activity } from "../../../../models";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
+import { ComponentHelper } from "../../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-receive-masstransit-message',
@@ -27,7 +28,8 @@ export class ReceiveMassTransitMessage {
 
   addActivityDefinition!: typeof addActivityDefinition;
 
-  componentWillLoad() {
+  async componentWillLoad() {
+    await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 

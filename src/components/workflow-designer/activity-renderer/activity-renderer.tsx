@@ -7,6 +7,7 @@ import {
   RenderResult
 } from "../../../models";
 import ActivityManager from '../../../services/activity-manager';
+import DisplayManager from '../../../services/display-manager';
 
 @Component({
   tag: 'wf-activity-renderer',
@@ -58,18 +59,9 @@ export class ActivityRenderer {
 
     return (
       <Host>
-        { properties.map(x => {
-          let propertyValue = activity.state[x.name];
-
-          if (!propertyValue && !!x.defaultValue)
-            propertyValue = x.defaultValue();
-
-          return (
-            <div class="form-group">
-              { this.renderInput(activity, x, propertyValue) }
-              { this.renderHint(x) }
-            </div>
-          );
+        { properties.map(property => {
+          const html = DisplayManager.displayEditor(activity, property);
+          return <div innerHTML={ html } />
         })
         }
       </Host>
@@ -77,82 +69,15 @@ export class ActivityRenderer {
   }
 
   @Method()
-  async updateEditor(formData: FormData) : Promise<Activity> {
-    const activity = this.activity;
+  async updateEditor(formData: FormData): Promise<Activity> {
+    const activity = { ...this.activity };
     const definition = this.activityDefinition;
     const properties = definition.properties;
-    const newState = {...activity.state};
 
-    for(const property of properties)
-    {
-      this.updateProperty(newState, property, formData);
+    for (const property of properties) {
+      DisplayManager.updateEditor(activity, property, formData);
     }
 
-    debugger;
-    return { ...activity, state: newState }
+    return activity;
   }
-
-  renderInput = (activity: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
-    switch (property.type) {
-      case 'expression':
-        return this.renderExpressionInput(activity, property, propertyValue);
-      case 'list':
-        return this.renderListInput(activity, property, propertyValue);
-      case 'text':
-      default:
-        return this.renderTextInput(activity, property, propertyValue);
-    }
-  };
-
-  updateProperty = (state: any, property: ActivityPropertyDescriptor, formData: FormData) => {
-    switch (property.type) {
-      case 'expression':
-        this.updateExpressionInput(state, property, formData);
-        break;
-      case 'list':
-        this.updateListInput(state, property, formData);
-        break;
-      case 'text':
-      default:
-        this.updateTextInput(state, property, formData);
-    }
-  };
-
-  renderExpressionInput = (_: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
-    return (<wf-field-editor-expression propertyDescriptor={ property } propertyValue={ propertyValue } />);
-  };
-
-  updateExpressionInput = (state: any, property: ActivityPropertyDescriptor, formData: FormData) => {
-    const expressionPropertyName = `${property.name}_expression`;
-    const syntaxPropertyName = `${property.name}_syntax`;
-
-    state[expressionPropertyName] = formData.get(expressionPropertyName);
-    state[syntaxPropertyName] = formData.get(syntaxPropertyName);
-  };
-
-  renderTextInput = (_: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
-    return (<wf-property-editor-text propertyDescriptor={ property } propertyValue={ propertyValue } />);
-  };
-
-  updateTextInput = (state: any, property: ActivityPropertyDescriptor, formData: FormData) => {
-    state[property.name] = formData.get(property.name);
-  };
-
-  renderListInput = (_: Activity, property: ActivityPropertyDescriptor, propertyValue: any): RenderResult => {
-    debugger;
-    return (<wf-field-editor-list propertyDescriptor={ property } propertyValue={ propertyValue } />);
-  };
-
-  updateListInput = (state: any, property: ActivityPropertyDescriptor, formData: FormData) => {
-    const formValue = formData.get(property.name);
-    const value = formValue ? formValue.toString() : '';
-    state[property.name] = value.split(',').map(x => x.trim());
-  };
-
-  renderHint = (propertyDescriptor: ActivityPropertyDescriptor): RenderResult => {
-    if (!propertyDescriptor.hint)
-      return null;
-
-    return <small class="form-text text-muted">{ propertyDescriptor.hint }</small>;
-  };
 }

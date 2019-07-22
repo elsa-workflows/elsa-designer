@@ -4,6 +4,7 @@ import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import ActivityManager from '../../../../services/activity-manager';
+import { ComponentHelper } from "../../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-if-else',
@@ -46,7 +47,8 @@ export class IfElse {
     return { ...activity, state: newState };
   }
 
-  componentWillLoad() {
+  async componentWillLoad() {
+    await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
 
     ActivityManager.addHandler(this.type, {

@@ -1,9 +1,10 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity, ActivityDefinition, RenderDesignerResult} from "../../../../models";
+import { Activity, ActivityDefinition, RenderDesignerResult } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import ActivityManager from '../../../../services/activity-manager';
+import { ComponentHelper } from "../../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-switch',
@@ -38,7 +39,8 @@ export class Switch {
     };
   }
 
-  componentWillLoad() {
+  async componentWillLoad() {
+    await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
 
     ActivityManager.addHandler(this.type, {

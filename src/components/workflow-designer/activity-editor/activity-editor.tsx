@@ -49,7 +49,6 @@ export class ActivityEditor {
 
     const form: any = e.target;
     const formData = new FormData(form);
-    debugger;
     const updatedActivity = await this.renderer.updateEditor(formData);
     this.submit.emit(updatedActivity);
     this.show = false;
