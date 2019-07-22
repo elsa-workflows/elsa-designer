@@ -4,6 +4,8 @@ import { Store } from "@stencil/redux";
 import { RootState } from "../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../redux/actions";
 import { ComponentHelper } from "../../../utils/ComponentHelper";
+import ActivityManager from '../../../services/activity-manager';
+import { DefaultActivityHandler } from "../../../services/default-activity-handler";
 
 @Component({
   tag: 'wf-activity-definition',
@@ -57,5 +59,7 @@ export class ActivityDefinition {
         getOutcomes: (_: Activity): string[] => outcomes
       }
     );
+
+    ActivityManager.addHandler(this.type, new DefaultActivityHandler());
   }
 }

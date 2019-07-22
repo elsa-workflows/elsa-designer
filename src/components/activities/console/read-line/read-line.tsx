@@ -60,6 +60,10 @@ export class ReadLine {
           label: 'Variable Name',
           hint: 'The name of the variable to store the value into.'
         }],
+        designer: {
+          description: 'a => !!a.state.variableName ? `Read text from standard in and store into <strong>${ variableName }</strong>.` : \'Read text from standard in.\'',
+          outcomes: 'Done'
+        },
         getOutcomes: (_: Activity): string[] => {
           return ['Done'];
         }

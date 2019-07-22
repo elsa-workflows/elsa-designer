@@ -2,9 +2,7 @@ import { Component, h, Host, Method, Prop } from '@stencil/core';
 import {
   Activity,
   ActivityDefinition,
-  ActivityDisplayMode,
-  ActivityPropertyDescriptor,
-  RenderResult
+  ActivityDisplayMode
 } from "../../../models";
 import ActivityManager from '../../../services/activity-manager';
 import DisplayManager from '../../../services/display-manager';

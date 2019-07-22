@@ -5,6 +5,7 @@ import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import ActivityManager from '../../../../services/activity-manager';
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
+import { DefaultActivityHandler } from "../../../../services/default-activity-handler";
 
 @Component({
   tag: 'wf-write-line',
@@ -43,9 +44,11 @@ export class WriteLine {
     await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
 
-    ActivityManager.addHandler(this.type, {
-      renderDesigner: WriteLine.onRenderDesigner
-    })
+    // ActivityManager.addHandler(this.type, {
+    //   renderDesigner: WriteLine.onRenderDesigner
+    // })
+
+    ActivityManager.addHandler(this.type, new DefaultActivityHandler());
   }
 
   componentDidLoad() {
@@ -62,6 +65,9 @@ export class WriteLine {
         }],
         getOutcomes: (_: Activity): string[] => {
           return ['Done'];
+        },
+        designer: {
+          description: `x => !!x.state.textExpression ? \`Write <strong>\${ x.state.textExpression.expression }</strong> to standard out.\` : x.definition.description`
         }
       }
     );

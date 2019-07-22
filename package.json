@@ -40,18 +40,18 @@
     "@stencil/core": "1.1.7",
     "@stencil/sass": "^1.0.1",
     "@types/jquery": "^3.3.30",
-    "@stencil/redux": "^0.1.1"
-  },
-  "license": "BSD-3-Clause",
-  "dependencies": {
+    "@stencil/redux": "^0.1.1",
     "bootstrap": "^4.3.1",
     "handlebars": "^4.1.2",
     "jquery": "^3.4.1",
     "jsplumb": "^2.10.2",
     "popper.js": "^1.15.0",
-    "uuid-browser": "^3.1.0",
     "redux": "^4.0.4",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "uuid-browser": "^3.1.0"
+  },
+  "license": "BSD-3-Clause",
+  "dependencies": {
   },
   "directories": {
     "doc": "doc"
