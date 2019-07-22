@@ -3,6 +3,7 @@ import { Activity, ActivityPropertyDescriptor } from "../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../redux/actions";
+import { ComponentHelper } from "../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-activity-definition',
@@ -33,7 +34,8 @@ export class ActivityDefinition {
 
   addActivityDefinition!: typeof addActivityDefinition;
 
-  componentWillLoad(){
+  async componentWillLoad(){
+    await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
 

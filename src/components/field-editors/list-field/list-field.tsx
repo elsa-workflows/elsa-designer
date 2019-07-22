@@ -28,6 +28,7 @@ export class FieldEditorList {
       <Host>
         <label htmlFor={ name }>{ label }</label>
         <input id={ name } name={ name } type="text" class="form-control" value={ items } />
+        <small class="form-text text-muted">{ this.hint }</small>
       </Host>);
   }
 }
