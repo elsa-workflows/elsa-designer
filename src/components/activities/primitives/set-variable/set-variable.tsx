@@ -45,8 +45,8 @@ export class SetVariable {
           label: 'Variable Name',
           hint: 'The name of the variable to store the value into.'
         }, {
-          name: 'variableExpression',
-          type: 'text',
+          name: 'expression',
+          type: 'expression',
           label: 'Variable Expression',
           hint: 'An expression that evaluates to the value to store in the variable.'
         }],

@@ -4,6 +4,7 @@ import { Store } from "@stencil/redux";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import { RootState } from "../../../../redux/reducers";
 import ActivityManager from '../../../../services/activity-manager';
+import { ComponentHelper } from "../../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-read-line',
@@ -38,7 +39,8 @@ export class ReadLine {
 
   addActivityDefinition!: typeof addActivityDefinition;
 
-  componentWillLoad() {
+  async componentWillLoad() {
+    await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
 
     ActivityManager.addHandler(this.type, {
