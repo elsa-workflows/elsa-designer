@@ -1,11 +1,9 @@
-import {Component, Element, Prop} from '@stencil/core';
-import { Activity, ActivityPropertyDescriptor } from "../../../models";
+import { Component, Element, Prop } from '@stencil/core';
+import { ActivityPropertyDescriptor } from "../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../redux/actions";
 import { ComponentHelper } from "../../../utils/ComponentHelper";
-import ActivityManager from '../../../services/activity-manager';
-import { DefaultActivityHandler } from "../../../services/default-activity-handler";
 
 @Component({
   tag: 'wf-activity-definition',
@@ -16,19 +14,19 @@ export class ActivityDefinition {
   @Element()
   el: HTMLElement;
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   type: string;
 
-  @Prop({reflect: true, attribute: 'display-name'})
+  @Prop({ reflect: true, attribute: 'display-name' })
   displayName: string;
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   description: string;
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   category: string;
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   outcomes: string = "Done";
 
   @Prop({ context: 'store' })
@@ -36,7 +34,7 @@ export class ActivityDefinition {
 
   addActivityDefinition!: typeof addActivityDefinition;
 
-  async componentWillLoad(){
+  async componentWillLoad() {
     await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
@@ -56,10 +54,10 @@ export class ActivityDefinition {
         description: this.description,
         category: this.category,
         properties: properties,
-        getOutcomes: (_: Activity): string[] => outcomes
+        designer: {
+          outcomes: `[${outcomes.map(x => `'${x}', `)}]`
+        }
       }
     );
-
-    ActivityManager.addHandler(this.type, new DefaultActivityHandler());
   }
 }

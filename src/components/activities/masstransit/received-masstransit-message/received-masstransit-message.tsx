@@ -1,9 +1,9 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity } from "../../../../models";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
+import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
   tag: 'wf-receive-masstransit-message',
@@ -45,8 +45,8 @@ export class ReceiveMassTransitMessage {
           label: 'Message Type',
           hint: 'The assembly-qualified type name of the message to receive.'
         }],
-        getOutcomes: (_: Activity): string[] => {
-          return ['Done'];
+        designer: {
+          outcomes: [OutcomeNames.Done]
         }
       }
     );

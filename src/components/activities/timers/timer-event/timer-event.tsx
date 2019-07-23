@@ -1,9 +1,9 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
+import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
   tag: 'wf-timer-event',
@@ -41,14 +41,15 @@ export class TimerEvent {
         category: this.category,
         properties: [
           {
-            name: 'timeoutExpression',
-            type: 'workflow-expression',
+            name: 'expression',
+            type: 'expression',
             label: 'Timeout Expression',
             hint: 'The amount of time to wait before this timer event is triggered. Format: \'d.HH:mm:ss\'.',
             defaultValue: () => '00:05:00'
           }],
-        getOutcomes: (_: Activity): string[] => {
-          return ['Done'];
+        designer: {
+          description: 'x => !!x.state.expression ? `Triggers after <strong>${ x.state.expression.expression }</strong>` : x.definition.description',
+          outcomes: [OutcomeNames.Done]
         }
       }
     );

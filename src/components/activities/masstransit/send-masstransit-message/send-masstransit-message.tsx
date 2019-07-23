@@ -1,9 +1,9 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity} from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
+import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
   tag: 'wf-send-masstransit-message',
@@ -47,12 +47,12 @@ export class SendMassTransitMessage {
         },
           {
             name: 'message',
-            type: 'workflow-expression',
+            type: 'expression',
             label: 'Message',
             hint: 'An expression that evaluates to the message to send.'
           }],
-        getOutcomes: (_: Activity): string[] => {
-          return ['Done'];
+        designer: {
+          outcomes: [OutcomeNames.Done]
         }
       }
     );
