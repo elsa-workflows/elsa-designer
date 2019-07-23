@@ -42,14 +42,25 @@ Example:
 
 ```html
 <!-- Designer Host -->
-<wf-designer-host>
+<wf-designer-host id="designerHost">
 
   <!-- Activity Library -->
-  <wf-activity-library>
+  <wf-activity-library id="activityLibrary">
     <wf-write-line></wf-write-line>
     <wf-read-line></wf-read-line>
     <wf-log></wf-log>
     <wf-set-variable></wf-set-variable>
+    <wf-http-request-event></wf-http-request-event>
+    <wf-http-request-action></wf-http-request-action>
+    <wf-http-response-action></wf-http-response-action>
+    <wf-send-masstransit-message></wf-send-masstransit-message>
+    <wf-receive-masstransit-message></wf-receive-masstransit-message>
+    <wf-fork></wf-fork>
+    <wf-join></wf-join>
+    <wf-send-email></wf-send-email>
+    <wf-timer-event></wf-timer-event>
+    <wf-switch></wf-switch>
+    <wf-if-else></wf-if-else>
     <wf-activity-definition type="CustomActivity" display-name="Custom Activity" category="Custom" description="A sample custom activity definition" outcomes="Left, Right">
       <wf-activity-definition-property name="firstName" type="expression" label="First Name" hint="Enter your first name"></wf-activity-definition-property>
       <wf-activity-definition-property name="lastName" type="expression" label="Last Name" hint="Enter your last name"></wf-activity-definition-property>
@@ -57,22 +68,36 @@ Example:
     </wf-activity-definition>
   </wf-activity-library>
 
-<!-- Activity Picker -->
-<wf-activity-picker></wf-activity-picker>
+  <!-- Activity Picker -->
+  <wf-activity-picker id="activityPicker"></wf-activity-picker>
 
   <!-- Activity Editor -->
   <wf-activity-editor></wf-activity-editor>
 
+  <!-- Import/Export -->
+  <wf-import-export></wf-import-export>
+
   <div id="header" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-dark border-bottom shadow-sm">
     <h5 class="my-0 mr-md-auto font-weight-normal">Workflow Designer</h5>
 
-    <!-- Activity Picker Button-->
+    <ul class="nav">
+      <li class="nav-item">
+        <wf-activity-picker-button>Add Activity</wf-activity-picker-button>
+      </li>
+      <li class="nav-item">
+        <wf-export-button></wf-export-button>
+      </li>
+      <li class="nav-item">
+        <wf-import-button></wf-import-button>
+      </li>
+      <li class="nav-item">
+        <wf-new-workflow-button></wf-new-workflow-button>
+      </li>
+    </ul>
   </div>
-    <wf-activity-picker-button></wf-activity-picker-button>
 
-  <!-- Designer -->
-  <wf-designer id="workflowDesigner">
-  </wf-designer>
+  <!-- Workflow Designer -->
+  <wf-designer></wf-designer>
 </wf-designer-host>
 ```
 
@@ -136,4 +161,37 @@ The Activity Editor component renders a Bootstrap Modal dialog that displays edi
 
 ## Custom Activities
 
-TODO: Document how to define & develop custom activities.
+All activities in Elsa Designer are declarative in nature, which means that you don't have to write code in order to define new activity types.
+This allows you for example to specify your own activities using inline HTML, an external JSON file, or even a CMS where a user can define application-specific activity types.
+
+An activity definition consists of the following attributes:
+
+- `type: string`
+- `displayName: string`
+- `description: string`
+- `category: string`
+- `properties: Array<ActivityDefinitionPropertyDescriptor>`
+
+Activity property descriptors allow you to define a set of properties that your activity is composed of.
+An activity property descriptor consists  of the following attributes:
+
+- `name: string`
+- `type: string`
+- `label: string`
+- `hint: string`
+
+### Declaring Custom Activities Using HTML
+
+Use `<wf-activity-definition>` to define new activity types. Example:  
+
+```html
+<wf-activity-definition type="CustomActivity" display-name="Custom Activity" category="Custom" description="A sample custom activity definition" outcomes="Left, Right">
+  <wf-activity-definition-property name="firstName" type="expression" label="First Name" hint="Enter your first name"></wf-activity-definition-property>
+  <wf-activity-definition-property name="lastName" type="expression" label="Last Name" hint="Enter your last name"></wf-activity-definition-property>
+  <wf-activity-definition-property name="favoriteColors" type="list" label="Favorite Colors" hint="Enter your favorite colors"></wf-activity-definition-property>
+</wf-activity-definition>
+```
+
+### Declaring Custom Activities Using JSON
+
+TODO: Describe how to register custom activity definitions using JavaScript & JSON.
