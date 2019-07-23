@@ -6,25 +6,25 @@ import { ComponentHelper } from "../../../../utils/ComponentHelper";
 import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
-  tag: 'wf-http-response-action',
+  tag: 'wf-join',
   shadow: true
 })
-export class HttpResponseAction {
+export class Fork {
 
   @Prop({ context: 'store' })
   store: Store<RootState, Action>;
 
   @Prop({ reflect: true })
-  type: string = "HttpResponseAction";
+  type: string = "Join";
 
   @Prop({ reflect: true })
-  displayName: string = "Send HTTP Response";
+  displayName: string = "Join";
 
   @Prop({ reflect: true })
-  description: string = "Send an HTTP response.";
+  description: string = "Merge workflow execution back into a single branch.";
 
   @Prop({ reflect: true })
-  category: string = "HTTP";
+  category: string = "Control Flow";
 
   addActivityDefinition!: typeof addActivityDefinition;
 
@@ -40,30 +40,13 @@ export class HttpResponseAction {
         description: this.description,
         category: this.category,
         properties: [{
-          name: 'statusCode',
+          name: 'joinMode',
           type: 'text',
-          label: 'Status Code',
-          hint: 'The HTTP status code to write.'
-        },
-          {
-            name: 'content',
-            type: 'workflow-expression',
-            label: 'Content',
-            hint: 'The HTTP content to write.'
-          },
-          {
-            name: 'contentType',
-            type: 'workflow-expression',
-            label: 'Content Type',
-            hint: 'The HTTP content type header to write.'
-          },
-          {
-            name: 'responseHeaders',
-            type: 'workflow-expression',
-            label: 'Response Headers',
-            hint: 'The headers to send along with the response. One \'header: value\' pair per line.'
-          }],
+          label: 'Join Mode',
+          hint: 'Either \'WaitAll\' or \'WaitAny\''
+        }],
         designer: {
+          description: 'x => !!x.state.joinMode ? `Merge workflow execution back into a single branch using mode <strong>${ x.state.joinMode }</strong>` : x.definition.description',
           outcomes: [OutcomeNames.Done]
         }
       }

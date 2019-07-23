@@ -6,22 +6,22 @@ import { ComponentHelper } from "../../../../utils/ComponentHelper";
 import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
-  tag: 'wf-http-response-action',
+  tag: 'wf-http-request-action',
   shadow: true
 })
-export class HttpResponseAction {
+export class HttpRequestAction {
 
   @Prop({ context: 'store' })
   store: Store<RootState, Action>;
 
   @Prop({ reflect: true })
-  type: string = "HttpResponseAction";
+  type: string = "HttpRequestAction";
 
   @Prop({ reflect: true })
-  displayName: string = "Send HTTP Response";
+  displayName: string = "Send HTTP Request";
 
   @Prop({ reflect: true })
-  description: string = "Send an HTTP response.";
+  description: string = "Send an outgoing HTTP request.";
 
   @Prop({ reflect: true })
   category: string = "HTTP";
@@ -40,31 +40,30 @@ export class HttpResponseAction {
         description: this.description,
         category: this.category,
         properties: [{
-          name: 'statusCode',
-          type: 'text',
-          label: 'Status Code',
-          hint: 'The HTTP status code to write.'
+          name: 'url',
+          type: 'uri',
+          label: 'URL',
+          hint: 'The URL to send the HTTP request to.'
         },
           {
+            name: 'method',
+            type: 'string',
+            label: 'Method',
+            hint: 'The HTTP method to use when making the request.'
+          },
+          {
             name: 'content',
-            type: 'workflow-expression',
+            type: 'expression',
             label: 'Content',
-            hint: 'The HTTP content to write.'
-          },
-          {
-            name: 'contentType',
-            type: 'workflow-expression',
-            label: 'Content Type',
-            hint: 'The HTTP content type header to write.'
-          },
-          {
-            name: 'responseHeaders',
-            type: 'workflow-expression',
-            label: 'Response Headers',
-            hint: 'The headers to send along with the response. One \'header: value\' pair per line.'
+            hint: 'The HTTP content to send along with the request.'
+          },{
+            name: 'statusCodes',
+            type: 'list',
+            label: 'Status Codes',
+            hint: 'A list of possible HTTP status codes to handle.'
           }],
         designer: {
-          outcomes: [OutcomeNames.Done]
+          outcomes: 'x => !!x.state.statusCodes ? x.state.statusCodes : []'
         }
       }
     );

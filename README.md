@@ -7,7 +7,7 @@
 Elsa is a visual programming tool that allows you to implement parts or all of your application with workflows.
 Elsa Designer is a standalone client-side web component that you can embed in your own application.
 
-![html-based workflow designer](/doc/workflow-sample-1.png)
+![html-based workflow designer](/doc/workflow-sample-2.png)
 
 ## Installing this component
 
@@ -35,6 +35,7 @@ Elsa Workflow Designer provides the following reusable web components:
 - Activity Picker
 - Activity Library
 - Activity Editor
+- Activity Definition
 
 These components work together to provide a workflow designer experience that enable you to declare what activities are available from the activity picker, and edit activities on the designer.
 Example:
@@ -49,6 +50,11 @@ Example:
     <wf-read-line></wf-read-line>
     <wf-log></wf-log>
     <wf-set-variable></wf-set-variable>
+    <wf-activity-definition type="CustomActivity" display-name="Custom Activity" category="Custom" description="A sample custom activity definition" outcomes="Left, Right">
+      <wf-activity-definition-property name="firstName" type="expression" label="First Name" hint="Enter your first name"></wf-activity-definition-property>
+      <wf-activity-definition-property name="lastName" type="expression" label="Last Name" hint="Enter your last name"></wf-activity-definition-property>
+      <wf-activity-definition-property name="favoriteColors" type="list" label="Favorite Colors" hint="Enter your favorite colors"></wf-activity-definition-property>
+    </wf-activity-definition>
   </wf-activity-library>
 
 <!-- Activity Picker -->
