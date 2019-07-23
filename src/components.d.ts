@@ -96,12 +96,6 @@ export namespace Components {
     'displayName': string;
     'type': string;
   }
-  interface WfHttpRequestAction {
-    'category': string;
-    'description': string;
-    'displayName': string;
-    'type': string;
-  }
   interface WfHttpRequestEvent {
     'category': string;
     'description': string;
@@ -124,12 +118,6 @@ export namespace Components {
   interface WfImportExport {
     'export': (designer: HTMLWfDesignerElement, formatDescriptor: WorkflowFormatDescriptor) => Promise<void>;
     'import': (designer: HTMLWfDesignerElement, data: ImportedWorkflowData) => Promise<void>;
-  }
-  interface WfJoin {
-    'category': string;
-    'description': string;
-    'displayName': string;
-    'type': string;
   }
   interface WfListField {
     'hint': string;
@@ -299,12 +287,6 @@ declare global {
     new (): HTMLWfForkElement;
   };
 
-  interface HTMLWfHttpRequestActionElement extends Components.WfHttpRequestAction, HTMLStencilElement {}
-  var HTMLWfHttpRequestActionElement: {
-    prototype: HTMLWfHttpRequestActionElement;
-    new (): HTMLWfHttpRequestActionElement;
-  };
-
   interface HTMLWfHttpRequestEventElement extends Components.WfHttpRequestEvent, HTMLStencilElement {}
   var HTMLWfHttpRequestEventElement: {
     prototype: HTMLWfHttpRequestEventElement;
@@ -333,12 +315,6 @@ declare global {
   var HTMLWfImportExportElement: {
     prototype: HTMLWfImportExportElement;
     new (): HTMLWfImportExportElement;
-  };
-
-  interface HTMLWfJoinElement extends Components.WfJoin, HTMLStencilElement {}
-  var HTMLWfJoinElement: {
-    prototype: HTMLWfJoinElement;
-    new (): HTMLWfJoinElement;
   };
 
   interface HTMLWfListFieldElement extends Components.WfListField, HTMLStencilElement {}
@@ -429,13 +405,11 @@ declare global {
     'wf-export-button': HTMLWfExportButtonElement;
     'wf-expression-field': HTMLWfExpressionFieldElement;
     'wf-fork': HTMLWfForkElement;
-    'wf-http-request-action': HTMLWfHttpRequestActionElement;
     'wf-http-request-event': HTMLWfHttpRequestEventElement;
     'wf-http-response-action': HTMLWfHttpResponseActionElement;
     'wf-if-else': HTMLWfIfElseElement;
     'wf-import-button': HTMLWfImportButtonElement;
     'wf-import-export': HTMLWfImportExportElement;
-    'wf-join': HTMLWfJoinElement;
     'wf-list-field': HTMLWfListFieldElement;
     'wf-log': HTMLWfLogElement;
     'wf-new-workflow-button': HTMLWfNewWorkflowButtonElement;
@@ -531,12 +505,6 @@ declare namespace LocalJSX {
     'displayName'?: string;
     'type'?: string;
   }
-  interface WfHttpRequestAction extends JSXBase.HTMLAttributes<HTMLWfHttpRequestActionElement> {
-    'category'?: string;
-    'description'?: string;
-    'displayName'?: string;
-    'type'?: string;
-  }
   interface WfHttpRequestEvent extends JSXBase.HTMLAttributes<HTMLWfHttpRequestEventElement> {
     'category'?: string;
     'description'?: string;
@@ -559,12 +527,6 @@ declare namespace LocalJSX {
     'onImport-workflow'?: (event: CustomEvent<any>) => void;
   }
   interface WfImportExport extends JSXBase.HTMLAttributes<HTMLWfImportExportElement> {}
-  interface WfJoin extends JSXBase.HTMLAttributes<HTMLWfJoinElement> {
-    'category'?: string;
-    'description'?: string;
-    'displayName'?: string;
-    'type'?: string;
-  }
   interface WfListField extends JSXBase.HTMLAttributes<HTMLWfListFieldElement> {
     'hint'?: string;
     'items'?: string;
@@ -652,13 +614,11 @@ declare namespace LocalJSX {
     'wf-export-button': WfExportButton;
     'wf-expression-field': WfExpressionField;
     'wf-fork': WfFork;
-    'wf-http-request-action': WfHttpRequestAction;
     'wf-http-request-event': WfHttpRequestEvent;
     'wf-http-response-action': WfHttpResponseAction;
     'wf-if-else': WfIfElse;
     'wf-import-button': WfImportButton;
     'wf-import-export': WfImportExport;
-    'wf-join': WfJoin;
     'wf-list-field': WfListField;
     'wf-log': WfLog;
     'wf-new-workflow-button': WfNewWorkflowButton;
