@@ -23,6 +23,7 @@ import {
 } from "../../../models";
 import { addActivity, loadWorkflow, newWorkflow } from "../../../redux/actions";
 import { ComponentHelper } from "../../../utils/ComponentHelper";
+import ActivityManager from '../../../services/activity-manager';
 
 @Component({
   tag: 'wf-designer',
@@ -236,7 +237,7 @@ export class Designer {
   private setupOutcomes(element: Element) {
     const activity = this.findActivityByElement(element);
     const definition = this.activityDefinitions[activity.type];
-    const outcomes = definition.getOutcomes(activity);
+    const outcomes = ActivityManager.getOutcomes(activity, definition);
 
     for (let outcome of outcomes) {
       const sourceEndpointOptions: EndpointOptions = JsPlumbUtils.getSourceEndpointOptions(activity.id, outcome);

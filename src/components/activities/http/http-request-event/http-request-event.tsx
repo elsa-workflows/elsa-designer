@@ -1,9 +1,9 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
+import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
   tag: 'wf-http-request-event',
@@ -57,8 +57,8 @@ export class HttpRequestEvent {
             label: 'Read Content',
             hint: 'Check if the HTTP request content body should be read and stored as part of the HTTP request model. The stored format depends on the content-type header.'
           }],
-        getOutcomes: (_: Activity): string[] => {
-          return ['Done'];
+        designer: {
+          outcomes: [OutcomeNames.Done]
         }
       }
     );

@@ -1,9 +1,7 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity, ActivityDefinition, RenderDesignerResult } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
-import ActivityManager from '../../../../services/activity-manager';
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
 
 @Component({
@@ -29,23 +27,9 @@ export class Switch {
 
   addActivityDefinition!: typeof addActivityDefinition;
 
-  static onRenderDesigner(activity: Activity, definition: ActivityDefinition): RenderDesignerResult {
-    const expression = activity.state.expression;
-
-    return {
-      description: !!expression
-        ? `Switch execution based on <strong>${ expression }</strong>.`
-        : definition.description
-    };
-  }
-
   async componentWillLoad() {
     await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
-
-    ActivityManager.addHandler(this.type, {
-      renderDesigner: Switch.onRenderDesigner,
-    })
   }
 
   componentDidLoad() {
@@ -66,9 +50,9 @@ export class Switch {
             label: 'Cases',
             hint: 'A comma-separated list of possible outcomes of the expression.'
           }],
-        getOutcomes: (activity: Activity): string[] => {
-          const cases = activity.state.cases as Array<object> || [];
-          return cases.map(x => x.toString());
+        designer: {
+          description: 'x => !!x.state.expression ? `Switch execution based on <strong>${ x.state.expression.expression }</strong>.` : x.definition.description',
+          outcomes: 'x => x.state.cases.map(c => c.toString())'
         }
       }
     );

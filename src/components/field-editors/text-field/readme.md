@@ -7,24 +7,13 @@
 
 ## Properties
 
-| Property             | Attribute        | Description | Type                         | Default     |
-| -------------------- | ---------------- | ----------- | ---------------------------- | ----------- |
-| `propertyDescriptor` | --               |             | `ActivityPropertyDescriptor` | `undefined` |
-| `propertyValue`      | `property-value` |             | `any`                        | `undefined` |
+| Property | Attribute | Description | Type     | Default     |
+| -------- | --------- | ----------- | -------- | ----------- |
+| `hint`   | `hint`    |             | `string` | `undefined` |
+| `label`  | `label`   |             | `string` | `undefined` |
+| `name`   | `name`    |             | `string` | `undefined` |
+| `value`  | `value`   |             | `string` | `undefined` |
 
-
-## Dependencies
-
-### Used by
-
- - [wf-activity-renderer](..\..\workflow-designer\activity-renderer)
-
-### Graph
-```mermaid
-graph TD;
-  wf-activity-renderer --> wf-field-editor-text
-  style wf-field-editor-text fill:#f9f,stroke:#333,stroke-width:4px
-```
 
 ----------------------------------------------
 

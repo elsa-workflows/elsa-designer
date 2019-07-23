@@ -1,10 +1,9 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity, ActivityDefinition, RenderDesignerResult } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import { RootState } from "../../../../redux/reducers";
-import ActivityManager from '../../../../services/activity-manager';
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
+import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
   tag: 'wf-read-line',
@@ -27,25 +26,11 @@ export class ReadLine {
   @Prop({ reflect: true })
   category: string = "Console";
 
-  static onRenderDesigner(activity: Activity, definition: ActivityDefinition): RenderDesignerResult {
-    const variableName = activity.state.variableName;
-
-    return {
-      description: !!variableName
-        ? `Read text from standard in and store into <strong>${ variableName }</strong>.`
-        : definition.description
-    };
-  }
-
   addActivityDefinition!: typeof addActivityDefinition;
 
   async componentWillLoad() {
     await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
-
-    ActivityManager.addHandler(this.type, {
-      renderDesigner: ReadLine.onRenderDesigner
-    })
   }
 
   componentDidLoad() {
@@ -60,8 +45,9 @@ export class ReadLine {
           label: 'Variable Name',
           hint: 'The name of the variable to store the value into.'
         }],
-        getOutcomes: (_: Activity): string[] => {
-          return ['Done'];
+        designer: {
+          description: 'a => !!a.state.variableName ? `Read text from standard in and store into <strong>${ variableName }</strong>.` : \'Read text from standard in.\'',
+          outcomes: [OutcomeNames.Done]
         }
       }
     );

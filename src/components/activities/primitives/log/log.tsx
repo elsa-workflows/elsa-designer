@@ -1,10 +1,9 @@
-import {Component, Prop} from '@stencil/core';
-import { Activity, ActivityDefinition, RenderDesignerResult } from "../../../../models";
+import { Component, Prop } from '@stencil/core';
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
-import ActivityManager from '../../../../services/activity-manager';
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
+import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
   tag: 'wf-log',
@@ -15,37 +14,23 @@ export class Log {
   @Prop({ context: 'store' })
   store: Store<RootState, Action>;
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   type: string = "Log";
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   displayName: string = "Log";
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   description: string = "Log a message.";
 
-  @Prop({reflect: true})
+  @Prop({ reflect: true })
   category: string = "Primitives";
 
   addActivityDefinition!: typeof addActivityDefinition;
 
-  static onRenderDesigner(activity: Activity, definition: ActivityDefinition): RenderDesignerResult {
-    const message = activity.state.message;
-
-    return {
-      description: !!message
-        ? `Log <strong>${ message }</strong>.`
-        : definition.description
-    };
-  }
-
   async componentWillLoad() {
     await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
-
-    ActivityManager.addHandler(this.type, {
-      renderDesigner: Log.onRenderDesigner
-    })
   }
 
   componentDidLoad() {
@@ -60,8 +45,9 @@ export class Log {
           label: 'Message',
           hint: 'The text to log.'
         }],
-        getOutcomes: (_: Activity): string[] => {
-          return ['Done'];
+        designer: {
+          description: 'x => !!x.state.message ? `Log <strong>${x.state.message}</strong>` : x.definition.description',
+          outcomes: [OutcomeNames.Done]
         }
       }
     );

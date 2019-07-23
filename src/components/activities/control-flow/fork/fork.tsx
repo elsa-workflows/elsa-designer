@@ -1,5 +1,4 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
@@ -28,7 +27,7 @@ export class Fork {
 
   addActivityDefinition!: typeof addActivityDefinition;
 
-  async componentWillLoad(){
+  async componentWillLoad() {
     await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
@@ -41,15 +40,12 @@ export class Fork {
         category: this.category,
         properties: [{
           name: 'branches',
-          type: 'text',
+          type: 'list',
           label: 'Branches',
           hint: 'Enter one or more names representing branches, separated with a comma. Example: Branch 1, Branch 2'
         }],
-        getOutcomes: (activity: Activity): string[] => {
-          const state = activity.state;
-          const branchesText = state.branches;
-          const branches = !!state.branches ? branchesText.split(',').map(x => x.trim()) : [];
-          return [...branches];
+        designer: {
+          outcomes: 'x => x.state.branches'
         }
       }
     );

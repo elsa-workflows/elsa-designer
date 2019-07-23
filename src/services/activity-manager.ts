@@ -1,6 +1,7 @@
 import { Activity, ActivityDefinition, ActivityHandlerMap, RenderDesignerResult } from "../models";
 import { ActivityHandler } from "./activity-handler";
 import { FormUpdater } from "../utils";
+import { DefaultActivityHandler } from "./default-activity-handler";
 
 export class ActivityManager {
   constructor(){
@@ -14,9 +15,9 @@ export class ActivityManager {
   };
 
   public renderDesigner = (activity: Activity, definition: ActivityDefinition): RenderDesignerResult => {
-    const handler = this.handlers[activity.type];
+    const handler = this.getHandler(activity.type);
 
-    if(!handler || !handler.renderDesigner)
+    if(!handler.renderDesigner)
       return {
         description: definition.description
       };
@@ -25,17 +26,22 @@ export class ActivityManager {
   };
 
   public updateEditor = (activity: Activity, formData: FormData): Activity => {
-    const handler = this.handlers[activity.type];
-    let updater = () => FormUpdater.updateEditor(activity, formData);
+    const handler = this.getHandler(activity.type);
+    let updater = handler.updateEditor  || FormUpdater.updateEditor;
 
-    if(!handler)
-      return updater();
+    return updater(activity, formData);
+  };
 
-    if(!handler.updateEditor)
-      return updater();
+  public getOutcomes = (activity: Activity, definition: ActivityDefinition): Array<string> => {
+    const handler = this.getHandler(activity.type);
 
-    return handler.updateEditor(activity, formData);
-  }
+    if(!handler.getOutcomes)
+      return [];
+
+    return handler.getOutcomes(activity, definition);
+  };
+
+  private getHandler = type => this.handlers[type] || new DefaultActivityHandler();
 }
 
 export default new ActivityManager();

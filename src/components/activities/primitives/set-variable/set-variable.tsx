@@ -1,9 +1,9 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity} from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
+import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
   tag: 'wf-set-variable',
@@ -50,8 +50,8 @@ export class SetVariable {
           label: 'Variable Expression',
           hint: 'An expression that evaluates to the value to store in the variable.'
         }],
-        getOutcomes: (_: Activity): string[] => {
-          return ['Done'];
+        designer: {
+          outcomes: [OutcomeNames.Done]
         }
       }
     );

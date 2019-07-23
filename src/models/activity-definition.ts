@@ -1,4 +1,6 @@
-import { Activity, ActivityPropertyDescriptor } from "./";
+import { ActivityPropertyDescriptor } from "./";
+
+export type Lambda<T = any> = string | T;
 
 export interface ActivityDefinition {
   type: string;
@@ -6,5 +8,8 @@ export interface ActivityDefinition {
   description: string;
   category: string;
   properties: Array<ActivityPropertyDescriptor>;
-  getOutcomes(activity: Activity): string[];
+  designer?: {
+    description?: Lambda<string>,
+    outcomes?: Lambda<Array<string>>
+  }
 }

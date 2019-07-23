@@ -1,9 +1,9 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity} from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
 import { ComponentHelper } from "../../../../utils/ComponentHelper";
+import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
   tag: 'wf-send-email',
@@ -28,7 +28,7 @@ export class SendEmail {
 
   addActivityDefinition!: typeof addActivityDefinition;
 
-  async componentWillLoad(){
+  async componentWillLoad() {
     await ComponentHelper.rootComponentReady();
     this.store.mapDispatchToProps(this, { addActivityDefinition });
   }
@@ -64,8 +64,8 @@ export class SendEmail {
             label: 'Body',
             hint: 'The body of the email message.'
           }],
-        getOutcomes: (_: Activity): string[] => {
-          return ['Done'];
+        designer: {
+          outcomes: [OutcomeNames.Done]
         }
       }
     );

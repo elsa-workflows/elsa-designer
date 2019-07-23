@@ -3,5 +3,4 @@ export interface ActivityPropertyDescriptor {
   type: string;
   label: string;
   hint?: string;
-  defaultValue?: () => any;
 }

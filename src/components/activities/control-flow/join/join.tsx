@@ -1,5 +1,4 @@
 import { Component, Prop } from '@stencil/core';
-import { Activity } from "../../../../models";
 import { Store } from "@stencil/redux";
 import { RootState } from "../../../../redux/reducers";
 import { Action, addActivityDefinition } from "../../../../redux/actions";
@@ -7,35 +6,27 @@ import { ComponentHelper } from "../../../../utils/ComponentHelper";
 import { OutcomeNames } from "../../../../models/outcome-names";
 
 @Component({
-  tag: 'wf-if-else',
+  tag: 'wf-join',
   shadow: true
 })
-export class IfElse {
+export class Fork {
 
   @Prop({ context: 'store' })
   store: Store<RootState, Action>;
 
   @Prop({ reflect: true })
-  type: string = 'IfElse';
+  type: string = "Join";
 
   @Prop({ reflect: true })
-  displayName: string = 'If/Else';
+  displayName: string = "Join";
 
   @Prop({ reflect: true })
-  description: string = 'Evaluate a Boolean expression and continue execution depending on the result.';
+  description: string = "Merge workflow execution back into a single branch.";
 
   @Prop({ reflect: true })
-  category: string = 'Control Flow';
+  category: string = "Control Flow";
 
   addActivityDefinition!: typeof addActivityDefinition;
-
-  static updateEditor(activity: Activity, formData: FormData): Activity {
-    const newState = { ...activity.state };
-
-    newState.expression = formData.get('expression');
-
-    return { ...activity, state: newState };
-  }
 
   async componentWillLoad() {
     await ComponentHelper.rootComponentReady();
@@ -49,14 +40,14 @@ export class IfElse {
         description: this.description,
         category: this.category,
         properties: [{
-          name: 'expression',
-          type: 'expression',
-          label: 'Expression',
-          hint: 'The expression to evaluate. The evaluated value will be used to switch on.'
+          name: 'joinMode',
+          type: 'text',
+          label: 'Join Mode',
+          hint: 'Either \'WaitAll\' or \'WaitAny\''
         }],
         designer: {
-          description: 'x => !!x.state.expression ? `Evaluate <strong>${ x.state.expression.expression }</strong> and continue execution depending on the result.` : x.definition.description',
-          outcomes: [OutcomeNames.True, OutcomeNames.False]
+          description: 'x => !!x.state.joinMode ? `Merge workflow execution back into a single branch using mode <strong>${ x.state.joinMode }</strong>` : x.definition.description',
+          outcomes: [OutcomeNames.Done]
         }
       }
     );
