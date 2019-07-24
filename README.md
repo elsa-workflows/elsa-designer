@@ -13,7 +13,7 @@ Elsa Designer is a standalone client-side web component that you can embed in yo
 
 ### Script tag
 
-- Put a script tag similar to this `<script src='https://unpkg.com/@elsa-workflows/elsa-workflow-designer@0.0.9/dist/elsa-workflow-designer.js'></script>` in the head of your index.html
+- Put a script tag similar to this `<script src='https://unpkg.com/@elsa-workflows/elsa-workflow-designer@0.0.10/dist/elsa-workflow-designer.js'></script>` in the head of your index.html
 - Then you can use the element anywhere in your template, JSX, html etc
 
 ### Node Modules

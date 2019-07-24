@@ -75,10 +75,10 @@ export class ActivityPicker {
     const selectedCategory = this.selectedCategory;
     let definitions = this.activityDefinitions;
 
-    if(!!selectedCategory)
+    if (!!selectedCategory)
       definitions = definitions.filter(x => x.category.toLowerCase() === selectedCategory.toLowerCase());
 
-    if(!!filterText)
+    if (!!filterText)
       definitions = definitions.filter(x => x.displayName.toLowerCase().includes(filterText.toLowerCase()));
 
     return (
@@ -106,7 +106,7 @@ export class ActivityPicker {
 
                         return (
                           <li class="nav-item">
-                            <a class={ classes } href="#" data-toggle="pill" onClick={ () => this.selectCategory(category) }>{ categoryDisplayText }</a>
+                            <a class={ classes } href="#" data-toggle="pill" onClick={ e => { e.preventDefault(); this.selectCategory(category); }}>{ categoryDisplayText }</a>
                           </li>
                         );
                       }) }
@@ -119,9 +119,10 @@ export class ActivityPicker {
                           <div class="card-body">
                             <h4 class="card-title"><i class="far fa-envelope" />{ activity.displayName }</h4>
                             <p>{ activity.description }</p>
+                            <a href="#" onClick={e => {e.preventDefault(); this.selectCategory(activity.category);}}><span class="badge badge-light">{ activity.category }</span></a>
                           </div>
                           <div class="card-footer text-muted text-xs-right">
-                            <a class="btn btn-primary btn-sm" href="#" onClick={ () => this.onActivitySelected(activity) }>Select</a>
+                            <a class="btn btn-primary btn-sm" href="#" onClick={ async e => { e.preventDefault(); await this.onActivitySelected(activity); }}>Select</a>
                           </div>
                         </div>
                       )) }
