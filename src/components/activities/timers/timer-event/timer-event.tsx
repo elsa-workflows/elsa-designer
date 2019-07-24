@@ -44,8 +44,7 @@ export class TimerEvent {
             name: 'expression',
             type: 'expression',
             label: 'Timeout Expression',
-            hint: 'The amount of time to wait before this timer event is triggered. Format: \'d.HH:mm:ss\'.',
-            defaultValue: () => '00:05:00'
+            hint: 'The amount of time to wait before this timer event is triggered. Format: \'d.HH:mm:ss\'.'
           }],
         designer: {
           description: 'x => !!x.state.expression ? `Triggers after <strong>${ x.state.expression.expression }</strong>` : x.definition.description',

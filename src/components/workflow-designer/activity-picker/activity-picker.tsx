@@ -22,6 +22,12 @@ export class ActivityPicker {
   @State()
   activityDefinitions: Array<ActivityDefinition> = [];
 
+  @State()
+  filterText: string = '';
+
+  @State()
+  selectedCategory: string = null;
+
   @Method()
   async show() {
     this.isVisible = true;
@@ -39,11 +45,6 @@ export class ActivityPicker {
 
   private modal: any;
 
-  async onActivitySelected(activity: ActivityDefinition) {
-    this.activitySelected.emit(activity);
-    await this.hide();
-  }
-
   async componentWillLoad() {
     await ComponentHelper.rootComponentReady();
 
@@ -54,9 +55,31 @@ export class ActivityPicker {
     });
   }
 
+  private async onActivitySelected(activity: ActivityDefinition) {
+    this.activitySelected.emit(activity);
+    await this.hide();
+  }
+
+  private onFilterTextChanged = (e: Event) => {
+    const filterField = e.target as HTMLInputElement;
+    this.filterText = filterField.value;
+  };
+
+  private selectCategory = (category: string) => {
+    this.selectedCategory = category;
+  };
+
   render() {
-    const categories: string[] = [...new Set(this.activityDefinitions.map(x => x.category))];
-    const activities = this.activityDefinitions;
+    const categories: string[] = [null, ...new Set(this.activityDefinitions.map(x => x.category))];
+    const filterText = this.filterText;
+    const selectedCategory = this.selectedCategory;
+    let definitions = this.activityDefinitions;
+
+    if(!!selectedCategory)
+      definitions = definitions.filter(x => x.category.toLowerCase() === selectedCategory.toLowerCase());
+
+    if(!!filterText)
+      definitions = definitions.filter(x => x.displayName.toLowerCase().includes(filterText.toLowerCase()));
 
     return (
       <div>
@@ -73,22 +96,25 @@ export class ActivityPicker {
                 <div class="row">
                   <div class="col-sm-3 col-md-3 col-lg-2">
                     <div class="form-group">
-                      <input class="form-control" type="search" placeholder="Filter" aria-label="Filter" autofocus />
+                      <input class="form-control" type="search" placeholder="Filter" aria-label="Filter" autofocus onKeyUp={ this.onFilterTextChanged } />
                     </div>
                     <ul class="nav nav-pills flex-column activity-picker-categories">
-                      <li class="nav-item">
-                        <a class="nav-link active" href="#all" data-toggle="pill">All</a>
-                      </li>
-                      { categories.map(category => (
-                        <li class="nav-item" data-category={ category }>
-                          <a class="nav-link" href="#" data-toggle="pill">{ category }</a>
-                        </li>
-                      )) }
+                      { categories.map(category => {
+                        const categoryDisplayText = category || 'All';
+                        const isSelected = category === this.selectedCategory;
+                        const classes = { 'nav-link': true, 'active': isSelected };
+
+                        return (
+                          <li class="nav-item">
+                            <a class={ classes } href="#" data-toggle="pill" onClick={ () => this.selectCategory(category) }>{ categoryDisplayText }</a>
+                          </li>
+                        );
+                      }) }
                     </ul>
                   </div>
                   <div class="col-sm-9 col-md-9 col-lg-10">
                     <div class="card-columns tab-content">
-                      { activities.map(activity => (
+                      { definitions.map(activity => (
                         <div class="card activity">
                           <div class="card-body">
                             <h4 class="card-title"><i class="far fa-envelope" />{ activity.displayName }</h4>
