@@ -7,10 +7,11 @@
 
 ## Properties
 
-| Property              | Attribute | Description | Type                                                     | Default                                         |
-| --------------------- | --------- | ----------- | -------------------------------------------------------- | ----------------------------------------------- |
-| `activityDefinitions` | --        |             | `ActivityDefinition[]`                                   | `[]`                                            |
-| `workflow`            | --        |             | `{ activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
+| Property              | Attribute       | Description | Type                                                                                                                         | Default                                         |
+| --------------------- | --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `activityDefinitions` | --              |             | `ActivityDefinition[]`                                                                                                       | `[]`                                            |
+| `canvasHeight`        | `canvas-height` |             | `string`                                                                                                                     | `undefined`                                     |
+| `workflow`            | --              |             | `{ id?: string; name?: string; description?: string; version?: string; activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
 
 
 ## Events
@@ -30,16 +31,6 @@
 #### Returns
 
 Type: `Promise<void>`
-
-
-
-### `getWorkflow() => Promise<{ activities: Activity[]; connections: import("C:/Projects/Elsa/elsa-designer-html/src/models/connection").Connection[]; }>`
-
-
-
-#### Returns
-
-Type: `Promise<{ activities: Activity[]; connections: Connection[]; }>`
 
 
 

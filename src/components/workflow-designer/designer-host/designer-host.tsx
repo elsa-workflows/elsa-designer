@@ -46,6 +46,11 @@ export class DesignerHost {
   }
 
   @Method()
+  async readWorkflow(): Promise<Workflow> {
+    return await { ...this.designer.workflow };
+  }
+
+  @Method()
   async showActivityPicker() {
     await this.activityPicker.show();
   }

@@ -7,9 +7,10 @@
 
 ## Properties
 
-| Property   | Attribute | Description | Type                                                     | Default                                         |
-| ---------- | --------- | ----------- | -------------------------------------------------------- | ----------------------------------------------- |
-| `workflow` | --        |             | `{ activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
+| Property       | Attribute       | Description | Type                                                                                                                         | Default                                         |
+| -------------- | --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `canvasHeight` | `canvas-height` |             | `string`                                                                                                                     | `undefined`                                     |
+| `workflow`     | --              |             | `{ id?: string; name?: string; description?: string; version?: string; activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
 
 
 ## Methods
@@ -51,6 +52,16 @@ Type: `Promise<void>`
 #### Returns
 
 Type: `Promise<void>`
+
+
+
+### `readWorkflow() => Promise<Workflow>`
+
+
+
+#### Returns
+
+Type: `Promise<Workflow>`
 
 
 

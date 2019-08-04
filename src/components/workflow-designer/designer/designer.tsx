@@ -56,11 +56,6 @@ export class Designer {
   }
 
   @Method()
-  async getWorkflow() {
-    return { ...this.workflow };
-  }
-
-  @Method()
   async loadWorkflow(workflow: Workflow) {
     this.workflow = { ...workflow };
   }

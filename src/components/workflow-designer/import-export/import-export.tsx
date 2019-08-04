@@ -25,7 +25,7 @@ export class ImportExport {
       window.URL.revokeObjectURL(blobUrl)
     }
 
-    const workflow = await designer.getWorkflow();
+    const workflow = designer.workflow;
     const data = this.serialize(workflow, formatDescriptor.format);
     const blob = new Blob([data], { type: formatDescriptor.mimeType });
 

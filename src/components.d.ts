@@ -45,7 +45,6 @@ export namespace Components {
     'activityDefinitions': Array<ActivityDefinition>;
     'addActivity': (activityDefinition: ActivityDefinition) => Promise<void>;
     'canvasHeight': string;
-    'getWorkflow': () => Promise<{ activities: Activity[]; connections: import("C:/Projects/Elsa/elsa-designer-html/src/models/connection").Connection[]; }>;
     'loadWorkflow': (workflow: Workflow) => Promise<void>;
     'newWorkflow': () => Promise<void>;
     'updateActivity': (activity: Activity) => Promise<void>;
@@ -57,6 +56,7 @@ export namespace Components {
     'import': () => Promise<void>;
     'load': (workflow: Workflow) => Promise<void>;
     'newWorkflow': () => Promise<void>;
+    'readWorkflow': () => Promise<Workflow>;
     'showActivityPicker': () => Promise<void>;
     'workflow': Workflow;
   }
