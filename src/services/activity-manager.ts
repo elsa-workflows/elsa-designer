@@ -10,11 +10,11 @@ export class ActivityManager {
 
   private readonly handlers: ActivityHandlerMap;
 
-  public addHandler = (activityTypeName: string, handler: ActivityHandler) => {
+  addHandler = (activityTypeName: string, handler: ActivityHandler) => {
     this.handlers[activityTypeName] = {...handler};
   };
 
-  public renderDesigner = (activity: Activity, definition: ActivityDefinition): RenderDesignerResult => {
+  renderDesigner = (activity: Activity, definition: ActivityDefinition): RenderDesignerResult => {
     const handler = this.getHandler(activity.type);
 
     if(!handler.renderDesigner)
@@ -25,14 +25,14 @@ export class ActivityManager {
     return handler.renderDesigner(activity, definition);
   };
 
-  public updateEditor = (activity: Activity, formData: FormData): Activity => {
+  updateEditor = (activity: Activity, formData: FormData): Activity => {
     const handler = this.getHandler(activity.type);
     let updater = handler.updateEditor  || FormUpdater.updateEditor;
 
     return updater(activity, formData);
   };
 
-  public getOutcomes = (activity: Activity, definition: ActivityDefinition): Array<string> => {
+  getOutcomes = (activity: Activity, definition: ActivityDefinition): Array<string> => {
     const handler = this.getHandler(activity.type);
 
     if(!handler.getOutcomes)

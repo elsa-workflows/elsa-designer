@@ -1,7 +1,5 @@
 import { Component, Element, h, Method, Event, EventEmitter, State, Prop } from '@stencil/core';
 import { ActivityDefinition } from '../../../models';
-import { Store } from "@stencil/redux";
-import { ComponentHelper } from "../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-activity-picker',
@@ -13,14 +11,11 @@ export class ActivityPicker {
   @Element()
   el: HTMLElement;
 
-  @Prop({ context: 'store' })
-  store: Store;
+  @Prop()
+  activityDefinitions: Array<ActivityDefinition> = [];
 
   @State()
   isVisible: boolean;
-
-  @State()
-  activityDefinitions: Array<ActivityDefinition> = [];
 
   @State()
   filterText: string = '';
@@ -45,16 +40,6 @@ export class ActivityPicker {
 
   private modal: any;
 
-  async componentWillLoad() {
-    await ComponentHelper.rootComponentReady();
-
-    this.store.mapStateToProps(this, state => {
-      return {
-        activityDefinitions: state.activityDefinitions
-      }
-    });
-  }
-
   private async onActivitySelected(activity: ActivityDefinition) {
     this.activitySelected.emit(activity);
     await this.hide();
@@ -70,10 +55,11 @@ export class ActivityPicker {
   };
 
   render() {
-    const categories: string[] = [null, ...new Set(this.activityDefinitions.map(x => x.category))];
+    const activities = this.activityDefinitions;
+    const categories: string[] = [null, ...new Set(activities.map(x => x.category))];
     const filterText = this.filterText;
     const selectedCategory = this.selectedCategory;
-    let definitions = this.activityDefinitions;
+    let definitions = activities;
 
     if (!!selectedCategory)
       definitions = definitions.filter(x => x.category.toLowerCase() === selectedCategory.toLowerCase());

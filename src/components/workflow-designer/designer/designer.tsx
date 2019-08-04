@@ -1,5 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Method, Prop, State } from '@stencil/core';
-import { Store } from '@stencil/redux';
+import { Component, Element, Event, EventEmitter, h, Method, Prop } from '@stencil/core';
 import {
   Connection as JsPlumbConnection,
   DragEventCallbackOptions,
@@ -9,8 +8,6 @@ import {
 } from "jsplumb";
 import { CssMap } from "../../../utils";
 import { JsPlumbUtils } from "./jsplumb-utils";
-import { Activity as ActivityInstance } from "../activity/activity";
-import { Connection as ConnectionComponent } from "../connection/connection";
 import { ActivityModel } from "./models";
 import uuid from 'uuid-browser/v4';
 import {
@@ -18,11 +15,8 @@ import {
   ActivityDefinition,
   ActivityDisplayMode,
   Workflow,
-  Point,
-  ActivityDefinitionMap
+  Point
 } from "../../../models";
-import { addActivity, loadWorkflow, newWorkflow } from "../../../redux/actions";
-import { ComponentHelper } from "../../../utils/ComponentHelper";
 import ActivityManager from '../../../services/activity-manager';
 
 @Component({
@@ -32,20 +26,22 @@ import ActivityManager from '../../../services/activity-manager';
 })
 export class Designer {
 
+  canvas: HTMLElement;
+
   constructor() {
-    this.jsPlumb = JsPlumbUtils.createInstance(this.elem());
+    this.jsPlumb = JsPlumbUtils.createInstance('.workflow-canvas');
   }
 
   @Element()
   private el: HTMLElement;
 
-  @Prop({ context: 'store' })
-  store: Store;
+  @Prop({ reflect: true, attribute: "canvas-height" })
+  canvasHeight: string;
 
-  @State()
-  activityDefinitions: ActivityDefinitionMap = {};
+  @Prop()
+  activityDefinitions: Array<ActivityDefinition> = [];
 
-  @State()
+  @Prop({ mutable: true })
   workflow: Workflow = {
     activities: [],
     connections: []
@@ -53,7 +49,10 @@ export class Designer {
 
   @Method()
   async newWorkflow() {
-    this.newWorkflowInternal();
+    this.workflow = {
+      activities: [],
+      connections: []
+    }
   }
 
   @Method()
@@ -63,7 +62,7 @@ export class Designer {
 
   @Method()
   async loadWorkflow(workflow: Workflow) {
-    this.loadWorkflowInternal(workflow);
+    this.workflow = { ...workflow };
   }
 
   @Method()
@@ -81,7 +80,8 @@ export class Designer {
 
     this.lastClickedLocation = null;
 
-    this.addActivityInternal(activity);
+    const activities = [...this.workflow.activities, activity];
+    this.workflow = { ...this.workflow, activities };
   }
 
   @Method()
@@ -100,32 +100,7 @@ export class Designer {
   activityContextMenu: HTMLWfContextMenuElement;
   selectedActivity: Activity;
 
-  addActivityInternal!: typeof addActivity;
-  newWorkflowInternal!: typeof newWorkflow;
-  loadWorkflowInternal!: typeof loadWorkflow;
-
   private elem = (): HTMLElement => this.el;
-
-  async componentWillLoad() {
-    await ComponentHelper.rootComponentReady();
-    const activities = Array.from(this.elem().querySelectorAll('wf-activity')).map(x => ActivityInstance.getModel(x));
-    const connections = Array.from(this.elem().querySelectorAll('wf-connection')).map(x => ConnectionComponent.getModel(x));
-
-    this.store.mapDispatchToProps(this, {
-      addActivityInternal: addActivity,
-      newWorkflowInternal: newWorkflow,
-      loadWorkflowInternal: loadWorkflow
-    });
-
-    this.store.mapStateToProps(this, state => {
-      return {
-        activityDefinitions: this.createActivityDefinitionLookup(state.activityDefinitions),
-        workflow: state.workflow
-      }
-    });
-
-    await this.loadWorkflow({ ...this.workflow, activities, connections });
-  }
 
   componentDidRender() {
     this.setupJsPlumb();
@@ -134,7 +109,7 @@ export class Designer {
   render() {
     const activities = this.createActivityModels();
     return (
-      <div class="workflow-canvas">
+      <host class="workflow-canvas" ref={ el => this.canvas = el } style={ { height: this.canvasHeight } }>
         { activities.map((model: ActivityModel) => {
           const activity = model.activity;
           const styles: CssMap = { 'left': `${ activity.left }px`, 'top': `${ activity.top }px` };
@@ -143,7 +118,7 @@ export class Designer {
             <div id={ `wf-activity-${ activity.id }` } data-activity-id={ activity.id } class="activity" style={ styles } onDblClick={ () => this.onEditActivity(activity) } onContextMenu={ (e) => this.onActivityContextMenu(e, activity) }>
               <wf-activity-renderer activity={ activity } activityDefinition={ model.definition } displayMode={ ActivityDisplayMode.Design } />
             </div>);
-          })
+        })
         }
         <wf-context-menu target={ this.elem() }>
           <wf-context-menu-item text="Add Activity" onClick={ this.onAddActivityClick } />
@@ -152,19 +127,9 @@ export class Designer {
           <wf-context-menu-item text="Edit" onClick={ this.onEditActivityClick } />
           <wf-context-menu-item text="Delete" onClick={ this.onDeleteActivityClick } />
         </wf-context-menu>
-      </div>
+      </host>
     );
   }
-
-  private createActivityDefinitionLookup = definitions => {
-    const lookup: ActivityDefinitionMap = {};
-
-    for (const definition of definitions) {
-      lookup[definition.type] = definition;
-    }
-
-    return lookup;
-  };
 
   private deleteActivity = async (activity: Activity) => {
     const activities = this.workflow.activities.filter(x => x.id !== activity.id);
@@ -175,9 +140,16 @@ export class Designer {
   };
 
   private createActivityModels(): Array<ActivityModel> {
-    return this.workflow.activities.map((activity: Activity) => {
+    const workflow = this.workflow || {
+      activities: [],
+      connections: []
+    };
 
-      const definition = this.activityDefinitions[activity.type];
+    const activityDefinitions = this.activityDefinitions || [];
+
+    return workflow.activities.map((activity: Activity) => {
+
+      const definition = activityDefinitions.find(x => x.type == activity.type);
 
       return {
         activity,
@@ -193,6 +165,7 @@ export class Designer {
       this.getActivityElements().forEach(this.setupActivityElement);
       this.setupConnections();
     });
+    this.jsPlumb.repaintEverything();
   };
 
   private setupActivityElement = (element: Element) => {
@@ -236,7 +209,7 @@ export class Designer {
 
   private setupOutcomes(element: Element) {
     const activity = this.findActivityByElement(element);
-    const definition = this.activityDefinitions[activity.type];
+    const definition = this.activityDefinitions.find(x => x.type == activity.type);
     const outcomes = ActivityManager.getOutcomes(activity, definition);
 
     for (let outcome of outcomes) {

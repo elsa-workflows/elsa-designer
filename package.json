@@ -1,6 +1,6 @@
 {
   "name": "@elsa-workflows/elsa-workflow-designer",
-  "version": "0.0.10",
+  "version": "0.0.22",
   "description": "Stencil Component Starter",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -36,22 +36,21 @@
     "test.watch": "stencil test --spec --e2e --watchAll"
   },
   "devDependencies": {
-    "@types/node": "^12.6.1",
-    "@stencil/core": "1.1.7",
+    "@types/node": "^12.6.9",
+    "@stencil/core": "1.2.3",
     "@stencil/sass": "^1.0.1",
-    "@types/jquery": "^3.3.30",
-    "@stencil/redux": "^0.1.1",
-    "bootstrap": "^4.3.1",
-    "handlebars": "^4.1.2",
-    "jquery": "^3.4.1",
-    "jsplumb": "^2.10.2",
-    "popper.js": "^1.15.0",
-    "redux": "^4.0.4",
-    "redux-thunk": "^2.3.0",
-    "uuid-browser": "^3.1.0"
+    "@types/jquery": "^3.3.30"
   },
   "license": "BSD-3-Clause",
   "dependencies": {
+    "bootstrap": "^4.3.1",
+    "dragscroll": "0.0.8",
+    "handlebars": "^4.1.2",
+    "jquery": "^3.4.1",
+    "jsplumb": "^2.11.1",
+    "panzoom": "^8.1.1",
+    "popper.js": "^1.15.0",
+    "uuid-browser": "^3.1.0"
   },
   "directories": {
     "doc": "doc"

@@ -5,6 +5,14 @@
 <!-- Auto Generated Below -->
 
 
+## Properties
+
+| Property              | Attribute | Description | Type                                                     | Default                                         |
+| --------------------- | --------- | ----------- | -------------------------------------------------------- | ----------------------------------------------- |
+| `activityDefinitions` | --        |             | `ActivityDefinition[]`                                   | `[]`                                            |
+| `workflow`            | --        |             | `{ activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
+
+
 ## Events
 
 | Event           | Description | Type               |
@@ -68,6 +76,10 @@ Type: `Promise<void>`
 
 ## Dependencies
 
+### Used by
+
+ - [wf-designer-host](..\designer-host)
+
 ### Depends on
 
 - [wf-activity-renderer](..\activity-renderer)
@@ -80,6 +92,7 @@ graph TD;
   wf-designer --> wf-activity-renderer
   wf-designer --> wf-context-menu
   wf-designer --> wf-context-menu-item
+  wf-designer-host --> wf-designer
   style wf-designer fill:#f9f,stroke:#333,stroke-width:4px
 ```
 
