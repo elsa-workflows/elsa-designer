@@ -208,10 +208,12 @@ declare namespace LocalJSX {
     'canvasHeight'?: string;
     'onAdd-activity'?: (event: CustomEvent<any>) => void;
     'onEdit-activity'?: (event: CustomEvent<any>) => void;
+    'onWorkflowChanged'?: (event: CustomEvent<any>) => void;
     'workflow'?: Workflow;
   }
   interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {
     'canvasHeight'?: string;
+    'onWorkflowChanged'?: (event: CustomEvent<any>) => void;
     'workflow'?: Workflow;
   }
   interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {

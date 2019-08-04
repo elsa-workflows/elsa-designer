@@ -11,15 +11,16 @@
 | --------------------- | --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | `activityDefinitions` | --              |             | `ActivityDefinition[]`                                                                                                       | `[]`                                            |
 | `canvasHeight`        | `canvas-height` |             | `string`                                                                                                                     | `undefined`                                     |
-| `workflow`            | --              |             | `{ id?: string; name?: string; description?: string; version?: string; activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
+| `workflow`            | --              |             | `{ id?: string; name?: string; description?: string; version?: number; activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
 
 
 ## Events
 
-| Event           | Description | Type               |
-| --------------- | ----------- | ------------------ |
-| `add-activity`  |             | `CustomEvent<any>` |
-| `edit-activity` |             | `CustomEvent<any>` |
+| Event             | Description | Type               |
+| ----------------- | ----------- | ------------------ |
+| `add-activity`    |             | `CustomEvent<any>` |
+| `edit-activity`   |             | `CustomEvent<any>` |
+| `workflowChanged` |             | `CustomEvent<any>` |
 
 
 ## Methods

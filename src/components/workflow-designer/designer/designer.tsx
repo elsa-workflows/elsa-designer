@@ -1,4 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Method, Prop } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Method, Prop, Watch } from '@stencil/core';
 import {
   Connection as JsPlumbConnection,
   DragEventCallbackOptions,
@@ -90,6 +90,9 @@ export class Designer {
   @Event({ eventName: 'add-activity' })
   private addActivityEvent: EventEmitter;
 
+  @Event()
+  workflowChanged: EventEmitter;
+
   jsPlumb: jsPlumbInstance;
   lastClickedLocation: Point = null;
   activityContextMenu: HTMLWfContextMenuElement;
@@ -99,6 +102,7 @@ export class Designer {
 
   componentDidRender() {
     this.setupJsPlumb();
+    this.workflowChanged.emit(this.workflow);
   }
 
   render() {

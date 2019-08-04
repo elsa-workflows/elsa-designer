@@ -1,4 +1,4 @@
-import { Component, Element, h, Listen, Method, Prop, State } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Listen, Method, Prop, State } from '@stencil/core';
 import 'dragscroll';
 import {
   Activity,
@@ -104,12 +104,19 @@ export class DesignerHost {
     this.designer.workflow = e.detail;
   }
 
+  @Event()
+  workflowChanged: EventEmitter;
+
   private loadActivityDefinitions = (): Array<ActivityDefinition> => {
     return pluginStore
       .list()
       .filter(x => !!x.getActivityDefinitions)
       .map(x => x.getActivityDefinitions())
       .reduce((a, b) => a.concat(b), []);
+  };
+
+  private onWorkflowChanged = (e: CustomEvent<Workflow>) => {
+    this.workflowChanged.emit(e.detail);
   };
 
   componentWillLoad() {
@@ -128,7 +135,13 @@ export class DesignerHost {
         <wf-activity-editor activityDefinitions={ activityDefinitions } ref={ el => this.activityEditor = el } />
         <wf-import-export ref={ el => this.importExport = el } />
         <div class="workflow-designer-wrapper dragscroll">
-          <wf-designer activityDefinitions={ activityDefinitions } workflow={ this.workflow } ref={ el => this.designer = el } canvasHeight={ this.canvasHeight } />
+          <wf-designer
+            activityDefinitions={ activityDefinitions }
+            workflow={ this.workflow }
+            ref={ el => this.designer = el }
+            canvasHeight={ this.canvasHeight }
+            onWorkflowChanged={ this.onWorkflowChanged }
+          />
         </div>
       </host>
     );
