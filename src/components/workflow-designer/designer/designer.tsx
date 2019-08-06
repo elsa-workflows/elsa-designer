@@ -10,14 +10,9 @@ import { CssMap } from "../../../utils";
 import { JsPlumbUtils } from "./jsplumb-utils";
 import { ActivityModel } from "./models";
 import uuid from 'uuid-browser/v4';
-import {
-  Activity,
-  ActivityDefinition,
-  ActivityDisplayMode,
-  Workflow,
-  Point
-} from "../../../models";
+import { Activity, ActivityDefinition, ActivityDisplayMode, Point, Workflow } from "../../../models";
 import ActivityManager from '../../../services/activity-manager';
+import { deepClone } from "../../../utils/deep-clone";
 
 @Component({
   tag: 'wf-designer',
@@ -47,6 +42,11 @@ export class Designer {
     connections: []
   };
 
+  @Watch('workflow')
+  onWorkflowChanged(value: Workflow) {
+    this.workflowChanged.emit(deepClone(value));
+  }
+
   @Method()
   async newWorkflow() {
     this.workflow = {
@@ -56,8 +56,8 @@ export class Designer {
   }
 
   @Method()
-  async loadWorkflow(workflow: Workflow) {
-    this.workflow = { ...workflow };
+  async getWorkflow() {
+    return deepClone(this.workflow);
   }
 
   @Method()
@@ -102,7 +102,6 @@ export class Designer {
 
   componentDidRender() {
     this.setupJsPlumb();
-    this.workflowChanged.emit(this.workflow);
   }
 
   render() {
@@ -133,9 +132,8 @@ export class Designer {
   private deleteActivity = async (activity: Activity) => {
     const activities = this.workflow.activities.filter(x => x.id !== activity.id);
     const connections = this.workflow.connections.filter(x => x.sourceActivityId != activity.id && x.destinationActivityId != activity.id);
-    const workflow = { ...this.workflow, activities, connections };
-
-    await this.loadWorkflow(workflow);
+    this.workflow = { ...this.workflow, activities, connections };
+    //await this.setWorkflow(workflow);
   };
 
   private createActivityModels(): Array<ActivityModel> {
@@ -251,7 +249,7 @@ export class Designer {
 
     activities[index] = { ...activity };
 
-    await this.loadWorkflow({ ...this.workflow, activities });
+    this.workflow = { ...this.workflow, activities };
   };
 
   private setupJsPlumbEventHandlers = () => {
@@ -280,7 +278,7 @@ export class Designer {
         outcome: outcome
       }];
 
-      await this.loadWorkflow({ ...this.workflow, connections });
+      this.workflow = { ...this.workflow, connections };
     }
   };
 
@@ -291,12 +289,12 @@ export class Designer {
     const destinationActivity: Activity = this.findActivityByElement(info.target);
     const connections = this.workflow.connections.filter(x => !(x.sourceActivityId === sourceActivity.id && x.destinationActivityId === destinationActivity.id && x.outcome === outcome));
 
-    const workflow = { ...this.workflow, connections };
-    await this.loadWorkflow(workflow);
+    this.workflow = { ...this.workflow, connections };
   };
 
   private onEditActivity(activity: Activity) {
-    this.editActivityEvent.emit(activity);
+    const clone = deepClone(activity);
+    this.editActivityEvent.emit(clone);
   }
 
   private onAddActivityClick = (e: MouseEvent) => {

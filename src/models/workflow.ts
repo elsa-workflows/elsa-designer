@@ -6,6 +6,7 @@ export type Workflow = {
   name?: string
   description?: string
   version?: number
+  isPublished?: boolean
   activities: Array<Activity>
   connections: Array<Connection>
 }

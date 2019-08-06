@@ -35,13 +35,13 @@ Type: `Promise<void>`
 
 
 
-### `loadWorkflow(workflow: Workflow) => Promise<void>`
+### `getWorkflow() => Promise<any>`
 
 
 
 #### Returns
 
-Type: `Promise<void>`
+Type: `Promise<any>`
 
 
 

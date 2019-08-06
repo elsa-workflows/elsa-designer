@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property       | Attribute       | Description | Type                                                                                                                         | Default                                         |
-| -------------- | --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| `canvasHeight` | `canvas-height` |             | `string`                                                                                                                     | `undefined`                                     |
-| `workflow`     | --              |             | `{ id?: string; name?: string; description?: string; version?: number; activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
+| Property       | Attribute       | Description | Type                                                                                                                         | Default     |
+| -------------- | --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `canvasHeight` | `canvas-height` |             | `string`                                                                                                                     | `undefined` |
+| `workflow`     | --              |             | `{ id?: string; name?: string; description?: string; version?: number; activities: Activity[]; connections: Connection[]; }` | `undefined` |
 
 
 ## Events
@@ -32,17 +32,17 @@ Type: `Promise<void>`
 
 
 
-### `import() => Promise<void>`
+### `getWorkflow() => Promise<any>`
 
 
 
 #### Returns
 
-Type: `Promise<void>`
+Type: `Promise<any>`
 
 
 
-### `load(workflow: Workflow) => Promise<void>`
+### `import() => Promise<void>`
 
 
 
@@ -59,16 +59,6 @@ Type: `Promise<void>`
 #### Returns
 
 Type: `Promise<void>`
-
-
-
-### `readWorkflow() => Promise<Workflow>`
-
-
-
-#### Returns
-
-Type: `Promise<Workflow>`
 
 
 

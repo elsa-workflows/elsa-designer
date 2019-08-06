@@ -1,6 +1,6 @@
 {
   "name": "@elsa-workflows/elsa-workflow-designer",
-  "version": "0.0.30",
+  "version": "0.0.36",
   "description": "Stencil Component Starter",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -48,7 +48,6 @@
     "handlebars": "^4.1.2",
     "jquery": "^3.4.1",
     "jsplumb": "^2.11.1",
-    "panzoom": "^8.1.1",
     "popper.js": "^1.15.0",
     "uuid-browser": "^3.1.0"
   },

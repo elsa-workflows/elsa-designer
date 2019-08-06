@@ -45,7 +45,7 @@ export namespace Components {
     'activityDefinitions': Array<ActivityDefinition>;
     'addActivity': (activityDefinition: ActivityDefinition) => Promise<void>;
     'canvasHeight': string;
-    'loadWorkflow': (workflow: Workflow) => Promise<void>;
+    'getWorkflow': () => Promise<any>;
     'newWorkflow': () => Promise<void>;
     'updateActivity': (activity: Activity) => Promise<void>;
     'workflow': Workflow;
@@ -53,10 +53,9 @@ export namespace Components {
   interface WfDesignerHost {
     'canvasHeight': string;
     'export': (formatDescriptor: WorkflowFormatDescriptor) => Promise<void>;
+    'getWorkflow': () => Promise<any>;
     'import': () => Promise<void>;
-    'load': (workflow: Workflow) => Promise<void>;
     'newWorkflow': () => Promise<void>;
-    'readWorkflow': () => Promise<Workflow>;
     'showActivityPicker': () => Promise<void>;
     'workflow': Workflow;
   }

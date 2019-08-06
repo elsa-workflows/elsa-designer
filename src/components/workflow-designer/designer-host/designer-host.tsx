@@ -1,4 +1,4 @@
-import { Component, Element, Event, EventEmitter, h, Listen, Method, Prop, State } from '@stencil/core';
+import { Component, Element, Event, EventEmitter, h, Listen, Method, Prop, State, Watch } from '@stencil/core';
 import 'dragscroll';
 import {
   Activity,
@@ -12,6 +12,7 @@ import { ExpressionFieldDriver } from "../../../drivers/expression-field-driver"
 import { ListFieldDriver } from "../../../drivers/list-field-driver";
 import '../../../plugins/console-activities';
 import pluginStore from '../../../services/workflow-plugin-store';
+import { deepClone } from "../../../utils/deep-clone";
 
 @Component({
   tag: 'wf-designer-host',
@@ -31,14 +32,11 @@ export class DesignerHost {
   @State()
   activityDefinitions: Array<ActivityDefinition> = [];
 
+  @Prop()
+  workflow: Workflow;
+
   @Prop({ reflect: true, attribute: "canvas-height" })
   canvasHeight: string;
-
-  @Prop({ mutable: true })
-  workflow: Workflow = {
-    activities: [],
-    connections: []
-  };
 
   @Method()
   async newWorkflow() {
@@ -46,8 +44,8 @@ export class DesignerHost {
   }
 
   @Method()
-  async readWorkflow(): Promise<Workflow> {
-    return await { ...this.designer.workflow };
+  async getWorkflow() {
+    return await this.designer.getWorkflow();
   }
 
   @Method()
@@ -63,11 +61,6 @@ export class DesignerHost {
   @Method()
   async import() {
     await this.importExport.import();
-  }
-
-  @Method()
-  async load(workflow: Workflow) {
-    await this.designer.loadWorkflow(workflow);
   }
 
   @Listen('activity-picked')
@@ -101,7 +94,7 @@ export class DesignerHost {
 
   @Listen('import-workflow')
   async onImportWorkflow(e: CustomEvent<Workflow>) {
-    this.designer.workflow = e.detail;
+    this.designer.workflow = deepClone(e.detail);
   }
 
   @Event()
@@ -137,9 +130,9 @@ export class DesignerHost {
         <div class="workflow-designer-wrapper dragscroll">
           <wf-designer
             activityDefinitions={ activityDefinitions }
-            workflow={ this.workflow }
             ref={ el => this.designer = el }
             canvasHeight={ this.canvasHeight }
+            workflow={ this.workflow }
             onWorkflowChanged={ this.onWorkflowChanged }
           />
         </div>
