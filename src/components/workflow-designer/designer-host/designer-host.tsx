@@ -10,9 +10,15 @@ import DisplayManager from '../../../services/display-manager';
 import { TextFieldDriver } from "../../../drivers/text-field-driver";
 import { ExpressionFieldDriver } from "../../../drivers/expression-field-driver";
 import { ListFieldDriver } from "../../../drivers/list-field-driver";
-import '../../../plugins/console-activities';
 import pluginStore from '../../../services/workflow-plugin-store';
 import { deepClone } from "../../../utils/deep-clone";
+import '../../../plugins/console-activities';
+import '../../../plugins/control-flow-activities';
+import '../../../plugins/email-activities';
+import '../../../plugins/http-activities';
+import '../../../plugins/mass-transit-activities';
+import '../../../plugins/primitives-activities';
+import '../../../plugins/timer-activities';
 
 @Component({
   tag: 'wf-designer-host',
