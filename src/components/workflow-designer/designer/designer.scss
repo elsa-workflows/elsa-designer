@@ -2,8 +2,10 @@
 
 .workflow-canvas {
   position: relative;
+  display: block;
   touch-action: none;
-  min-height: 1000px;
+  width: auto;
+  height: 100vh;
 
   .activity {
     display: block;

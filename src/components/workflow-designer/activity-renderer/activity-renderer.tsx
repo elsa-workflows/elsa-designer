@@ -39,7 +39,6 @@ export class ActivityRenderer {
   renderDesigner() {
     const activity = this.activity;
     const definition = this.activityDefinition;
-
     const result = ActivityManager.renderDesigner(activity, definition);
 
     return (

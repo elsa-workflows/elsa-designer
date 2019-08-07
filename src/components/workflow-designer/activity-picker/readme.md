@@ -5,6 +5,13 @@
 <!-- Auto Generated Below -->
 
 
+## Properties
+
+| Property              | Attribute | Description | Type                   | Default |
+| --------------------- | --------- | ----------- | ---------------------- | ------- |
+| `activityDefinitions` | --        |             | `ActivityDefinition[]` | `[]`    |
+
+
 ## Events
 
 | Event             | Description | Type               |
@@ -34,6 +41,19 @@ Type: `Promise<void>`
 
 
 
+
+## Dependencies
+
+### Used by
+
+ - [wf-designer-host](..\designer-host)
+
+### Graph
+```mermaid
+graph TD;
+  wf-designer-host --> wf-activity-picker
+  style wf-activity-picker fill:#f9f,stroke:#333,stroke-width:4px
+```
 
 ----------------------------------------------
 

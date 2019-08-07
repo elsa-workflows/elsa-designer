@@ -5,12 +5,22 @@
 <!-- Auto Generated Below -->
 
 
+## Properties
+
+| Property              | Attribute       | Description | Type                                                                                                                         | Default                                         |
+| --------------------- | --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `activityDefinitions` | --              |             | `ActivityDefinition[]`                                                                                                       | `[]`                                            |
+| `canvasHeight`        | `canvas-height` |             | `string`                                                                                                                     | `undefined`                                     |
+| `workflow`            | --              |             | `{ id?: string; name?: string; description?: string; version?: number; activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
+
+
 ## Events
 
-| Event           | Description | Type               |
-| --------------- | ----------- | ------------------ |
-| `add-activity`  |             | `CustomEvent<any>` |
-| `edit-activity` |             | `CustomEvent<any>` |
+| Event             | Description | Type               |
+| ----------------- | ----------- | ------------------ |
+| `add-activity`    |             | `CustomEvent<any>` |
+| `edit-activity`   |             | `CustomEvent<any>` |
+| `workflowChanged` |             | `CustomEvent<any>` |
 
 
 ## Methods
@@ -25,23 +35,13 @@ Type: `Promise<void>`
 
 
 
-### `getWorkflow() => Promise<{ activities: Activity[]; connections: import("C:/Projects/Elsa/elsa-designer-html/src/models/connection").Connection[]; }>`
+### `getWorkflow() => Promise<any>`
 
 
 
 #### Returns
 
-Type: `Promise<{ activities: Activity[]; connections: Connection[]; }>`
-
-
-
-### `loadWorkflow(workflow: Workflow) => Promise<void>`
-
-
-
-#### Returns
-
-Type: `Promise<void>`
+Type: `Promise<any>`
 
 
 
@@ -68,6 +68,10 @@ Type: `Promise<void>`
 
 ## Dependencies
 
+### Used by
+
+ - [wf-designer-host](..\designer-host)
+
 ### Depends on
 
 - [wf-activity-renderer](..\activity-renderer)
@@ -80,6 +84,7 @@ graph TD;
   wf-designer --> wf-activity-renderer
   wf-designer --> wf-context-menu
   wf-designer --> wf-context-menu-item
+  wf-designer-host --> wf-designer
   style wf-designer fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

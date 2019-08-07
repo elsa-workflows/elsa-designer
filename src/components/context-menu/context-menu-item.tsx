@@ -17,7 +17,7 @@ export class ContextMenuItem {
     const text = this.text;
 
     return (
-        <a class="dropdown-item" href="#">{text}</a>
+        <a class="dropdown-item" href="#" onClick={e => e.preventDefault()}>{text}</a>
     )
   }
 }

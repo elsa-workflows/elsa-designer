@@ -24,6 +24,11 @@ export class ExpressionField {
 
   private selectSyntax = (syntax) => this.syntax = syntax;
 
+  private onSyntaxOptionClick = (e: Event, syntax: string) => {
+    e.preventDefault();
+    this.selectSyntax(syntax);
+  };
+
   render() {
     const name = this.name;
     const label = this.label;
@@ -41,7 +46,8 @@ export class ExpressionField {
           <div class="input-group-append">
             <button class="btn btn-primary dropdown-toggle" type="button" id={ `${ name }_dropdownMenuButton` } data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{ selectedSyntax }</button>
             <div class="dropdown-menu" aria-labelledby={ `${ name }_dropdownMenuButton` }>
-              { syntaxes.map(x => <a onClick={ () => this.selectSyntax(x) } class="dropdown-item" href="#">{ x }</a>) }
+              { syntaxes.map(x =>
+                <a onClick={ e => this.onSyntaxOptionClick(e, x) } class="dropdown-item" href="#">{ x }</a>) }
             </div>
           </div>
         </div>

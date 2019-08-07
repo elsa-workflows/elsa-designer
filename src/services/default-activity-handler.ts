@@ -8,9 +8,12 @@ export class DefaultActivityHandler implements ActivityHandler {
 
     if (!!definition.designer && !!definition.designer.description) {
       const lambda = definition.designer.description;
-      const fun = eval(lambda);
 
-      description = fun({ activity, definition, state: activity.state });
+      if (lambda) {
+        const fun = eval(lambda);
+
+        description = fun({ activity, definition, state: activity.state });
+      }
     }
 
     return {

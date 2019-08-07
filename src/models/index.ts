@@ -6,10 +6,10 @@ export * from './activity-property-descriptor';
 export * from './activity-definition';
 export * from './connection';
 export * from './workflow';
-export * from './workflow-format';
-export * from './workflow-format-descriptors';
+export * from './workflow-format-descriptor';
 export * from './imported-workflow-data';
 export * from './render-result';
 export * from './render-designer-result';
 export * from './point';
 export * from './workflow-expression';
+export * from './workflow-plugin'

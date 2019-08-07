@@ -1,10 +1,5 @@
-import { Component, Element, h, Event, EventEmitter, Prop, State } from '@stencil/core';
+import { Component, Element, h, Event, EventEmitter, Prop} from '@stencil/core';
 import { Activity, ActivityDefinition, ActivityDisplayMode } from "../../../models";
-import { Store } from "@stencil/redux";
-import { RootState } from "../../../redux/reducers";
-import { Action } from "../../../redux/actions";
-import ActivityManager from '../../../services/activity-manager';
-import { ComponentHelper } from "../../../utils/ComponentHelper";
 
 @Component({
   tag: 'wf-activity-editor',
@@ -16,14 +11,11 @@ export class ActivityEditor {
   @Element()
   el: HTMLElement;
 
-  @Prop({ context: 'store' })
-  store: Store<RootState, Action>;
+  @Prop()
+  activityDefinitions: Array<ActivityDefinition> = [];
 
   @Prop()
   activity: Activity;
-
-  @State()
-  activityDefinitions: Array<ActivityDefinition>;
 
   @Prop({ mutable: true })
   show: boolean;
@@ -33,16 +25,6 @@ export class ActivityEditor {
 
   modal: HTMLElement;
   renderer: HTMLWfActivityRendererElement;
-
-  async componentWillLoad() {
-    await ComponentHelper.rootComponentReady();
-
-    this.store.mapStateToProps(this, state => {
-      return {
-        activityDefinitions: state.activityDefinitions
-      }
-    });
-  }
 
   async onSubmit(e: Event) {
     e.preventDefault();
@@ -67,7 +49,7 @@ export class ActivityEditor {
       return null;
     }
 
-    const activityDefinition = this.activityDefinitions.find(x => x.type === activity.type);
+    const activityDefinition = this.activityDefinitions.find(x => x.type == activity.type);
 
     if (!activityDefinition) {
       console.error(`No activity of type ${ this.activity.type } exists in the library.`);
