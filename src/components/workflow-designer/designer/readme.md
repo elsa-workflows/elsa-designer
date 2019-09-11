@@ -7,11 +7,11 @@
 
 ## Properties
 
-| Property              | Attribute       | Description | Type                                                                                                                         | Default                                         |
-| --------------------- | --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| `activityDefinitions` | --              |             | `ActivityDefinition[]`                                                                                                       | `[]`                                            |
-| `canvasHeight`        | `canvas-height` |             | `string`                                                                                                                     | `undefined`                                     |
-| `workflow`            | --              |             | `{ id?: string; name?: string; description?: string; version?: number; activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
+| Property              | Attribute       | Description | Type                                                                                                                                                | Default                                         |
+| --------------------- | --------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| `activityDefinitions` | --              |             | `ActivityDefinition[]`                                                                                                                              | `[]`                                            |
+| `canvasHeight`        | `canvas-height` |             | `string`                                                                                                                                            | `undefined`                                     |
+| `workflow`            | --              |             | `{ id?: string; name?: string; description?: string; version?: number; isPublished?: boolean; activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
 
 
 ## Events

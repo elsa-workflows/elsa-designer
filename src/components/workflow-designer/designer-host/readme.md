@@ -7,10 +7,10 @@
 
 ## Properties
 
-| Property       | Attribute       | Description | Type                                                                                                                         | Default     |
-| -------------- | --------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| `canvasHeight` | `canvas-height` |             | `string`                                                                                                                     | `undefined` |
-| `workflow`     | --              |             | `{ id?: string; name?: string; description?: string; version?: number; activities: Activity[]; connections: Connection[]; }` | `undefined` |
+| Property       | Attribute       | Description | Type                                                                                                                                                | Default     |
+| -------------- | --------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| `canvasHeight` | `canvas-height` |             | `string`                                                                                                                                            | `undefined` |
+| `workflow`     | --              |             | `{ id?: string; name?: string; description?: string; version?: number; isPublished?: boolean; activities: Activity[]; connections: Connection[]; }` | `undefined` |
 
 
 ## Events

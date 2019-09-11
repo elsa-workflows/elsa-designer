@@ -7,9 +7,9 @@
 
 ## Events
 
-| Event             | Description | Type                                                                                                                                      |
-| ----------------- | ----------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `import-workflow` |             | `CustomEvent<{ id?: string; name?: string; description?: string; version?: string; activities: Activity[]; connections: Connection[]; }>` |
+| Event             | Description | Type                                                                                                                                                             |
+| ----------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `import-workflow` |             | `CustomEvent<{ id?: string; name?: string; description?: string; version?: number; isPublished?: boolean; activities: Activity[]; connections: Connection[]; }>` |
 
 
 ## Methods
