@@ -33,6 +33,12 @@ export namespace Components {
     'displayMode': ActivityDisplayMode;
     'updateEditor': (formData: FormData) => Promise<Activity>;
   }
+  interface WfBooleanField {
+    'hint': string;
+    'label': string;
+    'name': string;
+    'value': string;
+  }
   interface WfContextMenu {
     'handleContextMenuEvent': (e: MouseEvent) => Promise<void>;
     'target': HTMLElement | ShadowRoot;
@@ -109,6 +115,12 @@ declare global {
     new (): HTMLWfActivityRendererElement;
   };
 
+  interface HTMLWfBooleanFieldElement extends Components.WfBooleanField, HTMLStencilElement {}
+  var HTMLWfBooleanFieldElement: {
+    prototype: HTMLWfBooleanFieldElement;
+    new (): HTMLWfBooleanFieldElement;
+  };
+
   interface HTMLWfContextMenuElement extends Components.WfContextMenu, HTMLStencilElement {}
   var HTMLWfContextMenuElement: {
     prototype: HTMLWfContextMenuElement;
@@ -166,6 +178,7 @@ declare global {
     'wf-activity-editor': HTMLWfActivityEditorElement;
     'wf-activity-picker': HTMLWfActivityPickerElement;
     'wf-activity-renderer': HTMLWfActivityRendererElement;
+    'wf-boolean-field': HTMLWfBooleanFieldElement;
     'wf-context-menu': HTMLWfContextMenuElement;
     'wf-context-menu-item': HTMLWfContextMenuItemElement;
     'wf-designer': HTMLWfDesignerElement;
@@ -193,6 +206,12 @@ declare namespace LocalJSX {
     'activity'?: Activity;
     'activityDefinition'?: ActivityDefinition;
     'displayMode'?: ActivityDisplayMode;
+  }
+  interface WfBooleanField extends JSXBase.HTMLAttributes<HTMLWfBooleanFieldElement> {
+    'hint'?: string;
+    'label'?: string;
+    'name'?: string;
+    'value'?: string;
   }
   interface WfContextMenu extends JSXBase.HTMLAttributes<HTMLWfContextMenuElement> {
     'onContext-menu'?: (event: CustomEvent<any>) => void;
@@ -247,6 +266,7 @@ declare namespace LocalJSX {
     'wf-activity-editor': WfActivityEditor;
     'wf-activity-picker': WfActivityPicker;
     'wf-activity-renderer': WfActivityRenderer;
+    'wf-boolean-field': WfBooleanField;
     'wf-context-menu': WfContextMenu;
     'wf-context-menu-item': WfContextMenuItem;
     'wf-designer': WfDesigner;
