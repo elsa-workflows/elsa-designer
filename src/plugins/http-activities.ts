@@ -19,13 +19,13 @@ export class HttpActivities implements WorkflowPlugin {
     category: HttpActivities.Category,
     properties: [{
       name: 'url',
-      type: 'uri',
+      type: 'text',
       label: 'URL',
       hint: 'The URL to send the HTTP request to.'
     },
       {
         name: 'method',
-        type: 'string',
+        type: 'text',
         label: 'Method',
         hint: 'The HTTP method to use when making the request.'
       },
@@ -52,13 +52,13 @@ export class HttpActivities implements WorkflowPlugin {
     category: HttpActivities.Category,
     properties: [{
       name: 'path',
-      type: 'uri',
+      type: 'text',
       label: 'Path',
       hint: 'The relative path that triggers this activity.'
     },
       {
         name: 'method',
-        type: 'string',
+        type: 'text',
         label: 'Method',
         hint: 'The HTTP method that triggers this activity.'
       },
@@ -69,6 +69,7 @@ export class HttpActivities implements WorkflowPlugin {
         hint: 'Check if the HTTP request content body should be read and stored as part of the HTTP request model. The stored format depends on the content-type header.'
       }],
     designer: {
+      description: `x => !!x.state.path ? \`Handle <strong>\${ x.state.method } \${ x.state.path }</strong>.\` : x.definition.description`,
       outcomes: [OutcomeNames.Done]
     }
   });
