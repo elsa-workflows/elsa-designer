@@ -17,7 +17,7 @@ import '../../../plugins/http-activities';
 import '../../../plugins/mass-transit-activities';
 import '../../../plugins/primitives-activities';
 import '../../../plugins/timer-activities';
-import { BooleanFieldDriver, ExpressionFieldDriver, ListFieldDriver, TextFieldDriver } from "../../../drivers";
+import { BooleanFieldDriver, ExpressionFieldDriver, ListFieldDriver, TextFieldDriver, SelectFieldDriver } from "../../../drivers";
 
 @Component({
   tag: 'wf-designer-host',
@@ -123,6 +123,7 @@ export class DesignerHost {
     DisplayManager.addDriver('expression', new ExpressionFieldDriver());
     DisplayManager.addDriver('list', new ListFieldDriver());
     DisplayManager.addDriver('boolean', new BooleanFieldDriver());
+    DisplayManager.addDriver('select', new SelectFieldDriver());
   }
 
   render() {

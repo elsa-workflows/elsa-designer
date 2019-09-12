@@ -15,6 +15,9 @@ import {
   WorkflowFormatDescriptor,
   WorkflowFormatDescriptorDictionary,
 } from './models';
+import {
+  SelectItem,
+} from './components/field-editors/select-field/models';
 
 export namespace Components {
   interface WfActivityEditor {
@@ -72,6 +75,7 @@ export namespace Components {
   interface WfExpressionField {
     'hint': string;
     'label': string;
+    'multiline': boolean;
     'name': string;
     'syntax': string;
     'value': string;
@@ -85,6 +89,13 @@ export namespace Components {
     'items': string;
     'label': string;
     'name': string;
+  }
+  interface WfSelectField {
+    'hint': string;
+    'items': Array<SelectItem>;
+    'label': string;
+    'name': string;
+    'value': string;
   }
   interface WfTextField {
     'hint': string;
@@ -169,6 +180,12 @@ declare global {
     new (): HTMLWfListFieldElement;
   };
 
+  interface HTMLWfSelectFieldElement extends Components.WfSelectField, HTMLStencilElement {}
+  var HTMLWfSelectFieldElement: {
+    prototype: HTMLWfSelectFieldElement;
+    new (): HTMLWfSelectFieldElement;
+  };
+
   interface HTMLWfTextFieldElement extends Components.WfTextField, HTMLStencilElement {}
   var HTMLWfTextFieldElement: {
     prototype: HTMLWfTextFieldElement;
@@ -187,6 +204,7 @@ declare global {
     'wf-expression-field': HTMLWfExpressionFieldElement;
     'wf-import-export': HTMLWfImportExportElement;
     'wf-list-field': HTMLWfListFieldElement;
+    'wf-select-field': HTMLWfSelectFieldElement;
     'wf-text-field': HTMLWfTextFieldElement;
   }
 }
@@ -242,6 +260,7 @@ declare namespace LocalJSX {
   interface WfExpressionField extends JSXBase.HTMLAttributes<HTMLWfExpressionFieldElement> {
     'hint'?: string;
     'label'?: string;
+    'multiline'?: boolean;
     'name'?: string;
     'syntax'?: string;
     'value'?: string;
@@ -254,6 +273,13 @@ declare namespace LocalJSX {
     'items'?: string;
     'label'?: string;
     'name'?: string;
+  }
+  interface WfSelectField extends JSXBase.HTMLAttributes<HTMLWfSelectFieldElement> {
+    'hint'?: string;
+    'items'?: Array<SelectItem>;
+    'label'?: string;
+    'name'?: string;
+    'value'?: string;
   }
   interface WfTextField extends JSXBase.HTMLAttributes<HTMLWfTextFieldElement> {
     'hint'?: string;
@@ -275,6 +301,7 @@ declare namespace LocalJSX {
     'wf-expression-field': WfExpressionField;
     'wf-import-export': WfImportExport;
     'wf-list-field': WfListField;
+    'wf-select-field': WfSelectField;
     'wf-text-field': WfTextField;
   }
 }
