@@ -13,7 +13,7 @@ export class HttpActivities implements WorkflowPlugin {
   ]);
 
   private sendHttpRequest = (): ActivityDefinition => ({
-    type: "SendHttpRequest",
+    type: "HttpRequestAction",
     displayName: "Send HTTP Request",
     description: "Send an HTTP request.",
     category: HttpActivities.Category,
@@ -46,7 +46,7 @@ export class HttpActivities implements WorkflowPlugin {
   });
 
   private handleHttpRequest = (): ActivityDefinition => ({
-    type: "HandleHttpRequest",
+    type: "HttpRequestEvent",
     displayName: "Handle HTTP Request",
     description: "Handle an incoming HTTP request.",
     category: HttpActivities.Category,
@@ -75,7 +75,7 @@ export class HttpActivities implements WorkflowPlugin {
   });
 
   private sendHttpResponse = (): ActivityDefinition => ({
-    type: "SendHttpResponse",
+    type: "HttpResponseAction",
     displayName: "Send HTTP Response",
     description: "Send an HTTP response.",
     category: HttpActivities.Category,
