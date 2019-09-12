@@ -23,10 +23,10 @@ export class TextField {
     const name = this.name;
 
     return (
-      <div class="form-group">
+      <host>
         <label htmlFor={ name }>{ this.label }</label>
         <input id={ name } name={ name } type="text" class="form-control" value={ this.value } />
         <small class="form-text text-muted">{ this.hint }</small>
-      </div>);
+      </host>);
   }
 }

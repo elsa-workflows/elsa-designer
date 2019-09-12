@@ -16,7 +16,7 @@ export class SelectFieldDriver implements FieldDriver {
   updateEditor = (activity: Activity, property: ActivityPropertyDescriptor, formData: FormData) => {
     const value = formData.get(property.name).toString();
 
-    activity.state[property.name] = value.split(',').map(x => x.trim());
+    activity.state[property.name] = value.trim();
   };
 
 }

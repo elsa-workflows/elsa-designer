@@ -51,7 +51,7 @@ export class ExpressionField {
     const selectedSyntax = this.syntax || 'PlainText';
 
     return (
-      <div class="form-group">
+      <host>
         <label htmlFor={ name }>{ label }</label>
         <div class="input-group">
           <input name={ `${ name }.syntax` } value={ selectedSyntax } type="hidden" />
@@ -65,6 +65,6 @@ export class ExpressionField {
           </div>
         </div>
         <small class="form-text text-muted">{ hint }</small>
-      </div>);
+      </host>);
   }
 }

@@ -25,9 +25,12 @@ export class HttpActivities implements WorkflowPlugin {
     },
       {
         name: 'method',
-        type: 'text',
+        type: 'select',
         label: 'Method',
-        hint: 'The HTTP method to use when making the request.'
+        hint: 'The HTTP method to use when making the request.',
+        options: {
+          items: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD']
+        }
       },
       {
         name: 'content',
@@ -38,7 +41,7 @@ export class HttpActivities implements WorkflowPlugin {
         name: 'statusCodes',
         type: 'list',
         label: 'Status Codes',
-        hint: 'A list of possible HTTP status codes to handle.'
+        hint: 'A list of possible HTTP status codes to handle, comma-separated. Example: 200, 400, 404'
       }],
     designer: {
       outcomes: 'x => !!x.state.statusCodes ? x.state.statusCodes : []'
@@ -58,9 +61,12 @@ export class HttpActivities implements WorkflowPlugin {
     },
       {
         name: 'method',
-        type: 'text',
+        type: 'select',
         label: 'Method',
-        hint: 'The HTTP method that triggers this activity.'
+        hint: 'The HTTP method that triggers this activity.',
+        options: {
+          items: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD']
+        }
       },
       {
         name: 'readContent',

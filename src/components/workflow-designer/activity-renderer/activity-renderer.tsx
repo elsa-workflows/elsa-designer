@@ -58,7 +58,7 @@ export class ActivityRenderer {
       <Host>
         { properties.map(property => {
           const html = DisplayManager.displayEditor(activity, property);
-          return <div innerHTML={ html } />
+          return <div class="form-group" innerHTML={ html } />
         })
         }
       </Host>

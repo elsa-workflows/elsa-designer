@@ -16,7 +16,7 @@ export class ExpressionFieldDriver implements FieldDriver {
     const syntaxFieldName = `${ property.name }.syntax`;
 
     activity.state[property.name] = {
-      expression: formData.get(expressionFieldName).toString(),
+      expression: formData.get(expressionFieldName).toString().trim(),
       syntax: formData.get(syntaxFieldName).toString()
     };
   };

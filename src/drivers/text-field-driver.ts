@@ -12,7 +12,7 @@ export class TextFieldDriver implements FieldDriver
   };
 
   updateEditor = (activity: Activity, property: ActivityPropertyDescriptor, formData: FormData) => {
-    activity.state[property.name] = formData.get(property.name);
+    activity.state[property.name] = formData.get(property.name).toString().trim();
   };
 
 }
