@@ -81,29 +81,42 @@ export class HttpActivities implements WorkflowPlugin {
     category: HttpActivities.Category,
     properties: [{
       name: 'statusCode',
-      type: 'text',
+      type: 'select',
       label: 'Status Code',
-      hint: 'The HTTP status code to write.'
+      hint: 'The HTTP status code to write. Example: 200',
+      options: {
+        items: [
+          { label: '2xx', options: [200, 201, 202, 203, 204] },
+          { label: '3xx', options: [301, 302, 304, 307, 308] },
+          { label: '4xx', options: [400, 401, 402, 403, 404, 405, 409, 410, 412, 413, 415, 417, 418, 420, 428, 429] }
+        ]
+      }
     },
       {
         name: 'content',
-        type: 'workflow-expression',
+        type: 'expression',
         label: 'Content',
-        hint: 'The HTTP content to write.'
+        hint: 'The HTTP content to write.',
+        options: { multiline: true }
       },
       {
         name: 'contentType',
-        type: 'workflow-expression',
+        type: 'select',
         label: 'Content Type',
-        hint: 'The HTTP content type header to write.'
+        hint: 'The HTTP content type header to write.',
+        options: {
+          items: ['text/plain', 'text/html', 'application/json', 'application/xml']
+        }
       },
       {
         name: 'responseHeaders',
-        type: 'workflow-expression',
+        type: 'expression',
         label: 'Response Headers',
-        hint: 'The headers to send along with the response. One \'header: value\' pair per line.'
+        hint: 'The headers to send along with the response. One \'header: value\' pair per line.',
+        options: { multiline: true }
       }],
     designer: {
+      description: `x => !!x.state.statusCode ? \`Send an HTTP <strong>\${ x.state.statusCode }</strong><br/><br/> \${ x.state.contentType }</strong><br/>\${ !!x.state.content ? x.state.content.expression ? x.state.content.expression.substr(0,100) + '...' : '' : '' }\` : x.definition.description`,
       outcomes: [OutcomeNames.Done]
     }
   });

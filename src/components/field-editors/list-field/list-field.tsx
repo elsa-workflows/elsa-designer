@@ -5,7 +5,7 @@ import { Component, h, Host, Prop } from '@stencil/core';
   styleUrl: 'list-field.scss',
   shadow: false
 })
-export class FieldEditorList {
+export class ListField {
 
   @Prop()
   name: string;

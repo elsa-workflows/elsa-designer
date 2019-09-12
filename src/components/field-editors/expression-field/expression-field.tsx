@@ -19,6 +19,9 @@ export class ExpressionField {
   @Prop({ reflect: true })
   value: string;
 
+  @Prop({ reflect: true })
+  multiline: boolean;
+
   @Prop({ reflect: true, mutable: true })
   syntax: string;
 
@@ -27,6 +30,16 @@ export class ExpressionField {
   private onSyntaxOptionClick = (e: Event, syntax: string) => {
     e.preventDefault();
     this.selectSyntax(syntax);
+  };
+
+  renderInputField = () => {
+    const name = this.name;
+    const value = this.value;
+
+    if (this.multiline)
+      return <textarea id={ name } name={ `${ name }.expression` } class="form-control" rows={ 3 }>{ value }</textarea>;
+
+    return <input id={ name } name={ `${ name }.expression` } value={ value } type="text" class="form-control" />;
   };
 
   render() {
@@ -42,7 +55,7 @@ export class ExpressionField {
         <label htmlFor={ name }>{ label }</label>
         <div class="input-group">
           <input name={ `${ name }.syntax` } value={ selectedSyntax } type="hidden" />
-          <input id={ name } name={ `${ name }.expression` } value={ value } type="text" class="form-control" />
+          { this.renderInputField() }
           <div class="input-group-append">
             <button class="btn btn-primary dropdown-toggle" type="button" id={ `${ name }_dropdownMenuButton` } data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{ selectedSyntax }</button>
             <div class="dropdown-menu" aria-labelledby={ `${ name }_dropdownMenuButton` }>
