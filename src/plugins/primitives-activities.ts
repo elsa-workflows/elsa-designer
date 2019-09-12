@@ -48,6 +48,7 @@ export class PrimitiveActivities implements WorkflowPlugin {
       hint: 'An expression that evaluates to the value to store in the variable.'
     }],
     designer: {
+      description: 'x => !!x.state.variableName ? `${x.state.expression.syntax}: <strong>${x.state.variableName}</strong> = <strong>${x.state.expression.expression}</strong>` : x.definition.description',
       outcomes: [OutcomeNames.Done]
     }
   });
