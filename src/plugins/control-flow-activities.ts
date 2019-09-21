@@ -6,6 +6,7 @@ import pluginStore from '../services/workflow-plugin-store';
 export class ControlFlowActivities implements WorkflowPlugin {
   private static readonly Category: string = "Control Flow";
 
+  getName = (): string => "ControlFlowActivities";
   getActivityDefinitions = (): Array<ActivityDefinition> => ([
     this.fork(),
     this.ifElse(),

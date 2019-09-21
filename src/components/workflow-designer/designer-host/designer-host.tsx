@@ -36,6 +36,7 @@ export class DesignerHost {
   @Prop() workflow: Workflow;
   @Prop({ reflect: true, attribute: "canvas-height" }) canvasHeight: string;
   @Prop({ attribute: "activity-definitions" }) activityDefinitionsData: string;
+  @Prop({ attribute: "plugins" }) pluginsData: string;
 
   @Method()
   async newWorkflow() {
@@ -100,8 +101,12 @@ export class DesignerHost {
   workflowChanged: EventEmitter;
 
   private loadActivityDefinitions = (): Array<ActivityDefinition> => {
+    const pluginsData = this.pluginsData || '';
+    const pluginNames = pluginsData.split(/[ ,]+/).map(x => x.trim());
+
     return pluginStore
       .list()
+      .filter(x => pluginNames.indexOf(x.getName()) > -1)
       .filter(x => !!x.getActivityDefinitions)
       .map(x => x.getActivityDefinitions())
       .reduce((a, b) => a.concat(b), []);

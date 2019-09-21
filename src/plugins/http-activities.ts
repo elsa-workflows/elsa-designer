@@ -6,6 +6,7 @@ import pluginStore from '../services/workflow-plugin-store';
 export class HttpActivities implements WorkflowPlugin {
   private static readonly Category: string = "HTTP";
 
+  getName = (): string => "HttpActivities";
   getActivityDefinitions = (): Array<ActivityDefinition> => ([
     this.sendHttpRequest(),
     this.sendHttpResponse(),

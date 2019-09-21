@@ -6,6 +6,7 @@ import pluginStore from '../services/workflow-plugin-store';
 export class ConsoleActivities implements WorkflowPlugin {
   private static readonly Category: string = "Console";
 
+  getName = (): string => "ConsoleActivities";
   getActivityDefinitions = (): Array<ActivityDefinition> => ([this.readLine(), this.writeLine()]);
 
   private readLine = (): ActivityDefinition => ({

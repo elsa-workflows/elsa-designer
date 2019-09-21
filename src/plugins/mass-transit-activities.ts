@@ -6,6 +6,7 @@ import pluginStore from '../services/workflow-plugin-store';
 export class MassTransitActivities implements WorkflowPlugin {
   private static readonly Category: string = "MassTransit";
 
+  getName = (): string => "MassTransitActivities";
   getActivityDefinitions = (): Array<ActivityDefinition> => ([
     this.receiveMassTransitMessage(),
     this.sendMassTransitMessage()

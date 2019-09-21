@@ -6,6 +6,7 @@ import pluginStore from '../services/workflow-plugin-store';
 export class PrimitiveActivities implements WorkflowPlugin {
   private static readonly Category: string = "Primitives";
 
+  getName = (): string => "PrimitiveActivities";
   getActivityDefinitions = (): Array<ActivityDefinition> => ([this.log(), this.setVariable()]);
 
   private log = (): ActivityDefinition => ({

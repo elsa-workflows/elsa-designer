@@ -6,6 +6,7 @@ import pluginStore from '../services/workflow-plugin-store';
 export class TimerActivities implements WorkflowPlugin {
   private static readonly Category: string = "Timers";
 
+  getName = (): string => "TimerActivities";
   getActivityDefinitions = (): Array<ActivityDefinition> => ([this.timerEvent()]);
 
   private timerEvent = (): ActivityDefinition => ({

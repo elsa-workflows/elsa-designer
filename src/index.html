@@ -52,7 +52,12 @@
     <div class="col-12">
 
       <div class="card">
-        <wf-designer-host id="designerHost" canvas-height="300vh" activity-definitions='[{"type": "Custom", "displayName": "Custom", "description": "Custom Activity", "category": "Custom", "designer": { "outcomes": ["Done"] }}]'></wf-designer-host>
+        <wf-designer-host
+          id="designerHost"
+          canvas-height="300vh"
+          plugins="PrimitiveActivities ControlFlowActivities EmailActivities HttpActivities ConsoleActivities MassTransitActivities TimerActivities"
+          activity-definitions='[{"type": "Custom", "displayName": "Custom", "description": "Custom Activity", "category": "Custom", "designer": { "outcomes": ["Done"] }}]'>
+        </wf-designer-host>
       </div>
 
     </div>
@@ -60,20 +65,20 @@
 </div>
 
 <script type="text/javascript">
-  const designer = document.querySelector("#designerHost");
+    const designer = document.querySelector("#designerHost");
 
-  function addActivity() {
-    designer.showActivityPicker();
-  }
+    function addActivity() {
+        designer.showActivityPicker();
+    }
 
-  function createNewWorkflow() {
-    if (confirm('Are you sure you want to discard current changes?'))
-      designer.newWorkflow();
-  }
+    function createNewWorkflow() {
+        if (confirm('Are you sure you want to discard current changes?'))
+            designer.newWorkflow();
+    }
 
-  function importWorkflow() {
-    designer.import();
-  }
+    function importWorkflow() {
+        designer.import();
+    }
 
 </script>
 </body>

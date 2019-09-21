@@ -6,6 +6,7 @@ import pluginStore from '../services/workflow-plugin-store';
 export class EmailActivities implements WorkflowPlugin {
   private static readonly Category: string = "Email";
 
+  getName = (): string => "EmailActivities";
   getActivityDefinitions = (): Array<ActivityDefinition> => ([this.sendEmail()]);
 
   private sendEmail = (): ActivityDefinition => ({
