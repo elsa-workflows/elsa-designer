@@ -60,6 +60,7 @@ export namespace Components {
     'workflow': Workflow;
   }
   interface WfDesignerHost {
+    'activityDefinitionsData': string;
     'canvasHeight': string;
     'export': (formatDescriptor: WorkflowFormatDescriptor) => Promise<void>;
     'getWorkflow': () => Promise<any>;
@@ -248,6 +249,7 @@ declare namespace LocalJSX {
     'workflow'?: Workflow;
   }
   interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {
+    'activityDefinitionsData'?: string;
     'canvasHeight'?: string;
     'onWorkflowChanged'?: (event: CustomEvent<any>) => void;
     'workflow'?: Workflow;

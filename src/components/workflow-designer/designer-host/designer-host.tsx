@@ -31,17 +31,11 @@ export class DesignerHost {
   designer: HTMLWfDesignerElement;
   importExport: HTMLWfImportExportElement;
 
-  @Element()
-  el: HTMLElement;
-
-  @State()
-  activityDefinitions: Array<ActivityDefinition> = [];
-
-  @Prop()
-  workflow: Workflow;
-
-  @Prop({ reflect: true, attribute: "canvas-height" })
-  canvasHeight: string;
+  @Element() el: HTMLElement;
+  @State() activityDefinitions: Array<ActivityDefinition> = [];
+  @Prop() workflow: Workflow;
+  @Prop({ reflect: true, attribute: "canvas-height" }) canvasHeight: string;
+  @Prop({ attribute: "activity-definitions" }) activityDefinitionsData: string;
 
   @Method()
   async newWorkflow() {
@@ -119,6 +113,13 @@ export class DesignerHost {
 
   componentWillLoad() {
     this.activityDefinitions = this.loadActivityDefinitions();
+
+    if(!!this.activityDefinitionsData)
+    {
+      const definitions = JSON.parse(this.activityDefinitionsData);
+      this.activityDefinitions = [...this.activityDefinitions, ...definitions]
+    }
+
     DisplayManager.addDriver('text', new TextFieldDriver());
     DisplayManager.addDriver('expression', new ExpressionFieldDriver());
     DisplayManager.addDriver('list', new ListFieldDriver());
