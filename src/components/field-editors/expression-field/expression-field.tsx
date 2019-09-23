@@ -46,9 +46,8 @@ export class ExpressionField {
     const name = this.name;
     const label = this.label;
     const hint = this.hint;
-    const value = this.value;
-    const syntaxes = ['PlainText', 'JavaScript', 'Liquid'];
-    const selectedSyntax = this.syntax || 'PlainText';
+    const syntaxes = ['Literal', 'JavaScript', 'Liquid'];
+    const selectedSyntax = this.syntax || 'Literal';
 
     return (
       <host>

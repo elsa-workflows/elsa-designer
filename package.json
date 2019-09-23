@@ -1,6 +1,6 @@
 {
   "name": "@elsa-workflows/elsa-workflow-designer",
-  "version": "0.0.43",
+  "version": "0.0.48",
   "description": "Stencil Component Starter",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

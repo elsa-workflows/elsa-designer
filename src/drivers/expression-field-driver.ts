@@ -5,7 +5,7 @@ export class ExpressionFieldDriver implements FieldDriver {
   displayEditor = (activity: Activity, property: ActivityPropertyDescriptor): RenderResult => {
     const name = property.name;
     const label = property.label;
-    const value: WorkflowExpression = activity.state[name] || { expression: '', syntax: 'PlainText' };
+    const value: WorkflowExpression = activity.state[name] || { expression: '', syntax: 'Literal' };
     const multiline: boolean = (property.options || {}).multiline || false;
 
     return `<wf-expression-field name="${ name }" label="${ label }" hint="${ property.hint }" value="${ value.expression }" syntax="${ value.syntax }" multiline="${ multiline }"></wf-expression-field>`;

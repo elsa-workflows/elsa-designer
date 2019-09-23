@@ -90,7 +90,7 @@ export class HttpActivities implements WorkflowPlugin {
       name: 'statusCode',
       type: 'select',
       label: 'Status Code',
-      hint: 'The HTTP status code to write. Example: 200',
+      hint: 'The HTTP status code to write.',
       options: {
         items: [
           { label: '2xx', options: [200, 201, 202, 203, 204] },
