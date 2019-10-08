@@ -1,6 +1,6 @@
-import { ActivityHandler } from "./activity-handler";
-import { Activity, ActivityDefinition, RenderDesignerResult } from "../models";
-import { FormUpdater } from "../utils";
+import {ActivityHandler} from "./activity-handler";
+import {Activity, ActivityDefinition, RenderDesignerResult} from "../models";
+import {FormUpdater} from "../utils";
 
 export class DefaultActivityHandler implements ActivityHandler {
   renderDesigner = (activity: Activity, definition: ActivityDefinition): RenderDesignerResult => {
@@ -12,7 +12,7 @@ export class DefaultActivityHandler implements ActivityHandler {
       if (lambda) {
         const fun = eval(lambda);
 
-        description = fun({ activity, definition, state: activity.state });
+        description = fun({activity, definition, state: activity.state});
       }
     }
 
@@ -38,7 +38,7 @@ export class DefaultActivityHandler implements ActivityHandler {
           outcomes = value;
 
         else if (value instanceof Function)
-          outcomes = value({ activity, definition, state: activity.state });
+          outcomes = value({activity, definition, state: activity.state});
       }
     }
 
