@@ -1,5 +1,5 @@
-import { Component, Element, h, Method, Event, EventEmitter, State, Prop } from '@stencil/core';
-import { ActivityDefinition } from '../../../models';
+import {Component, Element, h, Method, Event, EventEmitter, State, Prop} from '@stencil/core';
+import {ActivityDefinition} from '../../../models';
 
 @Component({
   tag: 'wf-activity-picker',
@@ -35,7 +35,7 @@ export class ActivityPicker {
     this.isVisible = false;
   }
 
-  @Event({ eventName: 'activity-picked' })
+  @Event({eventName: 'activity-picked'})
   activitySelected: EventEmitter;
 
   private modal: any;
@@ -69,7 +69,7 @@ export class ActivityPicker {
 
     return (
       <div>
-        <div class="modal" tabindex="-1" role="dialog" ref={ el => this.modal = el as HTMLElement }>
+        <div class="modal" tabindex="-1" role="dialog" ref={el => this.modal = el as HTMLElement}>
           <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
               <div class="modal-header">
@@ -82,36 +82,29 @@ export class ActivityPicker {
                 <div class="row">
                   <div class="col-sm-3 col-md-3 col-lg-2">
                     <div class="form-group">
-                      <input class="form-control" type="search" placeholder="Filter" aria-label="Filter" autofocus onKeyUp={ this.onFilterTextChanged } />
+                      <input class="form-control" type="search" placeholder="Filter" aria-label="Filter" autofocus
+                             onKeyUp={this.onFilterTextChanged}/>
                     </div>
                     <ul class="nav nav-pills flex-column activity-picker-categories">
-                      { categories.map(category => {
+                      {categories.map(category => {
                         const categoryDisplayText = category || 'All';
                         const isSelected = category === this.selectedCategory;
-                        const classes = { 'nav-link': true, 'active': isSelected };
+                        const classes = {'nav-link': true, 'active': isSelected};
 
                         return (
                           <li class="nav-item">
-                            <a class={ classes } href="#" data-toggle="pill" onClick={ e => { e.preventDefault(); this.selectCategory(category); }}>{ categoryDisplayText }</a>
+                            <a class={classes} href="#" data-toggle="pill" onClick={e => {
+                              e.preventDefault();
+                              this.selectCategory(category);
+                            }}>{categoryDisplayText}</a>
                           </li>
                         );
-                      }) }
+                      })}
                     </ul>
                   </div>
                   <div class="col-sm-9 col-md-9 col-lg-10">
                     <div class="card-columns tab-content">
-                      { definitions.map(activity => (
-                        <div class="card activity">
-                          <div class="card-body">
-                            <h4 class="card-title"><i class="far fa-envelope" />{ activity.displayName }</h4>
-                            <p>{ activity.description }</p>
-                            <a href="#" onClick={e => {e.preventDefault(); this.selectCategory(activity.category);}}><span class="badge badge-light">{ activity.category }</span></a>
-                          </div>
-                          <div class="card-footer text-muted text-xs-right">
-                            <a class="btn btn-primary btn-sm" href="#" onClick={ async e => { e.preventDefault(); await this.onActivitySelected(activity); }}>Select</a>
-                          </div>
-                        </div>
-                      )) }
+                      {definitions.map(this.renderActivity)}
                     </div>
                   </div>
                 </div>
@@ -125,4 +118,27 @@ export class ActivityPicker {
       </div>
     )
   }
+
+  renderActivity = (activity: ActivityDefinition) => {
+    const icon = activity.icon || 'fas fa-cog';
+    const iconClass = `${icon} mr-1`;
+    return (
+      <div class="card activity">
+        <div class="card-body">
+          <h4 class="card-title"><i class={iconClass}/>{activity.displayName}</h4>
+          <p>{activity.description}</p>
+          <a href="#" onClick={e => {
+            e.preventDefault();
+            this.selectCategory(activity.category);
+          }}><span class="badge badge-light">{activity.category}</span></a>
+        </div>
+        <div class="card-footer text-muted text-xs-right">
+          <a class="btn btn-primary btn-sm" href="#" onClick={async e => {
+            e.preventDefault();
+            await this.onActivitySelected(activity);
+          }}>Select</a>
+        </div>
+      </div>
+    );
+  };
 }

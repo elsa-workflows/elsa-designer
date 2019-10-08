@@ -19,6 +19,7 @@ export class ControlFlowActivities implements WorkflowPlugin {
     displayName: "Fork",
     description: "Fork workflow execution into multiple branches.",
     category: ControlFlowActivities.Category,
+    icon: 'fas fa-code-branch fa-rotate-180',
     properties: [{
       name: 'branches',
       type: 'list',
@@ -35,6 +36,7 @@ export class ControlFlowActivities implements WorkflowPlugin {
     displayName: "If/Else",
     description: "Evaluate a Boolean expression and continue execution depending on the result.",
     category: ControlFlowActivities.Category,
+
     properties: [{
       name: 'expression',
       type: 'expression',
@@ -52,6 +54,7 @@ export class ControlFlowActivities implements WorkflowPlugin {
     displayName: "Join",
     description: "Merge workflow execution back into a single branch.",
     category: ControlFlowActivities.Category,
+    icon: 'fas fa-code-branch',
     properties: [{
       name: 'joinMode',
       type: 'text',
@@ -69,6 +72,7 @@ export class ControlFlowActivities implements WorkflowPlugin {
     displayName: "Switch",
     description: "Switch execution based on a given expression.",
     category: ControlFlowActivities.Category,
+    icon: 'far fa-list-alt',
     properties: [{
       name: 'expression',
       type: 'expression',

@@ -10,10 +10,11 @@ export class ConsoleActivities implements WorkflowPlugin {
   getActivityDefinitions = (): Array<ActivityDefinition> => ([this.readLine(), this.writeLine()]);
 
   private readLine = (): ActivityDefinition => ({
-    type: "ReadLine",
-    displayName: "Read Line",
-    description: "Read text from standard in.",
+    type: 'ReadLine',
+    displayName: 'Read Line',
+    description: 'Read text from standard in.',
     category: ConsoleActivities.Category,
+    icon: 'fas fa-terminal',
     properties: [{
       name: 'variableName',
       type: 'text',
@@ -27,10 +28,11 @@ export class ConsoleActivities implements WorkflowPlugin {
   });
 
   private writeLine = (): ActivityDefinition => ({
-    type: "WriteLine",
-    displayName: "Write Line",
-    description: "Write text to standard out.",
+    type: 'WriteLine',
+    displayName: 'Write Line',
+    description: 'Write text to standard out.',
     category: ConsoleActivities.Category,
+    icon: 'fas fa-terminal',
     properties: [{
       name: 'textExpression',
       type: 'expression',

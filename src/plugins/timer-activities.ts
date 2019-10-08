@@ -14,6 +14,7 @@ export class TimerActivities implements WorkflowPlugin {
     displayName: "Timer Event",
     description: "Triggers after a specified amount of time.",
     category: TimerActivities.Category,
+    icon: 'fas fa-hourglass-start',
     properties: [
       {
         name: 'expression',

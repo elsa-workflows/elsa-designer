@@ -1,4 +1,4 @@
-import { Component, h, Host, Method, Prop } from '@stencil/core';
+import {Component, h, Host, Method, Prop} from '@stencil/core';
 import {
   Activity,
   ActivityDefinition,
@@ -40,11 +40,13 @@ export class ActivityRenderer {
     const activity = this.activity;
     const definition = this.activityDefinition;
     const result = ActivityManager.renderDesigner(activity, definition);
+    const icon = definition.icon || 'fas fa-cog';
+    const iconClass = `${icon} mr-1`;
 
     return (
       <div>
-        <h5>{ definition.displayName }</h5>
-        <p innerHTML={ result.description } />
+        <h5><i class={iconClass}/>{definition.displayName}</h5>
+        <p innerHTML={result.description}/>
       </div>
     );
   }
@@ -56,9 +58,9 @@ export class ActivityRenderer {
 
     return (
       <Host>
-        { properties.map(property => {
+        {properties.map(property => {
           const html = DisplayManager.displayEditor(activity, property);
-          return <div class="form-group" innerHTML={ html } />
+          return <div class="form-group" innerHTML={html}/>
         })
         }
       </Host>
@@ -67,7 +69,7 @@ export class ActivityRenderer {
 
   @Method()
   async updateEditor(formData: FormData): Promise<Activity> {
-    const activity = { ...this.activity };
+    const activity = {...this.activity};
     const definition = this.activityDefinition;
     const properties = definition.properties;
 

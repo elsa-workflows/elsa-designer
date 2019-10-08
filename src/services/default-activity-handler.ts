@@ -42,6 +42,6 @@ export class DefaultActivityHandler implements ActivityHandler {
       }
     }
 
-    return outcomes;
+    return outcomes || [];
   }
 }
