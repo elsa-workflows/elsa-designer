@@ -14,6 +14,7 @@ export class PrimitiveActivities implements WorkflowPlugin {
     displayName: "Log",
     description: "Log a message.",
     category: PrimitiveActivities.Category,
+    icon: 'fas fa-feather-alt',
     properties: [{
       name: 'message',
       type: 'text',

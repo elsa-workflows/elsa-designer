@@ -17,6 +17,7 @@ export class MassTransitActivities implements WorkflowPlugin {
     displayName: "Receive MassTransit Message",
     description: "Receive a message via MassTransit.",
     category: MassTransitActivities.Category,
+    icon: 'fas fa-envelope-open-text',
     properties: [{
       name: 'messageType',
       type: 'text',
@@ -33,6 +34,7 @@ export class MassTransitActivities implements WorkflowPlugin {
     displayName: "Send MassTransit Message",
     description: "Send a message via MassTransit.",
     category: MassTransitActivities.Category,
+    icon: 'fas fa-envelope',
     properties: [{
       name: 'messageType',
       type: 'text',

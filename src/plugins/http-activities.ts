@@ -18,6 +18,7 @@ export class HttpActivities implements WorkflowPlugin {
     displayName: "Send HTTP Request",
     description: "Send an HTTP request.",
     category: HttpActivities.Category,
+    icon: 'fas fa-cloud',
     properties: [{
       name: 'url',
       type: 'text',
@@ -54,6 +55,7 @@ export class HttpActivities implements WorkflowPlugin {
     displayName: "Handle HTTP Request",
     description: "Handle an incoming HTTP request.",
     category: HttpActivities.Category,
+    icon: 'fas fa-cloud',
     properties: [{
       name: 'path',
       type: 'text',
@@ -86,6 +88,7 @@ export class HttpActivities implements WorkflowPlugin {
     displayName: "Send HTTP Response",
     description: "Send an HTTP response.",
     category: HttpActivities.Category,
+    icon: 'fas fa-cloud',
     properties: [{
       name: 'statusCode',
       type: 'select',

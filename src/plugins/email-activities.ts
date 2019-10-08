@@ -14,6 +14,7 @@ export class EmailActivities implements WorkflowPlugin {
     displayName: "Send Email",
     description: "Send an email message.",
     category: EmailActivities.Category,
+    icon: 'far fa-envelope',
     properties: [
       {
         name: 'from',
