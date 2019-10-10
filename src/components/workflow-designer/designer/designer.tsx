@@ -133,7 +133,6 @@ export class Designer {
     const activities = this.workflow.activities.filter(x => x.id !== activity.id);
     const connections = this.workflow.connections.filter(x => x.sourceActivityId != activity.id && x.destinationActivityId != activity.id);
     this.workflow = { ...this.workflow, activities, connections };
-    //await this.setWorkflow(workflow);
   };
 
   private createActivityModels(): Array<ActivityModel> {

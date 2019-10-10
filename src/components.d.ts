@@ -69,6 +69,7 @@ export namespace Components {
     'pluginsData': string;
     'showActivityPicker': () => Promise<void>;
     'workflow': Workflow;
+    'workflowData': string;
   }
   interface WfExportButton {
     'designerHostId': string;
@@ -255,6 +256,7 @@ declare namespace LocalJSX {
     'onWorkflowChanged'?: (event: CustomEvent<any>) => void;
     'pluginsData'?: string;
     'workflow'?: Workflow;
+    'workflowData'?: string;
   }
   interface WfExportButton extends JSXBase.HTMLAttributes<HTMLWfExportButtonElement> {
     'designerHostId'?: string;

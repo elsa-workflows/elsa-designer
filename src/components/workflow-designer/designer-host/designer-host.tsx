@@ -1,15 +1,10 @@
-import { Component, Element, Event, EventEmitter, h, Listen, Method, Prop, State, Watch } from '@stencil/core';
+import {Component, Element, Event, EventEmitter, h, Listen, Method, Prop, State} from '@stencil/core';
 import 'dragscroll';
-import {
-  Activity,
-  ActivityDefinition,
-  Workflow,
-  WorkflowFormatDescriptor
-} from "../../../models";
+import {Activity, ActivityDefinition, Workflow, WorkflowFormatDescriptor} from "../../../models";
 import "../../../drivers";
 import DisplayManager from '../../../services/display-manager';
 import pluginStore from '../../../services/workflow-plugin-store';
-import { deepClone } from "../../../utils/deep-clone";
+import {deepClone} from "../../../utils/deep-clone";
 import '../../../plugins/console-activities';
 import '../../../plugins/control-flow-activities';
 import '../../../plugins/email-activities';
@@ -17,7 +12,13 @@ import '../../../plugins/http-activities';
 import '../../../plugins/mass-transit-activities';
 import '../../../plugins/primitives-activities';
 import '../../../plugins/timer-activities';
-import { BooleanFieldDriver, ExpressionFieldDriver, ListFieldDriver, TextFieldDriver, SelectFieldDriver } from "../../../drivers";
+import {
+  BooleanFieldDriver,
+  ExpressionFieldDriver,
+  ListFieldDriver,
+  SelectFieldDriver,
+  TextFieldDriver
+} from "../../../drivers";
 
 @Component({
   tag: 'wf-designer-host',
@@ -35,7 +36,8 @@ export class DesignerHost {
   @State() activityDefinitions: Array<ActivityDefinition> = [];
   @Prop() workflow: Workflow;
   @Prop({ reflect: true, attribute: "canvas-height" }) canvasHeight: string;
-  @Prop({ attribute: "activity-definitions" }) activityDefinitionsData: string;
+  @Prop({ attribute: "data-activity-definitions" }) activityDefinitionsData: string;
+  @Prop({ attribute: "data-workflow" }) workflowData: string;
   @Prop({ attribute: "plugins" }) pluginsData: string;
 
   @Method()
@@ -116,20 +118,32 @@ export class DesignerHost {
     this.workflowChanged.emit(e.detail);
   };
 
-  componentWillLoad() {
+  private initActivityDefinitions = () => {
     this.activityDefinitions = this.loadActivityDefinitions();
 
-    if(!!this.activityDefinitionsData)
-    {
+    if (!!this.activityDefinitionsData) {
       const definitions = JSON.parse(this.activityDefinitionsData);
       this.activityDefinitions = [...this.activityDefinitions, ...definitions]
     }
+  };
 
+  private initFieldDrivers = () => {
     DisplayManager.addDriver('text', new TextFieldDriver());
     DisplayManager.addDriver('expression', new ExpressionFieldDriver());
     DisplayManager.addDriver('list', new ListFieldDriver());
     DisplayManager.addDriver('boolean', new BooleanFieldDriver());
     DisplayManager.addDriver('select', new SelectFieldDriver());
+  };
+
+  private initWorkflow = () => {
+    if (!!this.workflowData)
+      this.designer.workflow = JSON.parse(this.workflowData);
+  };
+
+  componentWillLoad() {
+    this.initActivityDefinitions();
+    this.initFieldDrivers();
+    this.initWorkflow();
   }
 
   render() {
@@ -137,16 +151,16 @@ export class DesignerHost {
 
     return (
       <host>
-        <wf-activity-picker activityDefinitions={ activityDefinitions } ref={ el => this.activityPicker = el } />
-        <wf-activity-editor activityDefinitions={ activityDefinitions } ref={ el => this.activityEditor = el } />
-        <wf-import-export ref={ el => this.importExport = el } />
+        <wf-activity-picker activityDefinitions={activityDefinitions} ref={el => this.activityPicker = el}/>
+        <wf-activity-editor activityDefinitions={activityDefinitions} ref={el => this.activityEditor = el}/>
+        <wf-import-export ref={el => this.importExport = el}/>
         <div class="workflow-designer-wrapper dragscroll">
           <wf-designer
-            activityDefinitions={ activityDefinitions }
-            ref={ el => this.designer = el }
-            canvasHeight={ this.canvasHeight }
-            workflow={ this.workflow }
-            onWorkflowChanged={ this.onWorkflowChanged }
+            activityDefinitions={activityDefinitions}
+            ref={el => this.designer = el}
+            canvasHeight={this.canvasHeight}
+            workflow={this.workflow}
+            onWorkflowChanged={this.onWorkflowChanged}
           />
         </div>
       </host>
