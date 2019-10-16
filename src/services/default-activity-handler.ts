@@ -26,7 +26,7 @@ export class DefaultActivityHandler implements ActivityHandler {
   getOutcomes = (activity: Activity, definition: ActivityDefinition): Array<string> => {
     let outcomes = [];
 
-    if (definition.designer) {
+    if (!!definition && definition.designer) {
       const lambda = definition.designer.outcomes;
 
       if (lambda instanceof Array) {

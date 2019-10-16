@@ -143,6 +143,9 @@ export class DesignerHost {
   componentWillLoad() {
     this.initActivityDefinitions();
     this.initFieldDrivers();
+  }
+
+  componentDidLoad(){
     this.initWorkflow();
   }
 
