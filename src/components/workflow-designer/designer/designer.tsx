@@ -1,18 +1,19 @@
-import { Component, Element, Event, EventEmitter, h, Method, Prop, Watch } from '@stencil/core';
+import {Component, Element, Event, EventEmitter, h, Method, Prop, Watch} from '@stencil/core';
 import {
+  Anchor,
   Connection as JsPlumbConnection,
   DragEventCallbackOptions,
   Endpoint,
   EndpointOptions,
   jsPlumbInstance
 } from "jsplumb";
-import { CssMap } from "../../../utils";
-import { JsPlumbUtils } from "./jsplumb-utils";
-import { ActivityModel } from "./models";
+import {CssClassMap, CssMap} from "../../../utils";
+import {JsPlumbUtils} from "./jsplumb-utils";
+import {ActivityModel} from "./models";
 import uuid from 'uuid-browser/v4';
-import { Activity, ActivityDefinition, ActivityDisplayMode, Point, Workflow } from "../../../models";
+import {Activity, ActivityDefinition, ActivityDisplayMode, Point, Workflow} from "../../../models";
 import ActivityManager from '../../../services/activity-manager';
-import { deepClone } from "../../../utils/deep-clone";
+import {deepClone} from "../../../utils/deep-clone";
 
 @Component({
   tag: 'wf-designer',
@@ -107,23 +108,32 @@ export class Designer {
   render() {
     const activities = this.createActivityModels();
     return (
-      <host class="workflow-canvas" ref={ el => this.canvas = el } style={ { height: this.canvasHeight } }>
-        { activities.map((model: ActivityModel) => {
+      <host class="workflow-canvas" ref={el => this.canvas = el} style={{ height: this.canvasHeight }}>
+        {activities.map((model: ActivityModel) => {
           const activity = model.activity;
-          const styles: CssMap = { 'left': `${ activity.left }px`, 'top': `${ activity.top }px` };
+          const styles: CssMap = { 'left': `${activity.left}px`, 'top': `${activity.top}px` };
+          const classes: CssClassMap = {
+            'activity': true,
+            'activity-blocking': !!activity.blocking,
+            'activity-executed': !!activity.executed,
+            'activity-faulted': activity.faulted
+          };
 
           return (
-            <div id={ `wf-activity-${ activity.id }` } data-activity-id={ activity.id } class="activity" style={ styles } onDblClick={ () => this.onEditActivity(activity) } onContextMenu={ (e) => this.onActivityContextMenu(e, activity) }>
-              <wf-activity-renderer activity={ activity } activityDefinition={ model.definition } displayMode={ ActivityDisplayMode.Design } />
+            <div id={`wf-activity-${activity.id}`} data-activity-id={activity.id} class={classes} style={styles}
+                 onDblClick={() => this.onEditActivity(activity)}
+                 onContextMenu={(e) => this.onActivityContextMenu(e, activity)}>
+              <wf-activity-renderer activity={activity} activityDefinition={model.definition}
+                                    displayMode={ActivityDisplayMode.Design}/>
             </div>);
         })
         }
-        <wf-context-menu target={ this.elem() }>
-          <wf-context-menu-item text="Add Activity" onClick={ this.onAddActivityClick } />
+        <wf-context-menu target={this.elem()}>
+          <wf-context-menu-item text="Add Activity" onClick={this.onAddActivityClick}/>
         </wf-context-menu>
-        <wf-context-menu ref={ (el) => this.activityContextMenu = el }>
-          <wf-context-menu-item text="Edit" onClick={ this.onEditActivityClick } />
-          <wf-context-menu-item text="Delete" onClick={ this.onDeleteActivityClick } />
+        <wf-context-menu ref={(el) => this.activityContextMenu = el}>
+          <wf-context-menu-item text="Edit" onClick={this.onEditActivityClick}/>
+          <wf-context-menu-item text="Delete" onClick={this.onDeleteActivityClick}/>
         </wf-context-menu>
       </host>
     );
@@ -206,19 +216,23 @@ export class Designer {
   private setupOutcomes(element: Element) {
     const activity = this.findActivityByElement(element);
     const definition = this.activityDefinitions.find(x => x.type == activity.type);
-    const outcomes = ActivityManager.getOutcomes(activity, definition);
+    const outcomes: Array<string> = ActivityManager.getOutcomes(activity, definition);
 
     for (let outcome of outcomes) {
       const sourceEndpointOptions: EndpointOptions = JsPlumbUtils.getSourceEndpointOptions(activity.id, outcome);
-      this.jsPlumb.addEndpoint(element, null, sourceEndpointOptions);
+      const endpointOptions: any = {
+        connectorOverlays: [['Label', { label: outcome, cssClass: 'connection-label' }]],
+      };
+      this.jsPlumb.addEndpoint(element, endpointOptions, sourceEndpointOptions);
     }
   }
 
   private setupConnections = () => {
     for (let connection of this.workflow.connections) {
+      const sourceActivity = this.findActivityById(connection.sourceActivityId);
       const sourceEndpointId: string = JsPlumbUtils.createEndpointUuid(connection.sourceActivityId, connection.outcome);
       const sourceEndpoint: Endpoint = this.jsPlumb.getEndpoint(sourceEndpointId);
-      const destinationElementId: string = `wf-activity-${ connection.destinationActivityId }`;
+      const destinationElementId: string = `wf-activity-${connection.destinationActivityId}`;
 
       this.jsPlumb.connect({
         source: sourceEndpoint,
@@ -262,6 +276,7 @@ export class Designer {
     const outcome: string = sourceEndpoint.getParameter('outcome');
     const label: any = connection.getOverlay('label');
 
+    console.debug('Connection created');
     label.setLabel(outcome);
 
     // Check if we already have this connection.

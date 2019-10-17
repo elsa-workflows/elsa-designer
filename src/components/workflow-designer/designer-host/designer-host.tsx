@@ -136,8 +136,17 @@ export class DesignerHost {
   };
 
   private initWorkflow = () => {
-    if (!!this.workflowData)
-      this.designer.workflow = JSON.parse(this.workflowData);
+    if (!!this.workflowData) {
+      const workflow: Workflow = JSON.parse(this.workflowData);
+
+      if (!workflow.activities)
+        workflow.activities = [];
+
+      if (!workflow.connections)
+        workflow.connections = [];
+
+      this.designer.workflow = workflow;
+    }
   };
 
   componentWillLoad() {
@@ -145,7 +154,7 @@ export class DesignerHost {
     this.initFieldDrivers();
   }
 
-  componentDidLoad(){
+  componentDidLoad() {
     this.initWorkflow();
   }
 
