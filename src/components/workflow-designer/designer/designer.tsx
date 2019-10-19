@@ -25,7 +25,7 @@ export class Designer {
   canvas: HTMLElement;
 
   constructor() {
-    this.jsPlumb = JsPlumbUtils.createInstance('.workflow-canvas');
+
   }
 
   @Element()
@@ -36,6 +36,9 @@ export class Designer {
 
   @Prop()
   activityDefinitions: Array<ActivityDefinition> = [];
+
+  @Prop({ reflect: true })
+  readonly: boolean;
 
   @Prop({ mutable: true })
   workflow: Workflow = {
@@ -101,6 +104,10 @@ export class Designer {
 
   private elem = (): HTMLElement => this.el;
 
+  componentWillLoad(){
+    this.jsPlumb = JsPlumbUtils.createInstance('.workflow-canvas', this.readonly);
+  }
+
   componentDidRender() {
     this.setupJsPlumb();
     this.setupPopovers();
@@ -120,36 +127,58 @@ export class Designer {
             'activity-faulted': activity.faulted
           };
 
-          const popoverAttributes = {};
+          if (!this.readonly) {
+            return (
+              <div id={`wf-activity-${activity.id}`} data-activity-id={activity.id} class={classes} style={styles}
+                   onDblClick={() => this.onEditActivity(activity)}
+                   onContextMenu={(e) => this.onActivityContextMenu(e, activity)}>
+                <wf-activity-renderer activity={activity} activityDefinition={model.definition}
+                                      displayMode={ActivityDisplayMode.Design}/>
+              </div>);
+          } else {
 
-          if(!!activity.message)
-          {
-            popoverAttributes['data-toggle'] = 'popover';
-            popoverAttributes['data-trigger'] = 'hover';
-            popoverAttributes['title'] = activity.message.title;
-            popoverAttributes['data-content'] = activity.message.content;
+            classes['noselect'] = true;
+
+            const popoverAttributes = {};
+
+            if (!!activity.message) {
+              popoverAttributes['data-toggle'] = 'popover';
+              popoverAttributes['data-trigger'] = 'hover';
+              popoverAttributes['title'] = activity.message.title;
+              popoverAttributes['data-content'] = activity.message.content;
+            }
+
+            return (
+              <div id={`wf-activity-${activity.id}`} data-activity-id={activity.id} class={classes} style={styles}
+                   {...popoverAttributes}>
+                <wf-activity-renderer activity={activity} activityDefinition={model.definition}
+                                      displayMode={ActivityDisplayMode.Design}/>
+              </div>);
           }
 
-          return (
-            <div id={`wf-activity-${activity.id}`} data-activity-id={activity.id} class={classes} style={styles}
-                 {...popoverAttributes}
-                 onDblClick={() => this.onEditActivity(activity)}
-                 onContextMenu={(e) => this.onActivityContextMenu(e, activity)}>
-              <wf-activity-renderer activity={activity} activityDefinition={model.definition}
-                                    displayMode={ActivityDisplayMode.Design}/>
-            </div>);
         })
         }
+        {this.renderContextMenu()}
+      </host>
+    );
+  }
+
+  private renderContextMenu = () => {
+    if (this.readonly)
+      return null;
+
+    return (
+      [
         <wf-context-menu target={this.elem()}>
           <wf-context-menu-item text="Add Activity" onClick={this.onAddActivityClick}/>
-        </wf-context-menu>
+        </wf-context-menu>,
         <wf-context-menu ref={(el) => this.activityContextMenu = el}>
           <wf-context-menu-item text="Edit" onClick={this.onEditActivityClick}/>
           <wf-context-menu-item text="Delete" onClick={this.onDeleteActivityClick}/>
         </wf-context-menu>
-      </host>
+      ]
     );
-  }
+  };
 
   private deleteActivity = async (activity: Activity) => {
     const activities = this.workflow.activities.filter(x => x.id !== activity.id);
@@ -187,12 +216,14 @@ export class Designer {
   };
 
   private setupPopovers = () => {
-    $('[data-toggle="popover"]').popover({
-    });
+    $('[data-toggle="popover"]').popover({});
   };
 
   private setupActivityElement = (element: Element) => {
-    this.setupDragDrop(element);
+    if (!this.readonly) {
+      this.setupDragDrop(element);
+
+    }
     this.setupTargets(element);
     this.setupOutcomes(element);
     this.jsPlumb.revalidate(element);

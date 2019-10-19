@@ -38,6 +38,7 @@ export class DesignerHost {
   @Prop({ reflect: true, attribute: "canvas-height" }) canvasHeight: string;
   @Prop({ attribute: "data-activity-definitions" }) activityDefinitionsData: string;
   @Prop({ attribute: "data-workflow" }) workflowData: string;
+  @Prop({ attribute: "readonly" }) readonly: boolean;
   @Prop({ attribute: "plugins" }) pluginsData: string;
 
   @Method()
@@ -172,6 +173,7 @@ export class DesignerHost {
             ref={el => this.designer = el}
             canvasHeight={this.canvasHeight}
             workflow={this.workflow}
+            readonly={this.readonly}
             onWorkflowChanged={this.onWorkflowChanged}
           />
         </div>

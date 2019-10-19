@@ -1,8 +1,9 @@
 import {jsPlumb, jsPlumbInstance} from "jsplumb";
 
 export class JsPlumbUtils {
-  static createInstance = (container: any): jsPlumbInstance =>
+  static createInstance = (container: any, readonly: boolean): jsPlumbInstance =>
     jsPlumb.getInstance({
+      ConnectionsDetachable: !readonly,
       DragOptions: { cursor: 'pointer', zIndex: 2000 },
       ConnectionOverlays: [
         ['Arrow', {
