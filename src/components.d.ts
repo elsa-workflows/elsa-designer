@@ -40,7 +40,6 @@ export namespace Components {
     'hint': string;
     'label': string;
     'name': string;
-    'value': string;
   }
   interface WfContextMenu {
     'handleContextMenuEvent': (e: MouseEvent) => Promise<void>;
@@ -232,7 +231,6 @@ declare namespace LocalJSX {
     'hint'?: string;
     'label'?: string;
     'name'?: string;
-    'value'?: string;
   }
   interface WfContextMenu extends JSXBase.HTMLAttributes<HTMLWfContextMenuElement> {
     'onContext-menu'?: (event: CustomEvent<any>) => void;
