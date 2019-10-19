@@ -37,10 +37,10 @@ export namespace Components {
     'updateEditor': (formData: FormData) => Promise<Activity>;
   }
   interface WfBooleanField {
+    'checked': boolean;
     'hint': string;
     'label': string;
     'name': string;
-    'value': string;
   }
   interface WfContextMenu {
     'handleContextMenuEvent': (e: MouseEvent) => Promise<void>;
@@ -56,6 +56,7 @@ export namespace Components {
     'canvasHeight': string;
     'getWorkflow': () => Promise<any>;
     'newWorkflow': () => Promise<void>;
+    'readonly': boolean;
     'updateActivity': (activity: Activity) => Promise<void>;
     'workflow': Workflow;
   }
@@ -67,6 +68,7 @@ export namespace Components {
     'import': () => Promise<void>;
     'newWorkflow': () => Promise<void>;
     'pluginsData': string;
+    'readonly': boolean;
     'showActivityPicker': () => Promise<void>;
     'workflow': Workflow;
     'workflowData': string;
@@ -229,10 +231,10 @@ declare namespace LocalJSX {
     'displayMode'?: ActivityDisplayMode;
   }
   interface WfBooleanField extends JSXBase.HTMLAttributes<HTMLWfBooleanFieldElement> {
+    'checked'?: boolean;
     'hint'?: string;
     'label'?: string;
     'name'?: string;
-    'value'?: string;
   }
   interface WfContextMenu extends JSXBase.HTMLAttributes<HTMLWfContextMenuElement> {
     'onContext-menu'?: (event: CustomEvent<any>) => void;
@@ -248,6 +250,7 @@ declare namespace LocalJSX {
     'onAdd-activity'?: (event: CustomEvent<any>) => void;
     'onEdit-activity'?: (event: CustomEvent<any>) => void;
     'onWorkflowChanged'?: (event: CustomEvent<any>) => void;
+    'readonly'?: boolean;
     'workflow'?: Workflow;
   }
   interface WfDesignerHost extends JSXBase.HTMLAttributes<HTMLWfDesignerHostElement> {
@@ -255,6 +258,7 @@ declare namespace LocalJSX {
     'canvasHeight'?: string;
     'onWorkflowChanged'?: (event: CustomEvent<any>) => void;
     'pluginsData'?: string;
+    'readonly'?: boolean;
     'workflow'?: Workflow;
     'workflowData'?: string;
   }

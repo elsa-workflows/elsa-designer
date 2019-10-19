@@ -38,6 +38,7 @@ export class DesignerHost {
   @Prop({ reflect: true, attribute: "canvas-height" }) canvasHeight: string;
   @Prop({ attribute: "data-activity-definitions" }) activityDefinitionsData: string;
   @Prop({ attribute: "data-workflow" }) workflowData: string;
+  @Prop({ attribute: "readonly" }) readonly: boolean;
   @Prop({ attribute: "plugins" }) pluginsData: string;
 
   @Method()
@@ -136,13 +137,25 @@ export class DesignerHost {
   };
 
   private initWorkflow = () => {
-    if (!!this.workflowData)
-      this.designer.workflow = JSON.parse(this.workflowData);
+    if (!!this.workflowData) {
+      const workflow: Workflow = JSON.parse(this.workflowData);
+
+      if (!workflow.activities)
+        workflow.activities = [];
+
+      if (!workflow.connections)
+        workflow.connections = [];
+
+      this.designer.workflow = workflow;
+    }
   };
 
   componentWillLoad() {
     this.initActivityDefinitions();
     this.initFieldDrivers();
+  }
+
+  componentDidLoad() {
     this.initWorkflow();
   }
 
@@ -160,6 +173,7 @@ export class DesignerHost {
             ref={el => this.designer = el}
             canvasHeight={this.canvasHeight}
             workflow={this.workflow}
+            readonly={this.readonly}
             onWorkflowChanged={this.onWorkflowChanged}
           />
         </div>

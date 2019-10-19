@@ -6,7 +6,7 @@ export class TextFieldDriver implements FieldDriver
   displayEditor = (activity: Activity, property: ActivityPropertyDescriptor): RenderResult => {
     const name = property.name;
     const label = property.label;
-    const value = activity.state[name];
+    const value = activity.state[name] || '';
 
     return `<wf-text-field name="${name}" label="${label}" hint="${property.hint}" value="${value}"></wf-text-field>`;
   };

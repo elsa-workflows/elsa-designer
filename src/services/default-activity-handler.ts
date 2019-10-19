@@ -26,7 +26,7 @@ export class DefaultActivityHandler implements ActivityHandler {
   getOutcomes = (activity: Activity, definition: ActivityDefinition): Array<string> => {
     let outcomes = [];
 
-    if (definition.designer) {
+    if (!!definition && definition.designer) {
       const lambda = definition.designer.outcomes;
 
       if (lambda instanceof Array) {
@@ -38,10 +38,18 @@ export class DefaultActivityHandler implements ActivityHandler {
           outcomes = value;
 
         else if (value instanceof Function)
-          outcomes = value({activity, definition, state: activity.state});
+          {
+            try {
+              outcomes = value({activity, definition, state: activity.state});
+            }
+            catch(e){
+              console.warn(e);
+              outcomes = [];
+            }
+          }
       }
     }
 
-    return outcomes || [];
+    return !!outcomes ? outcomes : [];
   }
 }

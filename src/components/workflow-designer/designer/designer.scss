@@ -7,6 +7,15 @@
   width: auto;
   height: 100vh;
 
+  .noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -khtml-user-select: none; /* Konqueror HTML */
+    -moz-user-select: none; /* Old versions of Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+  }
+
   .activity {
     display: block;
     border: 1px solid #cccccc;
@@ -44,31 +53,31 @@
 
     &.activity-executed {
       border: 1px solid #6faa44;
+      background-color: #6faa44;
+      color: #ffffff;
 
-      .activity-status {
-        i {
-          color: #6faa44;
-        }
+      h5, h5 i {
+        color: #ffffff;
       }
     }
 
     &.activity-blocking {
       border: 1px solid #5a8fee;
+      background-color: #5a8fee;
+      color: #ffffff;
 
-      .activity-status {
-        i {
-          color: #5a8fee;
-        }
+      h5, h5 i {
+        color: #ffffff;
       }
     }
 
     &.activity-faulted {
       border: 1px solid #d23c3c;
+      background-color: #d23c3c;
+      color: #ffffff;
 
-      .activity-status {
-        i {
-          color: #d23c3c;
-        }
+      h5, h5 i {
+        color: #ffffff;
       }
     }
   }

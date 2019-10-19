@@ -18,27 +18,30 @@ export class EmailActivities implements WorkflowPlugin {
     properties: [
       {
         name: 'from',
-        type: 'workflow-expression',
+        type: 'expression',
         label: 'From',
         hint: 'The sender\'s email address'
       },
       {
         name: 'to',
-        type: 'workflow-expression',
+        type: 'expression',
         label: 'To',
         hint: 'The recipient\'s email address'
       },
       {
         name: 'subject',
-        type: 'workflow-expression',
+        type: 'expression',
         label: 'Subject',
         hint: 'The subject of the email message.'
       },
       {
         name: 'body',
-        type: 'workflow-expression',
+        type: 'expression',
         label: 'Body',
-        hint: 'The body of the email message.'
+        hint: 'The body of the email message.',
+        options: {
+          multiline: true
+        }
       }],
     designer: {
       outcomes: [OutcomeNames.Done]

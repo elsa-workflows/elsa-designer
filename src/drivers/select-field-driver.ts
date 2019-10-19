@@ -6,7 +6,7 @@ export class SelectFieldDriver implements FieldDriver {
   displayEditor = (activity: Activity, property: ActivityPropertyDescriptor): RenderResult => {
     const name: string = property.name;
     const label: string = property.label;
-    const value: string = activity.state[name];
+    const value: string = activity.state[name] || '';
     const items: Array<SelectItem> = property.options.items || [];
     const itemsJson = encodeURI(JSON.stringify(items));
 

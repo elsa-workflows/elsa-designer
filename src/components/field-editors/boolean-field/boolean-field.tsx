@@ -1,4 +1,4 @@
-import { Component, h, Host, Prop } from '@stencil/core';
+import {Component, h, Host, Prop} from '@stencil/core';
 
 @Component({
   tag: 'wf-boolean-field',
@@ -14,7 +14,7 @@ export class BooleanField {
   label: string;
 
   @Prop({ reflect: true })
-  value: string;
+  checked: boolean;
 
   @Prop({ reflect: true })
   hint: string;
@@ -25,10 +25,10 @@ export class BooleanField {
     return (
       <div class="form-group">
         <div class="form-check">
-          <input id={ name } name={ name } class="form-check-input" type="checkbox" value={ this.value } />
-          <label class="form-check-label" htmlFor={ name }>{ this.label }</label>
+          <input id={name} name={name} class="form-check-input" type="checkbox" value={'true'} checked={this.checked}/>
+          <label class="form-check-label" htmlFor={name}>{this.label}</label>
         </div>
-        <small class="form-text text-muted">{ this.hint }</small>
+        <small class="form-text text-muted">{this.hint}</small>
       </div>);
   }
 }
