@@ -103,6 +103,7 @@ export class Designer {
 
   componentDidRender() {
     this.setupJsPlumb();
+    this.setupPopovers();
   }
 
   render() {
@@ -119,8 +120,19 @@ export class Designer {
             'activity-faulted': activity.faulted
           };
 
+          const popoverAttributes = {};
+
+          if(!!activity.message)
+          {
+            popoverAttributes['data-toggle'] = 'popover';
+            popoverAttributes['data-trigger'] = 'hover';
+            popoverAttributes['title'] = activity.message.title;
+            popoverAttributes['data-content'] = activity.message.content;
+          }
+
           return (
             <div id={`wf-activity-${activity.id}`} data-activity-id={activity.id} class={classes} style={styles}
+                 {...popoverAttributes}
                  onDblClick={() => this.onEditActivity(activity)}
                  onContextMenu={(e) => this.onActivityContextMenu(e, activity)}>
               <wf-activity-renderer activity={activity} activityDefinition={model.definition}
@@ -174,6 +186,11 @@ export class Designer {
     this.jsPlumb.repaintEverything();
   };
 
+  private setupPopovers = () => {
+    $('[data-toggle="popover"]').popover({
+    });
+  };
+
   private setupActivityElement = (element: Element) => {
     this.setupDragDrop(element);
     this.setupTargets(element);
@@ -217,9 +234,10 @@ export class Designer {
     const activity = this.findActivityByElement(element);
     const definition = this.activityDefinitions.find(x => x.type == activity.type);
     const outcomes: Array<string> = ActivityManager.getOutcomes(activity, definition);
+    const activityExecuted = activity.executed;
 
     for (let outcome of outcomes) {
-      const sourceEndpointOptions: EndpointOptions = JsPlumbUtils.getSourceEndpointOptions(activity.id, outcome);
+      const sourceEndpointOptions: EndpointOptions = JsPlumbUtils.getSourceEndpointOptions(activity.id, outcome, activityExecuted);
       const endpointOptions: any = {
         connectorOverlays: [['Label', { label: outcome, cssClass: 'connection-label' }]],
       };
@@ -229,7 +247,6 @@ export class Designer {
 
   private setupConnections = () => {
     for (let connection of this.workflow.connections) {
-      const sourceActivity = this.findActivityById(connection.sourceActivityId);
       const sourceEndpointId: string = JsPlumbUtils.createEndpointUuid(connection.sourceActivityId, connection.outcome);
       const sourceEndpoint: Endpoint = this.jsPlumb.getEndpoint(sourceEndpointId);
       const destinationElementId: string = `wf-activity-${connection.destinationActivityId}`;
@@ -276,7 +293,6 @@ export class Designer {
     const outcome: string = sourceEndpoint.getParameter('outcome');
     const label: any = connection.getOverlay('label');
 
-    console.debug('Connection created');
     label.setLabel(outcome);
 
     // Check if we already have this connection.

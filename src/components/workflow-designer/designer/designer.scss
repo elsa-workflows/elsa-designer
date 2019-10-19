@@ -44,6 +44,8 @@
 
     &.activity-executed {
       border: 1px solid #6faa44;
+      background-color: #6faa44;
+      color: #ffffff;
 
       .activity-status {
         i {
@@ -54,6 +56,8 @@
 
     &.activity-blocking {
       border: 1px solid #5a8fee;
+      background-color: #5a8fee;
+      color: #ffffff;
 
       .activity-status {
         i {
@@ -64,6 +68,8 @@
 
     &.activity-faulted {
       border: 1px solid #d23c3c;
+      background-color: #d23c3c;
+      color: #ffffff;
 
       .activity-status {
         i {

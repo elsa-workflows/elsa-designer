@@ -1,3 +1,5 @@
+import {ActivityMessage} from "./activity-message";
+
 export interface Activity {
   id: string
   type: string
@@ -7,4 +9,6 @@ export interface Activity {
   blocking?: boolean
   executed?: boolean
   faulted?: boolean
+  message?: ActivityMessage
 }
+

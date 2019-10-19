@@ -4,6 +4,7 @@ export * from './activity-handler-map';
 export * from './activity-display-modes';
 export * from './activity-property-descriptor';
 export * from './activity-definition';
+export * from "./activity-message";
 export * from './connection';
 export * from './workflow';
 export * from './workflow-format-descriptor';
