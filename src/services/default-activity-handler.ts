@@ -4,20 +4,26 @@ import {FormUpdater} from "../utils";
 
 export class DefaultActivityHandler implements ActivityHandler {
   renderDesigner = (activity: Activity, definition: ActivityDefinition): RenderDesignerResult => {
-    let description = definition.description;
+    let description = null;
 
-    if (!!definition.designer && !!definition.designer.description) {
-      const lambda = definition.designer.description;
+    if (activity.state.description)
+      description = activity.state.description;
+    else if (!!definition.designer && !!definition.designer.description)
+      description = definition.designer.description;
+    else
+      description = definition.description;
 
-      if (lambda) {
-        const fun = eval(lambda);
+    try {
+      const fun = eval(description);
 
-        description = fun({activity, definition, state: activity.state});
-      }
+      description = fun({ activity, definition, state: activity.state });
+    } catch {
     }
 
     return {
-      description: description
+      title: activity.state.title || definition.displayName,
+      description: description,
+      icon: definition.icon || 'fas fa-cog'
     }
   };
 
@@ -37,16 +43,14 @@ export class DefaultActivityHandler implements ActivityHandler {
         if (value instanceof Array)
           outcomes = value;
 
-        else if (value instanceof Function)
-          {
-            try {
-              outcomes = value({activity, definition, state: activity.state});
-            }
-            catch(e){
-              console.warn(e);
-              outcomes = [];
-            }
+        else if (value instanceof Function) {
+          try {
+            outcomes = value({ activity, definition, state: activity.state });
+          } catch (e) {
+            console.warn(e);
+            outcomes = [];
           }
+        }
       }
     }
 

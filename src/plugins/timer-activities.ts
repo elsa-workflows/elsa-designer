@@ -21,6 +21,24 @@ export class TimerActivities implements WorkflowPlugin {
         type: 'expression',
         label: 'Timeout Expression',
         hint: 'The amount of time to wait before this timer event is triggered. Format: \'d.HH:mm:ss\'.'
+      },
+      {
+        name: 'id',
+        type: 'text',
+        label: 'ID',
+        hint: 'Optionally provide a custom ID for this activity. You can then reference this activity from expressions.'
+      },
+      {
+        name: 'title',
+        type: 'text',
+        label: 'Title',
+        hint: 'Optionally provide a custom title for this activity.'
+      },
+      {
+        name: 'description',
+        type: 'text',
+        label: 'Description',
+        hint: 'Optionally provide a custom description for this activity.'
       }],
     designer: {
       description: 'x => !!x.state.expression ? `Triggers after <strong>${ x.state.expression.expression }</strong>` : x.definition.description',

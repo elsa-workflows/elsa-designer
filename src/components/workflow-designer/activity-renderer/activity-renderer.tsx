@@ -40,12 +40,11 @@ export class ActivityRenderer {
     const activity = this.activity;
     const definition = this.activityDefinition;
     const result = ActivityManager.renderDesigner(activity, definition);
-    const icon = definition.icon || 'fas fa-cog';
-    const iconClass = `${icon} mr-1`;
+    const iconClass = `${result.icon} mr-1`;
 
     return (
       <div>
-        <h5><i class={iconClass}/>{definition.displayName}</h5>
+        <h5><i class={iconClass}/>{result.title}</h5>
         <p innerHTML={result.description}/>
       </div>
     );
