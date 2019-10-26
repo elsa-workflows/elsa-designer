@@ -40,10 +40,8 @@ export class TimerActivities implements WorkflowPlugin {
         label: 'Description',
         hint: 'Optionally provide a custom description for this activity.'
       }],
-    designer: {
-      description: 'x => !!x.state.expression ? `Triggers after <strong>${ x.state.expression.expression }</strong>` : x.definition.description',
-      outcomes: [OutcomeNames.Done]
-    }
+    runtimeDescription: 'x => !!x.state.expression ? `Triggers after <strong>${ x.state.expression.expression }</strong>` : x.definition.description',
+    outcomes: [OutcomeNames.Done]
   });
 }
 

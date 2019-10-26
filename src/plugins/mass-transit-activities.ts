@@ -24,9 +24,7 @@ export class MassTransitActivities implements WorkflowPlugin {
       label: 'Message Type',
       hint: 'The assembly-qualified type name of the message to receive.'
     }],
-    designer: {
-      outcomes: [OutcomeNames.Done]
-    }
+    outcomes: [OutcomeNames.Done]
   });
 
   private sendMassTransitMessage = (): ActivityDefinition => ({
@@ -47,9 +45,7 @@ export class MassTransitActivities implements WorkflowPlugin {
         label: 'Message',
         hint: 'An expression that evaluates to the message to send.'
       }],
-    designer: {
-      outcomes: [OutcomeNames.Done]
-    }
+    outcomes: [OutcomeNames.Done]
   });
 }
 

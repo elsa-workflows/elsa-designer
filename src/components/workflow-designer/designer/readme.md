@@ -11,6 +11,7 @@
 | --------------------- | --------------- | ----------- | -------------------------------------------------------- | ----------------------------------------------- |
 | `activityDefinitions` | --              |             | `ActivityDefinition[]`                                   | `[]`                                            |
 | `canvasHeight`        | `canvas-height` |             | `string`                                                 | `undefined`                                     |
+| `readonly`            | `readonly`      |             | `boolean`                                                | `undefined`                                     |
 | `workflow`            | --              |             | `{ activities: Activity[]; connections: Connection[]; }` | `{     activities: [],     connections: []   }` |
 
 
@@ -74,16 +75,16 @@ Type: `Promise<void>`
 
 ### Depends on
 
-- [wf-activity-renderer](..\activity-renderer)
 - [wf-context-menu](..\..\context-menu)
 - [wf-context-menu-item](..\..\context-menu)
+- [wf-activity-renderer](..\activity-renderer)
 
 ### Graph
 ```mermaid
 graph TD;
-  wf-designer --> wf-activity-renderer
   wf-designer --> wf-context-menu
   wf-designer --> wf-context-menu-item
+  wf-designer --> wf-activity-renderer
   wf-designer-host --> wf-designer
   style wf-designer fill:#f9f,stroke:#333,stroke-width:4px
 ```

@@ -19,8 +19,8 @@ export class ActivityManager {
 
     if(!handler.renderDesigner)
       return {
-        title: activity.title || definition.displayName,
-        description: activity.description || definition.description,
+        title: activity.state.title || definition.displayName,
+        description: activity.state.description || definition.description,
         icon: definition.icon || 'fas fa-cog'
       };
 

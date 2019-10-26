@@ -45,9 +45,7 @@ export class HttpActivities implements WorkflowPlugin {
         label: 'Status Codes',
         hint: 'A list of possible HTTP status codes to handle, comma-separated. Example: 200, 400, 404'
       }],
-    designer: {
-      outcomes: 'x => !!x.state.statusCodes ? x.state.statusCodes : []'
-    }
+    outcomes: 'x => !!x.state.statusCodes ? x.state.statusCodes : []'
   });
 
   private handleHttpRequest = (): ActivityDefinition => ({
@@ -77,10 +75,8 @@ export class HttpActivities implements WorkflowPlugin {
         label: 'Read Content',
         hint: 'Check if the HTTP request content body should be read and stored as part of the HTTP request model. The stored format depends on the content-type header.'
       }],
-    designer: {
-      description: `x => !!x.state.path ? \`Handle <strong>\${ x.state.method } \${ x.state.path }</strong>.\` : x.definition.description`,
-      outcomes: [OutcomeNames.Done]
-    }
+    runtimeDescription: `x => !!x.state.path ? \`Handle <strong>\${ x.state.method } \${ x.state.path }</strong>.\` : x.definition.description`,
+    outcomes: [OutcomeNames.Done]
   });
 
   private sendHttpResponse = (): ActivityDefinition => ({
@@ -125,10 +121,8 @@ export class HttpActivities implements WorkflowPlugin {
         hint: 'The headers to send along with the response. One \'header: value\' pair per line.',
         options: { multiline: true }
       }],
-    designer: {
-      description: `x => !!x.state.statusCode ? \`Send an HTTP <strong>\${ x.state.statusCode }</strong><br/><br/> \${ x.state.contentType }</strong><br/>\${ !!x.state.content ? x.state.content.expression ? x.state.content.expression.substr(0,100) + '...' : '' : '' }\` : x.definition.description`,
-      outcomes: [OutcomeNames.Done]
-    }
+    runtimeDescription: `x => !!x.state.statusCode ? \`Send an HTTP <strong>\${ x.state.statusCode }</strong><br/><br/> \${ x.state.contentType }</strong><br/>\${ !!x.state.content ? x.state.content.expression ? x.state.content.expression.substr(0,100) + '...' : '' : '' }\` : x.definition.description`,
+    outcomes: [OutcomeNames.Done]
   });
 }
 

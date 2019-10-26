@@ -13,6 +13,8 @@ export class ConsoleActivities implements WorkflowPlugin {
     type: 'ReadLine',
     displayName: 'Read Line',
     description: 'Read text from standard in.',
+    runtimeDescription: 'a => !!a.state.variableName ? `Read text from standard in and store into <strong>${ a.state.variableName }</strong>.` : \'Read text from standard in.\'',
+    outcomes: [OutcomeNames.Done],
     category: ConsoleActivities.Category,
     icon: 'fas fa-terminal',
     properties: [{
@@ -20,11 +22,7 @@ export class ConsoleActivities implements WorkflowPlugin {
       type: 'text',
       label: 'Variable Name',
       hint: 'The name of the variable to store the value into.'
-    }],
-    designer: {
-      description: 'a => !!a.state.variableName ? `Read text from standard in and store into <strong>${ a.state.variableName }</strong>.` : \'Read text from standard in.\'',
-      outcomes: [OutcomeNames.Done]
-    }
+    }]
   });
 
   private writeLine = (): ActivityDefinition => ({
@@ -33,16 +31,14 @@ export class ConsoleActivities implements WorkflowPlugin {
     description: 'Write text to standard out.',
     category: ConsoleActivities.Category,
     icon: 'fas fa-terminal',
+    runtimeDescription: `x => !!x.state.textExpression ? \`Write <strong>\${ x.state.textExpression.expression }</strong> to standard out.\` : x.definition.description`,
+    outcomes: [OutcomeNames.Done],
     properties: [{
       name: 'textExpression',
       type: 'expression',
       label: 'Text',
       hint: 'The text to write.'
-    }],
-    designer: {
-      description: `x => !!x.state.textExpression ? \`Write <strong>\${ x.state.textExpression.expression }</strong> to standard out.\` : x.definition.description`,
-      outcomes: [OutcomeNames.Done]
-    }
+    }]
   });
 }
 

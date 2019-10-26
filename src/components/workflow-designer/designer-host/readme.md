@@ -12,6 +12,7 @@
 | `activityDefinitionsData` | `data-activity-definitions` |             | `string`                                                 | `undefined` |
 | `canvasHeight`            | `canvas-height`             |             | `string`                                                 | `undefined` |
 | `pluginsData`             | `plugins`                   |             | `string`                                                 | `undefined` |
+| `readonly`                | `readonly`                  |             | `boolean`                                                | `undefined` |
 | `workflow`                | --                          |             | `{ activities: Activity[]; connections: Connection[]; }` | `undefined` |
 | `workflowData`            | `data-workflow`             |             | `string`                                                 | `undefined` |
 
@@ -93,9 +94,9 @@ graph TD;
   wf-designer-host --> wf-import-export
   wf-designer-host --> wf-designer
   wf-activity-editor --> wf-activity-renderer
-  wf-designer --> wf-activity-renderer
   wf-designer --> wf-context-menu
   wf-designer --> wf-context-menu-item
+  wf-designer --> wf-activity-renderer
   style wf-designer-host fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

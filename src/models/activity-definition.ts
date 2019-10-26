@@ -6,11 +6,9 @@ export interface ActivityDefinition {
   type: string
   displayName: string
   description: string
+  runtimeDescription?: Lambda<string>,
   category: string
   icon?: string
   properties: Array<ActivityPropertyDescriptor>
-  designer?: {
-    description?: Lambda<string>,
-    outcomes?: Lambda<Array<string>>
-  }
+  outcomes?: Lambda<Array<string>>
 }

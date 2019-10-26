@@ -8,8 +8,8 @@ export class DefaultActivityHandler implements ActivityHandler {
 
     if (activity.state.description)
       description = activity.state.description;
-    else if (!!definition.designer && !!definition.designer.description)
-      description = definition.designer.description;
+    else if (!!definition.runtimeDescription)
+      description = definition.runtimeDescription;
     else
       description = definition.description;
 
@@ -32,8 +32,8 @@ export class DefaultActivityHandler implements ActivityHandler {
   getOutcomes = (activity: Activity, definition: ActivityDefinition): Array<string> => {
     let outcomes = [];
 
-    if (!!definition && definition.designer) {
-      const lambda = definition.designer.outcomes;
+    if (!!definition) {
+      const lambda = definition.outcomes;
 
       if (lambda instanceof Array) {
         outcomes = lambda as Array<string>;

@@ -15,6 +15,7 @@ export class EmailActivities implements WorkflowPlugin {
     description: "Send an email message.",
     category: EmailActivities.Category,
     icon: 'far fa-envelope',
+    outcomes: [OutcomeNames.Done],
     properties: [
       {
         name: 'from',
@@ -42,10 +43,7 @@ export class EmailActivities implements WorkflowPlugin {
         options: {
           multiline: true
         }
-      }],
-    designer: {
-      outcomes: [OutcomeNames.Done]
-    }
+      }]
   });
 }
 

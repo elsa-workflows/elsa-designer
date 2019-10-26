@@ -27,10 +27,8 @@ export class PrimitiveActivities implements WorkflowPlugin {
         label: 'Log Level',
         hint: 'The log level to use.'
       }],
-    designer: {
-      description: 'x => !!x.state.message ? `Log <strong>${x.state.logLevel}: ${x.state.message}</strong>` : x.definition.description',
-      outcomes: [OutcomeNames.Done]
-    }
+    runtimeDescription: 'x => !!x.state.message ? `Log <strong>${x.state.logLevel}: ${x.state.message}</strong>` : x.definition.description',
+    outcomes: [OutcomeNames.Done]
   });
 
   private setVariable = (): ActivityDefinition => ({
@@ -49,10 +47,8 @@ export class PrimitiveActivities implements WorkflowPlugin {
       label: 'Variable Expression',
       hint: 'An expression that evaluates to the value to store in the variable.'
     }],
-    designer: {
-      description: 'x => !!x.state.variableName ? `${x.state.expression.syntax}: <strong>${x.state.variableName}</strong> = <strong>${x.state.expression.expression}</strong>` : x.definition.description',
-      outcomes: [OutcomeNames.Done]
-    }
+    runtimeDescription: 'x => !!x.state.variableName ? `${x.state.expression.syntax}: <strong>${x.state.variableName}</strong> = <strong>${x.state.expression.expression}</strong>` : x.definition.description',
+    outcomes: [OutcomeNames.Done]
   });
 }
 
