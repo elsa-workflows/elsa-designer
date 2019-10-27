@@ -23,10 +23,10 @@ export class TimerActivities implements WorkflowPlugin {
         hint: 'The amount of time to wait before this timer event is triggered. Format: \'d.HH:mm:ss\'.'
       },
       {
-        name: 'id',
+        name: 'name',
         type: 'text',
-        label: 'ID',
-        hint: 'Optionally provide a custom ID for this activity. You can then reference this activity from expressions.'
+        label: 'Name',
+        hint: 'Optionally provide a name for this activity. You can reference named activities from expressions.'
       },
       {
         name: 'title',
