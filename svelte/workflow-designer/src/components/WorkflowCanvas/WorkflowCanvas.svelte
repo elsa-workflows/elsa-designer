@@ -4,6 +4,7 @@
     import Panzoom from '@panzoom/panzoom';
     import {Activity as ActivityModel, Connection, Workflow} from '../../models';
     import Activity from '../Activity/Activity.svelte';
+    import ContextMenu from "../ContextMenu/ContextMenu.svelte";
     import {
         createJsPlumbInstance,
         createEndpointUuid,
@@ -41,6 +42,8 @@
     let element;
     let jsPlumb;
     let panzoom;
+    let activityContextMenu;
+    let selectedActivity;
 
     onMount(() => {
         jsPlumb = createJsPlumbInstance(element);
@@ -97,15 +100,20 @@
         return panzoom;
     }
 
+    function onActivityContextMenu(e, activity) {
+        activityContextMenu.show(e);
+    }
+
 </script>
 
 <style src="./WorkflowCanvas.scss"></style>
 
 <div class="workflow-canvas-container">
+    <ContextMenu bind:this={activityContextMenu}/>
     <div class="workflow-canvas" bind:this={element}>
         {#if jsPlumb}
             {#each workflow.activities as activity (activity.id)}
-                <Activity activity="{activity}"/>
+                <Activity activity="{activity}" on:contextmenu={e => onActivityContextMenu(e, activity)}/>
             {/each}
         {/if}
     </div>

@@ -62,6 +62,10 @@
 
 <style src="./Activity.scss" global></style>
 
-<div id="{createActivityElementId(activity.id)}" data-activity-id="{activity.id}" class="activity noselect panzoom-exclude" bind:this={element} style="top: {activity.top}px; left: {activity.left}px;">
+<div id="{createActivityElementId(activity.id)}" data-activity-id="{activity.id}"
+     class="activity noselect panzoom-exclude" bind:this={element}
+     style="top: {activity.top}px; left: {activity.left}px;"
+     on:contextmenu
+ >
     <h5><i class="fa fa-cog"></i>{activity.displayName}</h5>
 </div>
