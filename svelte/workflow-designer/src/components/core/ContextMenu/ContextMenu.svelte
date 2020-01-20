@@ -1,4 +1,4 @@
-﻿<script>
+﻿﻿<script>
     let hidden = true;
     let position = {left: 0, top: 0};
     

@@ -1,4 +1,4 @@
-﻿<script>
+﻿﻿<script>
     export let text = 'Untitled';
 </script>
 

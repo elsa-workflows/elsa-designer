@@ -1,4 +1,4 @@
-﻿﻿﻿﻿ /* 
+﻿﻿﻿﻿﻿ /* 
     Default styles for jsPlumb Toolkit
 
     Copyright 2018 https://jsplumbtoolkit.com
@@ -694,7 +694,7 @@ Assigned to tile images in a tiled background
   background-color: #f1f1f1;
   color: #3d3d3d;
   font-family: helvetica, sans-serif;
-  padding: 1em;
+  padding: 1.5em;
   font-size: 0.7em;
   cursor: default;
   transition: box-shadow 0.15s ease-in;
@@ -705,6 +705,10 @@ Assigned to tile images in a tiled background
     margin-bottom: .5rem;
     font-weight: 500;
     line-height: 1.2;
+    
+    > i {
+      margin-right: 0.5em;
+    }
   }
 }
 

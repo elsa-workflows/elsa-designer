@@ -1,8 +1,8 @@
-﻿﻿﻿﻿
+﻿﻿﻿﻿﻿
 <script>
     import {onMount, getContext} from "svelte";
-    import {createActivityElementId, createSourceEndpoint, jsPlumbKey} from "../../utils/jsPlumbUtils";
-    import {Activity} from "../../models";
+    import {createActivityElementId, createSourceEndpoint, jsPlumbKey} from "../../../utils/jsPlumbUtils";
+    import {Activity} from "../../../models";
 
     export let activity = new Activity();
 
@@ -67,5 +67,5 @@
      style="top: {activity.top}px; left: {activity.left}px;"
      on:contextmenu
  >
-    <h5><i class="fa fa-cog"></i>{activity.displayName}</h5>
+    <h5><i class="fas fa-cog"></i>{activity.displayName}</h5>
 </div>

@@ -1,17 +1,16 @@
-﻿﻿
-<script>
+﻿﻿<script>
     import {onMount, setContext, tick} from 'svelte';
     import Panzoom from '@panzoom/panzoom';
-    import {Activity as ActivityModel, Connection, Workflow} from '../../models';
+    import {Activity as ActivityModel, Connection, Workflow} from '../../../models';
     import Activity from '../Activity/Activity.svelte';
     import ContextMenu from "../ContextMenu/ContextMenu.svelte";
+    import ContextMenuItem from "../ContextMenu/ContextMenuItem.svelte";
     import {
         createJsPlumbInstance,
         createEndpointUuid,
         createActivityElementId,
         jsPlumbKey
-    } from '../../utils/jsPlumbUtils';
-    import ContextMenuItem from "../ContextMenu/ContextMenuItem.svelte";
+    } from '../../../utils/jsPlumbUtils';
 
     const workflow = new Workflow();
     const writeLine1 = new ActivityModel({
