@@ -11,6 +11,7 @@
         createActivityElementId,
         jsPlumbKey
     } from '../../utils/jsPlumbUtils';
+    import ContextMenuItem from "../ContextMenu/ContextMenuItem.svelte";
 
     const workflow = new Workflow();
     const writeLine1 = new ActivityModel({
@@ -43,7 +44,9 @@
     let jsPlumb;
     let panzoom;
     let activityContextMenu;
+    let workflowContextMenu;
     let selectedActivity;
+    let connectionCount = 0;
 
     onMount(() => {
         jsPlumb = createJsPlumbInstance(element);
@@ -63,6 +66,9 @@
     });
 
     function setupJsPlumb(jsPlumb) {
+
+        jsPlumb.bind('connection', connectionCreated);
+        jsPlumb.bind('connectionDetached', connectionDetached);
 
         const createConnections = function (jsPlumb) {
             for (const connection of workflow.connections) {
@@ -100,8 +106,54 @@
         return panzoom;
     }
 
+    function onWorkflowCanvasContextMenu(e) {
+        workflowContextMenu.show(e);
+        activityContextMenu.hide();
+    }
+
     function onActivityContextMenu(e, activity) {
+        selectedActivity = activity;
         activityContextMenu.show(e);
+        workflowContextMenu.hide();
+    }
+
+    function connectionCreated(info) {
+        const connection = info.connection;
+        const sourceEndpoint = info.sourceEndpoint;
+        const outcome = sourceEndpoint.getParameter('outcome');
+        const labelOverLayId = sourceEndpoint.connectorOverlays[0][1].id;
+        const labelOverlay = connection.getOverlay(labelOverLayId);
+
+        labelOverlay.setLabel(outcome);
+
+        // Check if we already have this connection.
+        const sourceActivityId = info.source.getAttribute('data-activity-id');
+        const targetActivityId = info.target.getAttribute('data-activity-id');
+        const wfConnection = workflow.connections.find(x => x.sourceActivityId === sourceActivityId && x.targetActivityId === targetActivityId);
+
+        if (!wfConnection) {
+            // Add created connection to list.
+            workflow.connections.push(new Connection({
+                sourceActivityId: sourceActivityId,
+                targetActivityId: targetActivityId,
+                outcome: outcome
+            }));
+        }
+    }
+
+    function connectionDetached(info) {
+        const sourceEndpoint = info.sourceEndpoint;
+        const outcome = sourceEndpoint.getParameter('outcome');
+        const sourceActivityId = info.source.getAttribute('data-activity-id');
+        const targetActivityId = info.target.getAttribute('data-activity-id');
+        
+        workflow.connections = workflow.connections.filter(x => !(x.sourceActivityId === sourceActivityId && x.targetActivityId === targetActivityId && x.outcome === outcome));
+    }
+
+    function editSelectedActivity() {
+    }
+
+    function deleteSelectedActivity() {
     }
 
 </script>
@@ -109,11 +161,17 @@
 <style src="./WorkflowCanvas.scss"></style>
 
 <div class="workflow-canvas-container">
-    <ContextMenu bind:this={activityContextMenu}/>
-    <div class="workflow-canvas" bind:this={element}>
+    <ContextMenu bind:this={activityContextMenu}>
+        <ContextMenuItem on:click={editSelectedActivity}>Edit</ContextMenuItem>
+        <ContextMenuItem on:click={deleteSelectedActivity}>Delete</ContextMenuItem>
+    </ContextMenu>
+    <ContextMenu bind:this={workflowContextMenu}>
+        <ContextMenuItem>Add Activity</ContextMenuItem>
+    </ContextMenu>
+    <div class="workflow-canvas" bind:this={element} on:contextmenu="{onWorkflowCanvasContextMenu}">
         {#if jsPlumb}
             {#each workflow.activities as activity (activity.id)}
-                <Activity activity="{activity}" on:contextmenu={e => onActivityContextMenu(e, activity)}/>
+                <Activity activity="{activity}" on:contextmenu="{e => onActivityContextMenu(e, activity)}"/>
             {/each}
         {/if}
     </div>
