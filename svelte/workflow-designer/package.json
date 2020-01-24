@@ -22,11 +22,11 @@
     "sass": "^1.24.0",
     "svelte": "^3.0.0",
     "svelte-preprocess": "^3.3.0",
-    "typescript": "^3.7.4"
+    "typescript": "^3.7.4",
+    "@panzoom/panzoom": "^4.0.2",
+    "jsplumb": "2.12.8"
   },
   "dependencies": {
-    "@panzoom/panzoom": "^4.0.2",
-    "jsplumb": "2.12.8",
     "sirv-cli": "^0.4.4"
   }
 }
