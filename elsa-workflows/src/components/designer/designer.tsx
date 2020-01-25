@@ -1,4 +1,4 @@
-import {Component, Prop, Element, h, Host} from '@stencil/core';
+import {Component, Prop, Element, h, Host, Watch, State, Method} from '@stencil/core';
 import {jsPlumbInstance} from "jsplumb";
 import Panzoom from "@panzoom/panzoom";
 import {Activity, Workflow} from "../../models";
@@ -9,6 +9,12 @@ import {
 } from "./jsplumb-utils";
 import {createPanzoom} from "./panzoom-utils";
 
+const emptyWorkflow: Workflow = {
+  id: null,
+  activities: [],
+  connections: []
+};
+
 @Component({
   tag: 'elsa-designer',
   styleUrl: 'designer.scss',
@@ -16,69 +22,54 @@ import {createPanzoom} from "./panzoom-utils";
 })
 export class DesignerComponent {
 
-  private workflow: Workflow;
   private workflowCanvasElement: HTMLElement;
   private jsPlumb: jsPlumbInstance;
   private panzoom: Panzoom;
+  private currentWorkflow: Workflow;
 
-  constructor() {
-
-    const writeLine1: Activity = {
-      id: '1',
-      type: 'WriteLine',
-      displayName: 'Write Line',
-      state: {text: {type: 'Literal', expression: 'Hello World!'}},
-      outcomes: ['Done'],
-      left: 100,
-      top: 50
-    };
-
-    const writeLine2: Activity = {
-      id: '2',
-      type: 'WriteLine',
-      displayName: 'Write Line',
-      state: {text: {type: 'Literal', expression: 'Hello World!'}},
-      outcomes: ['Done'],
-      left: 350,
-      top: 350
-    };
-
-    this.workflow = {
-      activities: [writeLine1, writeLine2],
-      connections: [{sourceActivityId: '1', targetActivityId: '2', outcome: 'Done'}]
-    }
-  }
-
+  @Prop() workflow: Workflow;
   @Element() element: HTMLElsaDesignerElement;
 
-  componentWillUpdate() {
-    if (!!this.jsPlumb) {
-      this.jsPlumb.reset();
-      this.panzoom.destroy();
-    }
+  @Watch('workflow')
+  workflowHandler(newValue: Workflow) {
+    this.currentWorkflow = newValue;
   }
 
-  componentDidLoad() {
+  @Method()
+  async getWorkflow(): Promise<Workflow> {
+    return {...this.currentWorkflow};
+  }
+
+  componentWillLoad() {
+    this.jsPlumb = createJsPlumb(this.workflowCanvasElement);
+  }
+
+  componentDidRender() {
     this.setup();
   }
 
-  componentDidUpdate() {
-    this.setup();
-  }
+  private workflowOrDefault = () => this.workflow || emptyWorkflow;
 
   private setup = () => {
-    this.jsPlumb = this.setupJsPlumb();
-    this.panzoom = createPanzoom(this.workflowCanvasElement, zoom => (this.jsPlumb as any).setZoom(zoom));
+    this.setupJsPlumb();
+    this.setupPanzoom();
   };
 
-  private setupJsPlumb = (): jsPlumbInstance => {
-    const jsPlumb = createJsPlumb(this.workflowCanvasElement);
-
+  private setupJsPlumb = () => {
+    const jsPlumb = this.jsPlumb;
+    jsPlumb.reset();
     jsPlumb.bind('connection', this.connectionCreated);
     jsPlumb.bind('connectionDetached', this.connectionDetached);
 
-    displayWorkflow(jsPlumb, this.workflowCanvasElement, this.workflow);
-    return jsPlumb;
+    const workflow = this.workflowOrDefault();
+    displayWorkflow(jsPlumb, this.workflowCanvasElement, workflow);
+  };
+
+  private setupPanzoom = () => {
+    if (!!this.panzoom)
+      this.panzoom.destroy();
+
+    this.panzoom = createPanzoom(this.workflowCanvasElement, zoom => (this.jsPlumb as any).setZoom(zoom));
   };
 
   private connectionCreated = (info) => {
@@ -107,7 +98,7 @@ export class DesignerComponent {
   };
 
   private connectionDetached = (info) => {
-    const workflow = this.workflow;
+    const workflow = this.workflowOrDefault();
     const sourceEndpoint = info.sourceEndpoint;
     const outcome = sourceEndpoint.getParameter('outcome');
     const sourceActivityId = info.source.getAttribute('data-activity-id');
@@ -123,25 +114,27 @@ export class DesignerComponent {
   };
 
   private renderActivity = (activity: Activity) => {
+
     const styles = {
-      top: `${activity.top}px`,
-      left: `${activity.left}px`
+      left: `${activity.left}px`,
+      top: `${activity.top}px`
     };
 
     return (
-      <div id={createActivityElementId(activity.id)} data-activity-id={activity.id}
-           class="activity noselect panzoom-exclude" style={styles}>
+      <div key={activity.id} id={createActivityElementId(activity.id)} data-activity-id={activity.id} class="activity noselect panzoom-exclude" style={styles}>
         <h5><i class="fas fa-cog"/>{activity.displayName}</h5>
       </div>
     );
   };
 
   render() {
+    const workflow = this.workflowOrDefault();
+
     return (
       <Host>
         <div class="workflow-canvas-container">
           <div class="workflow-canvas" ref={el => this.workflowCanvasElement = el}>
-            {this.workflow.activities.map(this.renderActivity)}
+            {workflow.activities.map(this.renderActivity)}
           </div>
         </div>
       </Host>

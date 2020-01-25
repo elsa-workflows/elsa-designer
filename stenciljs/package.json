@@ -36,10 +36,10 @@
     "test.watch": "stencil test --spec --e2e --watchAll"
   },
   "devDependencies": {
-    "@stencil/core": "1.8.2",
+    "@stencil/core": "1.8.6",
     "@stencil/sass": "1.1.1",
     "@types/jquery": "^3.3.31",
-    "@types/node": "^13.1.1"
+    "@types/node": "^13.5.0"
   },
   "license": "BSD-3-Clause",
   "dependencies": {
@@ -47,8 +47,8 @@
     "dragscroll": "0.0.8",
     "handlebars": "^4.5.3",
     "jquery": "^3.4.1",
-    "jsplumb": "^2.11.1",
-    "popper.js": "^1.15.0",
+    "jsplumb": "^2.12.8",
+    "popper.js": "^1.16.1",
     "uuid-browser": "^3.1.0"
   },
   "directories": {

@@ -5,16 +5,23 @@
 <!-- Auto Generated Below -->
 
 
+## Properties
+
+| Property   | Attribute | Description | Type       | Default     |
+| ---------- | --------- | ----------- | ---------- | ----------- |
+| `workflow` | --        |             | `Workflow` | `undefined` |
+
+
 ## Dependencies
 
-### Depends on
+### Used by
 
-- [elsa-activity](../activity)
+ - [elsa-designer-host](../designer-host)
 
 ### Graph
 ```mermaid
 graph TD;
-  elsa-designer --> elsa-activity
+  elsa-designer-host --> elsa-designer
   style elsa-designer fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

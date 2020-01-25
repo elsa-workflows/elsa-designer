@@ -7,10 +7,16 @@
 
 
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
-
+import {
+  Workflow,
+} from './models';
 
 export namespace Components {
-  interface ElsaDesigner {}
+  interface ElsaDesigner {
+    'getWorkflow': () => Promise<Workflow>;
+    'workflow': Workflow;
+  }
+  interface ElsaDesignerHost {}
 }
 
 declare global {
@@ -21,16 +27,27 @@ declare global {
     prototype: HTMLElsaDesignerElement;
     new (): HTMLElsaDesignerElement;
   };
+
+  interface HTMLElsaDesignerHostElement extends Components.ElsaDesignerHost, HTMLStencilElement {}
+  var HTMLElsaDesignerHostElement: {
+    prototype: HTMLElsaDesignerHostElement;
+    new (): HTMLElsaDesignerHostElement;
+  };
   interface HTMLElementTagNameMap {
     'elsa-designer': HTMLElsaDesignerElement;
+    'elsa-designer-host': HTMLElsaDesignerHostElement;
   }
 }
 
 declare namespace LocalJSX {
-  interface ElsaDesigner {}
+  interface ElsaDesigner {
+    'workflow'?: Workflow;
+  }
+  interface ElsaDesignerHost {}
 
   interface IntrinsicElements {
     'elsa-designer': ElsaDesigner;
+    'elsa-designer-host': ElsaDesignerHost;
   }
 }
 
@@ -41,6 +58,7 @@ declare module "@stencil/core" {
   export namespace JSX {
     interface IntrinsicElements {
       'elsa-designer': LocalJSX.ElsaDesigner & JSXBase.HTMLAttributes<HTMLElsaDesignerElement>;
+      'elsa-designer-host': LocalJSX.ElsaDesignerHost & JSXBase.HTMLAttributes<HTMLElsaDesignerHostElement>;
     }
   }
 }

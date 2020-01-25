@@ -1,4 +1,8 @@
-﻿:host, ﻿.workflow-canvas-container {
+﻿:host {
+  display: block;
+}
+
+:host, ﻿.workflow-canvas-container {
   height: 100%;
   width: 100%;
 }
