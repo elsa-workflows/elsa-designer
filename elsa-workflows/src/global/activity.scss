@@ -1,0 +1,193 @@
+﻿@import "jsplumb-defaults";
+
+/* ---------------------------------------------------------------------------------------------------- */
+/* --- jsPlumb setup ---------------------------------------------------------------------------------- */
+/* ---------------------------------------------------------------------------------------------------- */
+
+.jtk-surface-pan {
+  display: none;
+}
+
+.jtk-connector {
+  z-index: 9;
+}
+
+.jtk-connector:hover, .jtk-connector.jtk-hover {
+  z-index: 10;
+}
+
+.jtk-endpoint {
+  z-index: 12;
+  opacity: 0.8;
+  cursor: pointer;
+}
+
+.jtk-overlay {
+  background-color: white;
+  color: #434343;
+  font-weight: 400;
+  padding: 4px;
+  z-index: 10;
+
+}
+
+.jtk-overlay.jtk-hover {
+  color: #434343;
+}
+
+.selected-mode {
+  color: #E4F013;
+}
+
+.connect {
+  width: 10px;
+  height: 10px;
+  background-color: #f76258;
+  position: absolute;
+  bottom: 13px;
+  right: 5px;
+}
+
+.jtk-node {
+  background-color: #5184a0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  position: absolute;
+  z-index: 11;
+  overflow: hidden;
+  min-width: 80px;
+  min-height: 30px;
+  width: auto;
+}
+
+.jtk-node .name {
+
+  color: white;
+  cursor: move;
+  font-size: 13px;
+  line-height: 24px;
+  padding: 6px;
+  text-align: center;
+}
+
+.jtk-node .name span {
+  cursor: pointer;
+
+}
+
+﻿.workflow-canvas-container {
+  height: 100%;
+  width: 100%;
+}
+
+.workflow-canvas {
+  width: 4000px;
+  height: 4000px;
+  position: relative;
+}
+
+.activity {
+  display: block;
+  border: 1px solid #cccccc;
+  box-shadow: 1px 1px 11px #aaa;
+  border-radius: 0.5em;
+  opacity: 0.8;
+  min-width: 70px;
+  min-height: 60px;
+  max-width: 250px;
+  text-align: left;
+  z-index: 20;
+  position: absolute;
+  background-color: #f1f1f1;
+  color: #3d3d3d;
+  font-family: helvetica, sans-serif;
+  padding: 1.5em;
+  font-size: 0.7em;
+  cursor: default;
+  transition: box-shadow 0.15s ease-in;
+
+  h5 {
+    font-size: 1rem;
+    margin-top: 10px;
+    margin-bottom: .5rem;
+    font-weight: 500;
+    line-height: 1.2;
+
+    > i {
+      margin-right: 0.5em;
+    }
+  }
+}
+
+.activity:hover {
+  box-shadow: 2px 2px 19px #888888;
+  -o-box-shadow: 2px 2px 19px #888888;
+  -webkit-box-shadow: 2px 2px 19px #888888;
+  -moz-box-shadow: 2px 2px 19px #888888;
+}
+
+.active {
+  border: 1px dotted green;
+}
+
+.jtk-connector {
+  z-index: 4;
+}
+
+.jtk-endpoint, .endpointTargetLabel, .endpointSourceLabel {
+  z-index: 21;
+  cursor: pointer;
+}
+
+.activity.jtk-connected {
+
+}
+
+.jtk-drag {
+  outline: none;
+}
+
+path, .jtk-endpoint {
+  cursor: pointer;
+}
+
+.jtk-endpoint {
+  opacity: 1;
+
+  svg circle {
+    stroke: transparent;
+    stroke-width: 2px;
+    fill: #7da7f2;
+
+  }
+}
+
+svg.elsa path {
+  stroke: #999999;
+}
+
+.jtk-overlay {
+  background-color: transparent;
+}
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Opera and Firefox */
+}
+
+.connection-label {
+  z-index: 31;
+  border: 1px solid #cccccc;
+  padding: 0.4em 0.5em;
+  font-size: 0.9em;
+  -moz-border-radius: 2px;
+  -webkit-border-radius: 2px;
+  border-radius: 2px;
+  background-color: white;
+  font-family: helvetica, sans-serif;
+}

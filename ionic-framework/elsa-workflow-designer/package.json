@@ -1,0 +1,28 @@
+{
+  "name": "elsa-workflow-designer",
+  "private": false,
+  "version": "0.0.1",
+  "description": "elsa-workflow-designer",
+  "license": "MIT",
+  "files": [
+    "dist/app/",
+    "dist/components/"
+  ],
+  "scripts": {
+    "build": "stencil build",
+    "start": "stencil build --dev --watch --serve",
+    "test": "stencil test --spec --e2e",
+    "test.watch": "stencil test --spec --e2e --watch",
+    "generate": "stencil generate"
+  },
+  "main": "dist/components/index.js",
+  "module": "dist/components/index.mjs",
+  "collection": "dist/components/collection/collection-manifest.json",
+  "types": "dist/components/types/components.d.ts",
+  "dependencies": {
+    "@ionic/core": "^4.11.7"
+  },
+  "devDependencies": {
+    "@stencil/core": "^1.8.4"
+  }
+}
