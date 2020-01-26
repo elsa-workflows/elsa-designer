@@ -27,7 +27,9 @@
     "@fortawesome/fontawesome-free": "latest",
     "@panzoom/panzoom": "latest",
     "bootstrap-scss": "latest",
-    "jsplumb": "latest"
+    "jsplumb": "latest",
+    "uuid-browser": "^3.1.0",
+    "bs-components": "https://www.myget.org/F/bs-components/npm/bs-components/-/0.1.8.tgz"
   },
   "dependencies": {},
   "license": "MIT"

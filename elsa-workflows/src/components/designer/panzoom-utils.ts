@@ -2,7 +2,8 @@
 
 export function createPanzoom (element: HTMLElement, zoomCallback: Function) {
   const panzoom = Panzoom(element, {
-    maxScale: 2,
+    maxScale: 1,
+    minScale: 1,
     overflow: 'hidden',
     contain: 'outside'
   });

@@ -9,11 +9,68 @@
   <link type="text/css" rel="stylesheet" rev="stylesheet" href="/build/elsa-workflows.css"/>
   <script type="module" src="/build/elsa-workflows.esm.js"></script>
   <script nomodule src="/build/elsa-workflows.js"></script>
-
 </head>
 <body>
 
-  <elsa-designer-host></elsa-designer-host>
+<elsa-designer-host id="designer-host"></elsa-designer-host>
 
+<script type="text/javascript">
+
+  const loadActivityDefinitions = ()=> {
+    const readLine = {
+      type: 'ReadLine',
+      displayName: 'Read Line',
+      description: 'Read a line of text from an input stream.',
+      category: 'Console',
+      icon: 'fas fa-terminal',
+      outcomes: ['Done']
+    };
+
+    const writeLine = {
+      type: 'WriteLine',
+      displayName: 'Write Line',
+      description: 'Write a line of text to an output stream.',
+      category: 'Console',
+      icon: 'fas fa-terminal',
+      outcomes: ['Done']
+    };
+
+    const httpRequestReceived = {
+      type: 'HttpRequestReceived',
+      displayName: 'Receive HTTP Request',
+      description: 'Block execution until an HTTP request is received.',
+      category: 'HTTP',
+      icon: 'fas fa-cloud',
+      outcomes: ['Done']
+    };
+
+    return [readLine, writeLine, httpRequestReceived];
+  };
+
+
+  const loadWorkflow = () => {
+    const writeLine1 = {
+      id: '1',
+      type: 'WriteLine',
+      displayName: 'Write Line',
+      state: {text: {type: 'Literal', expression: 'Hello World!'}},
+      outcomes: ['Done'],
+      left: 200,
+      top: 150
+    };
+
+    return {
+      id: '1',
+      activities: [writeLine1],
+      connections: []
+    };
+  };
+
+
+  const designerHost = document.getElementById('designer-host');
+
+  designerHost.activityDefinitions = loadActivityDefinitions();
+  designerHost.workflow = loadWorkflow();
+</script>
 </body>
 </html>

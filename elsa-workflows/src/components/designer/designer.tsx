@@ -1,7 +1,7 @@
-import {Component, Prop, Element, h, Host, Watch, State, Method} from '@stencil/core';
+import {Component, Event, Prop, Element, h, Host, Watch, State, Method, EventEmitter} from '@stencil/core';
 import {jsPlumbInstance} from "jsplumb";
 import Panzoom from "@panzoom/panzoom";
-import {Activity, Workflow} from "../../models";
+import {Activity, ActivityDefinition, Workflow} from "../../models";
 import {
   createActivityElementId,
   createJsPlumb,
@@ -15,6 +15,14 @@ const emptyWorkflow: Workflow = {
   connections: []
 };
 
+export interface AddActivityArgs {
+  mouseEvent: MouseEvent
+}
+
+export interface EditActivityArgs {
+  activityId: string
+}
+
 @Component({
   tag: 'elsa-designer',
   styleUrl: 'designer.scss',
@@ -23,32 +31,57 @@ const emptyWorkflow: Workflow = {
 export class DesignerComponent {
 
   private workflowCanvasElement: HTMLElement;
+  private workflowContextMenu: HTMLElsaContextMenuElement;
+  private activityContextMenu: HTMLElsaContextMenuElement;
   private jsPlumb: jsPlumbInstance;
   private panzoom: Panzoom;
-  private currentWorkflow: Workflow;
 
-  @Prop() workflow: Workflow;
-  @Element() element: HTMLElsaDesignerElement;
+  @Prop() activityDefinitions: Array<ActivityDefinition> = [];
+  @Prop() workflow: Workflow | string;
+
+  @Event({eventName: 'add-activity'}) addActivityEvent: EventEmitter<AddActivityArgs>;
+  @Event({eventName: 'edit-activity'}) editActivityEvent: EventEmitter<EditActivityArgs>;
+
+  @Element() private element: HTMLElsaDesignerElement;
+  @State() private workflowModel: Workflow;
 
   @Watch('workflow')
-  workflowHandler(newValue: Workflow) {
-    this.currentWorkflow = newValue;
+  workflowHandler(newValue: Workflow | string) {
+    this.workflowModel = this.parseWorkflow(newValue);
   }
 
   @Method()
   async getWorkflow(): Promise<Workflow> {
-    return {...this.currentWorkflow};
+    return {...this.workflowModel};
+  }
+
+  @Method()
+  async addActivity(activity: Activity) {
+    const activities = [...this.workflowModel.activities, activity];
+    this.workflow = {...this.workflowModel, activities};
+  }
+
+  @Method()
+  async getScale(): Promise<number> {
+    return this.panzoom.getScale();
+  }
+
+  @Method()
+  async getPan(): Promise<{x: number, y: number}> {
+    return this.panzoom.getPan();
   }
 
   componentWillLoad() {
     this.jsPlumb = createJsPlumb(this.workflowCanvasElement);
+    this.workflowModel = this.parseWorkflow(this.workflow);
   }
 
   componentDidRender() {
     this.setup();
   }
 
-  private workflowOrDefault = () => this.workflow || emptyWorkflow;
+  private parseWorkflow = (value: Workflow | string): Workflow => !!value ? value instanceof String ? JSON.parse(value as string) : value as Workflow : null;
+  private workflowOrDefault = () => this.workflowModel || emptyWorkflow;
 
   private setup = () => {
     this.setupJsPlumb();
@@ -62,7 +95,7 @@ export class DesignerComponent {
     jsPlumb.bind('connectionDetached', this.connectionDetached);
 
     const workflow = this.workflowOrDefault();
-    displayWorkflow(jsPlumb, this.workflowCanvasElement, workflow);
+    displayWorkflow(jsPlumb, this.workflowCanvasElement, workflow, this.activityDefinitions);
   };
 
   private setupPanzoom = () => {
@@ -73,7 +106,7 @@ export class DesignerComponent {
   };
 
   private connectionCreated = (info) => {
-    const workflow = this.workflow;
+    const workflow = this.workflowOrDefault();
     const connection = info.connection;
     const sourceEndpoint = info.sourceEndpoint;
     const outcome = sourceEndpoint.getParameter('outcome');
@@ -113,7 +146,19 @@ export class DesignerComponent {
   private deleteSelectedActivity = () => {
   };
 
+  private onWorkflowContextMenu = async (e: MouseEvent) => await this.workflowContextMenu.show(e);
+  private onActivityContextMenu = async (e: MouseEvent, activity: Activity) => await this.activityContextMenu.show(e, activity);
+  private onEditActivityClick = async e => this.editActivityEvent.emit({activityId: (await this.activityContextMenu.getContext() as Activity).id});
+
+  private onAddActivityClick = (e: MouseEvent) => {
+    return this.addActivityEvent.emit({mouseEvent: e});
+  };
+
+
   private renderActivity = (activity: Activity) => {
+
+    const activityDefinition = this.activityDefinitions.find(x => x.type === activity.type);
+    const displayName = activity.displayName || activityDefinition.displayName;
 
     const styles = {
       left: `${activity.left}px`,
@@ -121,8 +166,12 @@ export class DesignerComponent {
     };
 
     return (
-      <div key={activity.id} id={createActivityElementId(activity.id)} data-activity-id={activity.id} class="activity noselect panzoom-exclude" style={styles}>
-        <h5><i class="fas fa-cog"/>{activity.displayName}</h5>
+      <div key={activity.id} id={createActivityElementId(activity.id)}
+           data-activity-id={activity.id}
+           class="activity noselect panzoom-exclude"
+           style={styles}
+           onContextMenu={e => this.onActivityContextMenu(e, activity)}>
+        <h5><i class="fas fa-cog"/>{displayName}</h5>
       </div>
     );
   };
@@ -133,10 +182,16 @@ export class DesignerComponent {
     return (
       <Host>
         <div class="workflow-canvas-container">
-          <div class="workflow-canvas" ref={el => this.workflowCanvasElement = el}>
+          <div class="workflow-canvas" ref={el => this.workflowCanvasElement = el} onContextMenu={this.onWorkflowContextMenu}>
             {workflow.activities.map(this.renderActivity)}
           </div>
         </div>
+        <elsa-context-menu ref={el => this.workflowContextMenu = el}>
+          <elsa-context-menu-item onClick={this.onAddActivityClick}>Add Activity</elsa-context-menu-item>
+        </elsa-context-menu>
+        <elsa-context-menu ref={el => this.activityContextMenu = el}>
+          <elsa-context-menu-item onClick={this.onEditActivityClick}>Edit Activity</elsa-context-menu-item>
+        </elsa-context-menu>
       </Host>
     );
   }

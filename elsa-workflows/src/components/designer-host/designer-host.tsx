@@ -1,5 +1,7 @@
-import {Component, Host, h, State} from '@stencil/core';
-import {Activity, Workflow} from "../../models";
+import {Component, Host, h, State, Listen, Prop, Watch} from '@stencil/core';
+import {Activity, ActivityDefinition, Workflow} from "../../models";
+import {AddActivityArgs, EditActivityArgs} from "../designer/designer";
+import uuid from 'uuid-browser/v4';
 
 @Component({
   tag: 'elsa-designer-host',
@@ -8,65 +10,68 @@ import {Activity, Workflow} from "../../models";
 })
 export class DesignerHostComponent {
 
-  @State() private workflow: Workflow;
-
   private designer: HTMLElsaDesignerElement;
+  private lastClickedLocation: { x: number, y: number } = {x: 150, y: 150};
 
-  loadWorkflow = (): Workflow => {
+  @Prop() activityDefinitions: Array<ActivityDefinition>;
+  @Prop() workflow: Workflow | string;
 
-    const writeLine1: Activity = {
-      id: '1',
-      type: 'WriteLine',
-      displayName: 'Write Line',
-      state: {text: {type: 'Literal', expression: 'Hello World!'}},
-      outcomes: ['Done'],
-      left: 100,
-      top: 50
+  @State() private workflowModel: Workflow;
+  @State() private showActivityPicker: boolean;
+
+  @Watch('workflow')
+  workflowHandler(newValue: Workflow | string) {
+    this.workflowModel = this.parseWorkflow(newValue);
+  }
+
+  @Listen('add-activity')
+  handleAddActivity(e: CustomEvent<AddActivityArgs>) {
+    const x = e.detail.mouseEvent.x;
+    const y = e.detail.mouseEvent.y;
+    this.lastClickedLocation = {x, y};
+    this.showActivityPicker = true;
+  }
+
+  @Listen('edit-activity')
+  handleEditActivity(e: CustomEvent<EditActivityArgs>) {
+    alert(`Show Activity Editor for ${e.detail.activityId}`);
+  }
+
+  @Listen('activity-selected')
+  async handleActivitySelected(e: CustomEvent<ActivityDefinition>) {
+    const activityDefinition = e.detail;
+    const pan = await this.designer.getPan();
+    const left = this.lastClickedLocation.x - pan.x;
+    const top = this.lastClickedLocation.y - pan.y;
+
+    const activity: Activity = {
+      type: activityDefinition.type,
+      displayName: activityDefinition.displayName,
+      id: uuid(),
+      left: left,
+      top: top,
+      state: {}
     };
 
-    const writeLine2: Activity = {
-      id: '2',
-      type: 'WriteLine',
-      displayName: 'Write Line',
-      state: {text: {type: 'Literal', expression: 'Hello World!'}},
-      outcomes: ['Done'],
-      left: 350,
-      top: 350
-    };
+    await this.designer.addActivity(activity);
+  }
 
-    const readLine1: Activity = {
-      id: '3',
-      type: 'ReadLine',
-      displayName: 'Read Line',
-      state: {text: {type: 'Literal', expression: 'Hello World!'}},
-      outcomes: ['Done'],
-      left: 600,
-      top: 250
-    };
+  componentWillLoad() {
+    this.workflowModel = this.parseWorkflow(this.workflow);
+  }
 
-    return {
-      id: '1',
-      activities: [writeLine1, writeLine2, readLine1],
-      connections: [{sourceActivityId: writeLine1.id, targetActivityId: writeLine2.id, outcome: 'Done'}]
-    };
-  };
-
-  onLoadClick = e => {
-    this.workflow = {id: null, activities: [], connections: []};
-    this.workflow = this.loadWorkflow();
-  };
-
-  onSaveClick = async e => {
-    this.workflow = await this.designer.getWorkflow();
-    console.debug(this.workflow);
-  };
+  private parseWorkflow = (value: Workflow | string): Workflow =>
+    !!value ? value instanceof String ? JSON.parse(value as string) : value as Workflow : null;
 
   render() {
     return (
       <Host>
-        <button class="btn btn-primary" onClick={this.onLoadClick}>Load</button>
-        <button class="btn btn-primary" onClick={this.onSaveClick}>Save</button>
-        <elsa-designer workflow={this.workflow} ref={el => this.designer = el}/>
+        <elsa-designer workflow={this.workflowModel} activityDefinitions={this.activityDefinitions} ref={el => this.designer = el}/>
+        <elsa-activity-picker
+          activityDefinitions={this.activityDefinitions}
+          showModal={this.showActivityPicker}
+          onHidden={() => this.showActivityPicker = false}
+        />
       </Host>
     );
   }

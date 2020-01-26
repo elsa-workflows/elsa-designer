@@ -8,19 +8,61 @@
 
 import { HTMLStencilElement, JSXBase } from '@stencil/core/internal';
 import {
+  Activity,
+  ActivityDefinition,
   Workflow,
 } from './models';
+import {
+  AddActivityArgs,
+  EditActivityArgs,
+} from './components/designer/designer';
 
 export namespace Components {
-  interface ElsaDesigner {
-    'getWorkflow': () => Promise<Workflow>;
-    'workflow': Workflow;
+  interface ElsaActivityPicker {
+    'activityDefinitions': Array<ActivityDefinition>;
+    'showModal': boolean;
   }
-  interface ElsaDesignerHost {}
+  interface ElsaContextMenu {
+    'getContext': () => Promise<any>;
+    'show': (e: MouseEvent, context?: any) => Promise<void>;
+  }
+  interface ElsaContextMenuItem {
+    'text': any;
+  }
+  interface ElsaDesigner {
+    'activityDefinitions': Array<ActivityDefinition>;
+    'addActivity': (activity: Activity) => Promise<void>;
+    'getPan': () => Promise<{ x: number; y: number; }>;
+    'getScale': () => Promise<number>;
+    'getWorkflow': () => Promise<Workflow>;
+    'workflow': Workflow | string;
+  }
+  interface ElsaDesignerHost {
+    'activityDefinitions': Array<ActivityDefinition>;
+    'workflow': Workflow | string;
+  }
 }
 
 declare global {
 
+
+  interface HTMLElsaActivityPickerElement extends Components.ElsaActivityPicker, HTMLStencilElement {}
+  var HTMLElsaActivityPickerElement: {
+    prototype: HTMLElsaActivityPickerElement;
+    new (): HTMLElsaActivityPickerElement;
+  };
+
+  interface HTMLElsaContextMenuElement extends Components.ElsaContextMenu, HTMLStencilElement {}
+  var HTMLElsaContextMenuElement: {
+    prototype: HTMLElsaContextMenuElement;
+    new (): HTMLElsaContextMenuElement;
+  };
+
+  interface HTMLElsaContextMenuItemElement extends Components.ElsaContextMenuItem, HTMLStencilElement {}
+  var HTMLElsaContextMenuItemElement: {
+    prototype: HTMLElsaContextMenuItemElement;
+    new (): HTMLElsaContextMenuItemElement;
+  };
 
   interface HTMLElsaDesignerElement extends Components.ElsaDesigner, HTMLStencilElement {}
   var HTMLElsaDesignerElement: {
@@ -34,18 +76,42 @@ declare global {
     new (): HTMLElsaDesignerHostElement;
   };
   interface HTMLElementTagNameMap {
+    'elsa-activity-picker': HTMLElsaActivityPickerElement;
+    'elsa-context-menu': HTMLElsaContextMenuElement;
+    'elsa-context-menu-item': HTMLElsaContextMenuItemElement;
     'elsa-designer': HTMLElsaDesignerElement;
     'elsa-designer-host': HTMLElsaDesignerHostElement;
   }
 }
 
 declare namespace LocalJSX {
-  interface ElsaDesigner {
-    'workflow'?: Workflow;
+  interface ElsaActivityPicker {
+    'activityDefinitions'?: Array<ActivityDefinition>;
+    'onActivity-selected'?: (event: CustomEvent<any>) => void;
+    'onHidden'?: (event: CustomEvent<any>) => void;
+    'showModal'?: boolean;
   }
-  interface ElsaDesignerHost {}
+  interface ElsaContextMenu {
+    'onContext-menu'?: (event: CustomEvent<any>) => void;
+  }
+  interface ElsaContextMenuItem {
+    'text'?: any;
+  }
+  interface ElsaDesigner {
+    'activityDefinitions'?: Array<ActivityDefinition>;
+    'onAdd-activity'?: (event: CustomEvent<AddActivityArgs>) => void;
+    'onEdit-activity'?: (event: CustomEvent<EditActivityArgs>) => void;
+    'workflow'?: Workflow | string;
+  }
+  interface ElsaDesignerHost {
+    'activityDefinitions'?: Array<ActivityDefinition>;
+    'workflow'?: Workflow | string;
+  }
 
   interface IntrinsicElements {
+    'elsa-activity-picker': ElsaActivityPicker;
+    'elsa-context-menu': ElsaContextMenu;
+    'elsa-context-menu-item': ElsaContextMenuItem;
     'elsa-designer': ElsaDesigner;
     'elsa-designer-host': ElsaDesignerHost;
   }
@@ -57,6 +123,9 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
   export namespace JSX {
     interface IntrinsicElements {
+      'elsa-activity-picker': LocalJSX.ElsaActivityPicker & JSXBase.HTMLAttributes<HTMLElsaActivityPickerElement>;
+      'elsa-context-menu': LocalJSX.ElsaContextMenu & JSXBase.HTMLAttributes<HTMLElsaContextMenuElement>;
+      'elsa-context-menu-item': LocalJSX.ElsaContextMenuItem & JSXBase.HTMLAttributes<HTMLElsaContextMenuItemElement>;
       'elsa-designer': LocalJSX.ElsaDesigner & JSXBase.HTMLAttributes<HTMLElsaDesignerElement>;
       'elsa-designer-host': LocalJSX.ElsaDesignerHost & JSXBase.HTMLAttributes<HTMLElsaDesignerHostElement>;
     }

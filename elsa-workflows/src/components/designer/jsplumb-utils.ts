@@ -1,5 +1,5 @@
 ﻿import {jsPlumb, jsPlumbInstance} from 'jsplumb';
-import {Workflow} from "../../models";
+import {ActivityDefinition, Workflow} from "../../models";
 
 const jsPlumbKey = {};
 
@@ -50,11 +50,12 @@ export function createJsPlumb(element) {
   return p;
 }
 
-export function displayWorkflow(jsPlumb: jsPlumbInstance, workflowCanvasElement: HTMLElement, workflow: Workflow) {
+export function displayWorkflow(jsPlumb: jsPlumbInstance, workflowCanvasElement: HTMLElement, workflow: Workflow, activityDefinitions: Array<ActivityDefinition>) {
 
   const setupActivities = () => {
 
-    const getActivity = (id) => workflow.activities.find(x => x.id === id);
+    const getActivity = id => workflow.activities.find(x => x.id === id);
+    const getActivityDefinition = (type):ActivityDefinition => activityDefinitions.find(x => x.type == type);
 
     const makeTarget = (activityElement) => {
       jsPlumb.makeTarget(activityElement, {
@@ -67,7 +68,15 @@ export function displayWorkflow(jsPlumb: jsPlumbInstance, workflowCanvasElement:
     const createOutcomeEndpoints = (activityElement: HTMLElement) => {
       const activityId = activityElement.getAttribute('data-activity-id');
       const activity = getActivity(activityId);
-      const outcomes = activity.outcomes || [];
+      const activityDefinition = getActivityDefinition(activity.type);
+
+      if(!activityDefinition)
+      {
+        console.warn(`Could not find activity of type ${activity.type}`);
+        return;
+      }
+
+      const outcomes = activityDefinition.outcomes || [];
 
       for (const outcome of outcomes) {
         const sourceEndpointOptions: any = createSourceEndpoint(activity.id, outcome);
