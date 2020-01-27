@@ -1,5 +1,6 @@
 import { Config } from '@stencil/core';
 import { sass } from '@stencil/sass';
+import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 export const config: Config = {
   namespace: 'elsa-workflows',
@@ -16,6 +17,6 @@ export const config: Config = {
       serviceWorker: null // disable service workers
     }
   ],
-  plugins:[sass()],
+  plugins:[sass(), nodePolyfills()],
   globalStyle: 'src/global/app.scss'
 };

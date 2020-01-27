@@ -22,14 +22,15 @@
     "generate": "stencil generate"
   },
   "devDependencies": {
+    "@fortawesome/fontawesome-free": "latest",
     "@stencil/core": "latest",
     "@stencil/sass": "latest",
-    "@fortawesome/fontawesome-free": "latest",
-    "@panzoom/panzoom": "latest",
     "bootstrap-scss": "latest",
-    "jsplumb": "latest",
-    "uuid-browser": "^3.1.0",
-    "bs-components": "https://www.myget.org/F/bs-components/npm/bs-components/-/0.1.8.tgz"
+    "bs-components": "https://www.myget.org/F/bs-components/npm/bs-components/-/0.1.8.tgz",
+    "jsplumb": "https://www.myget.org/F/jsplumb-sfmskywalker/npm/jsplumb/-/2.12.10.tgz",
+    "pan-zoom": "latest",
+    "rollup-plugin-node-polyfills": "^0.2.1",
+    "uuid-browser": "^3.1.0"
   },
   "dependencies": {},
   "license": "MIT"

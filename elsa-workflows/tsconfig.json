@@ -14,7 +14,8 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "jsx": "react",
-    "jsxFactory": "h"
+    "jsxFactory": "h",
+    "typeRoots": ["./node_modules/@types", "./src/shared/@types"]
   },
   "include": [
     "src",

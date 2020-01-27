@@ -1,6 +1,5 @@
 import {Component, Event, Prop, Element, h, Host, Watch, State, Method, EventEmitter} from '@stencil/core';
 import {jsPlumbInstance} from "jsplumb";
-import Panzoom from "@panzoom/panzoom";
 import {Activity, ActivityDefinition, Workflow} from "../../models";
 import {
   createActivityElementId,
@@ -34,7 +33,7 @@ export class DesignerComponent {
   private workflowContextMenu: HTMLElsaContextMenuElement;
   private activityContextMenu: HTMLElsaContextMenuElement;
   private jsPlumb: jsPlumbInstance;
-  private panzoom: Panzoom;
+  private panzoom: Function;
 
   @Prop() activityDefinitions: Array<ActivityDefinition> = [];
   @Prop() workflow: Workflow | string;
@@ -63,12 +62,14 @@ export class DesignerComponent {
 
   @Method()
   async getScale(): Promise<number> {
-    return this.panzoom.getScale();
+    //return this.panzoom.getScale();
+    return 1;
   }
 
   @Method()
-  async getPan(): Promise<{x: number, y: number}> {
-    return this.panzoom.getPan();
+  async getPan(): Promise<{ x: number, y: number }> {
+    //return this.panzoom.getPan();
+    return {x: 0, y: 0};
   }
 
   componentWillLoad() {
@@ -100,9 +101,9 @@ export class DesignerComponent {
 
   private setupPanzoom = () => {
     if (!!this.panzoom)
-      this.panzoom.destroy();
+      this.panzoom();
 
-    this.panzoom = createPanzoom(this.workflowCanvasElement, zoom => (this.jsPlumb as any).setZoom(zoom));
+    this.panzoom = createPanzoom(this.workflowCanvasElement, zoom => this.jsPlumb.setZoom(zoom));
   };
 
   private connectionCreated = (info) => {
