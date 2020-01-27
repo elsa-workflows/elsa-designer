@@ -32,8 +32,7 @@ export namespace Components {
   interface ElsaDesigner {
     'activityDefinitions': Array<ActivityDefinition>;
     'addActivity': (activity: Activity) => Promise<void>;
-    'getPan': () => Promise<{ x: number; y: number; }>;
-    'getScale': () => Promise<number>;
+    'getTransform': () => Promise<{ x: number; y: number; scale: number; }>;
     'getWorkflow': () => Promise<Workflow>;
     'workflow': Workflow | string;
   }

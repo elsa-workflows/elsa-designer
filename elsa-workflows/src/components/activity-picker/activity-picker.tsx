@@ -39,6 +39,7 @@ export class ActivityPicker {
   private onActivitySelectClick = (e: Event, activity: ActivityDefinition) => {
     e.preventDefault();
     this.activitySelectedEvent.emit(activity);
+    this.showModal = false;
   };
 
   private onCategoryClick = (e: MouseEvent, category: string) => {
@@ -51,13 +52,13 @@ export class ActivityPicker {
     const iconClass = `${icon} mr-1`;
     return (
       <div class="card" style={{width: '18rem;'}}>
-          <div class="card-body">
-            <h4 class="card-title"><i class={iconClass}/>{activity.displayName}</h4>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" onClick={e => this.selectCategory(activity.category)}>
-              <span class="badge badge-light">{activity.category}</span>
-            </a>
-          </div>
+        <div class="card-body">
+          <h4 class="card-title"><i class={iconClass}/>{activity.displayName}</h4>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" onClick={e => this.selectCategory(activity.category)}>
+            <span class="badge badge-light">{activity.category}</span>
+          </a>
+        </div>
         <div class="card-footer text-muted">
           <a class="btn btn-primary btn-sm" href="#" onClick={e => this.onActivitySelectClick(e, activity)}>Select</a>
         </div>
@@ -93,7 +94,7 @@ export class ActivityPicker {
                 <div class="row">
                   <div class="col-sm-3 col-md-3 col-lg-2">
                     <div class="form-group">
-                      <input type="text" value={filterText} class="form-control" placeholder="Filter" aria-label="Filter" autofocus onKeyUp={this.onFilterTextChanged} onChange={this.onFilterTextChanged} />
+                      <input type="text" value={filterText} class="form-control" placeholder="Filter" aria-label="Filter" autofocus onKeyUp={this.onFilterTextChanged} onChange={this.onFilterTextChanged}/>
                     </div>
                     <ul class="nav nav-pills flex-column activity-picker-categories">
                       {categories.map(category => {

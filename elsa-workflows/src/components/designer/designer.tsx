@@ -7,6 +7,8 @@ import {
   displayWorkflow
 } from "./jsplumb-utils";
 import {createPanzoom} from "./panzoom-utils";
+import {PanZoom} from "panzoom";
+import {PanzoomObject} from "@panzoom/panzoom/dist/src/types";
 
 const emptyWorkflow: Workflow = {
   id: null,
@@ -33,7 +35,7 @@ export class DesignerComponent {
   private workflowContextMenu: HTMLElsaContextMenuElement;
   private activityContextMenu: HTMLElsaContextMenuElement;
   private jsPlumb: jsPlumbInstance;
-  private panzoom: Function;
+  private panzoom: PanzoomObject;
 
   @Prop() activityDefinitions: Array<ActivityDefinition> = [];
   @Prop() workflow: Workflow | string;
@@ -61,15 +63,10 @@ export class DesignerComponent {
   }
 
   @Method()
-  async getScale(): Promise<number> {
-    //return this.panzoom.getScale();
-    return 1;
-  }
-
-  @Method()
-  async getPan(): Promise<{ x: number, y: number }> {
-    //return this.panzoom.getPan();
-    return {x: 0, y: 0};
+  async getTransform(): Promise<{ x: number, y: number, scale: number }> {
+    const rect = this.workflowCanvasElement.getBoundingClientRect();
+    const scale = this.panzoom.getScale();
+    return { x: rect.x, y: rect.y, scale };
   }
 
   componentWillLoad() {
@@ -100,10 +97,8 @@ export class DesignerComponent {
   };
 
   private setupPanzoom = () => {
-    if (!!this.panzoom)
-      this.panzoom();
-
-    this.panzoom = createPanzoom(this.workflowCanvasElement, zoom => this.jsPlumb.setZoom(zoom));
+    if(!this.panzoom)
+      this.panzoom = createPanzoom(this.workflowCanvasElement, zoom => this.jsPlumb.setZoom(zoom));
   };
 
   private connectionCreated = (info) => {

@@ -2,6 +2,7 @@ import {Component, Host, h, State, Listen, Prop, Watch} from '@stencil/core';
 import {Activity, ActivityDefinition, Workflow} from "../../models";
 import {AddActivityArgs, EditActivityArgs} from "../designer/designer";
 import uuid from 'uuid-browser/v4';
+import 'bs-components';
 
 @Component({
   tag: 'elsa-designer-host',
@@ -40,9 +41,9 @@ export class DesignerHostComponent {
   @Listen('activity-selected')
   async handleActivitySelected(e: CustomEvent<ActivityDefinition>) {
     const activityDefinition = e.detail;
-    const pan = await this.designer.getPan();
-    const left = this.lastClickedLocation.x - pan.x;
-    const top = this.lastClickedLocation.y - pan.y;
+    const transform = await this.designer.getTransform();
+    const left = (this.lastClickedLocation.x / transform.scale) - (transform.x / transform.scale);
+    const top = (this.lastClickedLocation.y / transform.scale) - (transform.y / transform.scale);
 
     const activity: Activity = {
       type: activityDefinition.type,
