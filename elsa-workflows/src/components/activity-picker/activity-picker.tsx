@@ -1,5 +1,7 @@
 import {Component, Element, Prop, State, Method, Event, EventEmitter, Host, h} from '@stencil/core';
 import {ActivityDefinition} from "../../models";
+import {Container} from "inversify";
+import {ActivityDriver} from "../../services";
 
 @Component({
   tag: 'elsa-activity-picker',
@@ -12,6 +14,7 @@ export class ActivityPicker {
 
   @Element() el: HTMLElement;
 
+  @Prop() container: Container;
   @Prop() activityDefinitions: Array<ActivityDefinition> = [];
   @Prop({attribute: 'show-modal', reflect: true}) showModal: boolean;
 
@@ -22,12 +25,20 @@ export class ActivityPicker {
   @Event({eventName: 'activity-selected'}) activitySelectedEvent: EventEmitter;
 
   componentDidRender() {
-    if (!!this.modal)
+    if (!!this.modal) {
       this.modal.removeEventListener('hidden.bs.modal', this.emitHiddenEvent);
+      this.modal.removeEventListener('shown.bs.modal', this.onShowModal);
+    }
+
     this.modal.addEventListener('hidden.bs.modal', this.emitHiddenEvent);
+    this.modal.addEventListener('shown.bs.modal', this.onShowModal);
   }
 
   private emitHiddenEvent = () => this.hiddenEvent.emit();
+
+  private onShowModal = () => {
+
+  };
 
   private onFilterTextChanged = (e: Event) => {
     const filterField = e.target as HTMLInputElement;

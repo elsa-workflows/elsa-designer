@@ -6,6 +6,8 @@ export function createPanzoom (element: HTMLElement, zoomCallback?: Function): P
     minScale: 0.5,
     maxScale: 2.5,
     contain: 'outside',
+    startX: -500,
+    startY: -500
   });
 
   if(!!zoomCallback)

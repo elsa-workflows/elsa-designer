@@ -7,8 +7,8 @@ import {
   displayWorkflow
 } from "./jsplumb-utils";
 import {createPanzoom} from "./panzoom-utils";
-import {PanZoom} from "panzoom";
 import {PanzoomObject} from "@panzoom/panzoom/dist/src/types";
+import {Container} from "inversify";
 
 const emptyWorkflow: Workflow = {
   id: null,
@@ -37,18 +37,25 @@ export class DesignerComponent {
   private jsPlumb: jsPlumbInstance;
   private panzoom: PanzoomObject;
 
+  @Element() private element: HTMLElsaDesignerElement;
+
+  @Prop() container: Container;
   @Prop() activityDefinitions: Array<ActivityDefinition> = [];
   @Prop() workflow: Workflow | string;
 
   @Event({eventName: 'add-activity'}) addActivityEvent: EventEmitter<AddActivityArgs>;
   @Event({eventName: 'edit-activity'}) editActivityEvent: EventEmitter<EditActivityArgs>;
 
-  @Element() private element: HTMLElsaDesignerElement;
-  @State() private workflowModel: Workflow;
+  @State() private workflowModel: Workflow = emptyWorkflow;
 
   @Watch('workflow')
   workflowHandler(newValue: Workflow | string) {
     this.workflowModel = this.parseWorkflow(newValue);
+  }
+
+  @Method()
+  async registerService(action: (container: Container) => void): Promise<void> {
+    action(this.container);
   }
 
   @Method()
@@ -57,48 +64,51 @@ export class DesignerComponent {
   }
 
   @Method()
+  async getActivity(id: string): Promise<Activity> {
+    const activity = this.workflowModel.activities.find(x => x.id === id);
+    return {...activity};
+  }
+
+  @Method()
   async addActivity(activity: Activity) {
     const activities = [...this.workflowModel.activities, activity];
-    this.workflow = {...this.workflowModel, activities};
+    this.workflowModel = {...this.workflowModel, activities};
   }
 
   @Method()
   async getTransform(): Promise<{ x: number, y: number, scale: number }> {
     const rect = this.workflowCanvasElement.getBoundingClientRect();
     const scale = this.panzoom.getScale();
-    return { x: rect.x, y: rect.y, scale };
+    return {x: rect.x, y: rect.y, scale};
   }
 
   componentWillLoad() {
-    this.jsPlumb = createJsPlumb(this.workflowCanvasElement);
     this.workflowModel = this.parseWorkflow(this.workflow);
   }
 
+  componentDidLoad() {
+    this.panzoom = createPanzoom(this.workflowCanvasElement, zoom => this.jsPlumb.setZoom(zoom));
+  }
+
   componentDidRender() {
-    this.setup();
+    this.setupJsPlumb();
   }
 
   private parseWorkflow = (value: Workflow | string): Workflow => !!value ? value instanceof String ? JSON.parse(value as string) : value as Workflow : null;
   private workflowOrDefault = () => this.workflowModel || emptyWorkflow;
 
-  private setup = () => {
-    this.setupJsPlumb();
-    this.setupPanzoom();
-  };
-
   private setupJsPlumb = () => {
-    const jsPlumb = this.jsPlumb;
+    let jsPlumb = this.jsPlumb;
+
+    if (!jsPlumb)
+      jsPlumb = this.jsPlumb = createJsPlumb(this.workflowCanvasElement);
+
     jsPlumb.reset();
     jsPlumb.bind('connection', this.connectionCreated);
     jsPlumb.bind('connectionDetached', this.connectionDetached);
 
     const workflow = this.workflowOrDefault();
     displayWorkflow(jsPlumb, this.workflowCanvasElement, workflow, this.activityDefinitions);
-  };
-
-  private setupPanzoom = () => {
-    if(!this.panzoom)
-      this.panzoom = createPanzoom(this.workflowCanvasElement, zoom => this.jsPlumb.setZoom(zoom));
   };
 
   private connectionCreated = (info) => {

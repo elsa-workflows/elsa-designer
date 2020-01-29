@@ -10,6 +10,7 @@
 | Property              | Attribute  | Description | Type                   | Default     |
 | --------------------- | ---------- | ----------- | ---------------------- | ----------- |
 | `activityDefinitions` | --         |             | `ActivityDefinition[]` | `[]`        |
+| `container`           | --         |             | `Container`            | `undefined` |
 | `workflow`            | `workflow` |             | `Workflow \| string`   | `undefined` |
 
 
@@ -33,23 +34,23 @@ Type: `Promise<void>`
 
 
 
-### `getPan() => Promise<{ x: number; y: number; }>`
+### `getActivity(id: string) => Promise<Activity>`
 
 
 
 #### Returns
 
-Type: `Promise<{ x: number; y: number; }>`
+Type: `Promise<Activity>`
 
 
 
-### `getScale() => Promise<number>`
+### `getTransform() => Promise<{ x: number; y: number; scale: number; }>`
 
 
 
 #### Returns
 
-Type: `Promise<number>`
+Type: `Promise<{ x: number; y: number; scale: number; }>`
 
 
 
@@ -60,6 +61,16 @@ Type: `Promise<number>`
 #### Returns
 
 Type: `Promise<Workflow>`
+
+
+
+### `registerService(action: (container: Container) => void) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
 
 
 
