@@ -146,20 +146,22 @@ export class DesignerComponent {
     workflow.connections = workflow.connections.filter(x => !(x.sourceActivityId === sourceActivityId && x.targetActivityId === targetActivityId && x.outcome === outcome));
   };
 
-  private editSelectedActivity = () => {
-  };
+  private editActivity = (id: string) => this.editActivityEvent.emit({activityId: id});
 
-  private deleteSelectedActivity = () => {
+  private deleteActivity = (id: string) => {
+    const activities = this.workflowModel.activities.filter(x => x.id !== id);
+    this.workflowModel = {...this.workflowModel, activities: activities};
   };
 
   private onWorkflowContextMenu = async (e: MouseEvent) => await this.workflowContextMenu.show(e);
   private onActivityContextMenu = async (e: MouseEvent, activity: Activity) => await this.activityContextMenu.show(e, activity);
-  private onEditActivityClick = async e => this.editActivityEvent.emit({activityId: (await this.activityContextMenu.getContext() as Activity).id});
+  private onEditActivityClick = async e => this.editActivity((await this.activityContextMenu.getContext() as Activity).id);
+  private onDeleteActivityClick = async e => this.deleteActivity((await this.activityContextMenu.getContext() as Activity).id);
+  private onActivityDoubleClick = (id: string) => this.editActivity(id);
 
   private onAddActivityClick = (e: MouseEvent) => {
     return this.addActivityEvent.emit({mouseEvent: e});
   };
-
 
   private renderActivity = (activity: Activity) => {
 
@@ -176,7 +178,8 @@ export class DesignerComponent {
            data-activity-id={activity.id}
            class="activity noselect panzoom-exclude"
            style={styles}
-           onContextMenu={e => this.onActivityContextMenu(e, activity)}>
+           onContextMenu={e => this.onActivityContextMenu(e, activity)}
+           onDblClick={() => this.onActivityDoubleClick(activity.id)}>
         <h5><i class="fas fa-cog"/>{displayName}</h5>
       </div>
     );
@@ -188,7 +191,9 @@ export class DesignerComponent {
     return (
       <Host>
         <div class="workflow-canvas-container">
-          <div class="workflow-canvas" ref={el => this.workflowCanvasElement = el} onContextMenu={this.onWorkflowContextMenu}>
+          <div class="workflow-canvas"
+               ref={el => this.workflowCanvasElement = el}
+               onContextMenu={this.onWorkflowContextMenu}>
             {workflow.activities.map(this.renderActivity)}
           </div>
         </div>
@@ -197,6 +202,7 @@ export class DesignerComponent {
         </elsa-context-menu>
         <elsa-context-menu ref={el => this.activityContextMenu = el}>
           <elsa-context-menu-item onClick={this.onEditActivityClick}>Edit Activity</elsa-context-menu-item>
+          <elsa-context-menu-item onClick={this.onDeleteActivityClick}>Delete Activity</elsa-context-menu-item>
         </elsa-context-menu>
       </Host>
     );

@@ -27,18 +27,11 @@ export class ActivityPicker {
   componentDidRender() {
     if (!!this.modal) {
       this.modal.removeEventListener('hidden.bs.modal', this.emitHiddenEvent);
-      this.modal.removeEventListener('shown.bs.modal', this.onShowModal);
+      this.modal.addEventListener('hidden.bs.modal', this.emitHiddenEvent);
     }
-
-    this.modal.addEventListener('hidden.bs.modal', this.emitHiddenEvent);
-    this.modal.addEventListener('shown.bs.modal', this.onShowModal);
   }
 
   private emitHiddenEvent = () => this.hiddenEvent.emit();
-
-  private onShowModal = () => {
-
-  };
 
   private onFilterTextChanged = (e: Event) => {
     const filterField = e.target as HTMLInputElement;

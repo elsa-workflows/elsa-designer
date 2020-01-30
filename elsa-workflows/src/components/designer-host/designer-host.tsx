@@ -1,11 +1,10 @@
 import 'bs-components';
-import "reflect-metadata";
 import {Component, Host, h, State, Listen, Prop, Watch} from '@stencil/core';
 import {Activity, ActivityDefinition, Workflow} from "../../models";
 import {AddActivityArgs, EditActivityArgs} from "../designer/designer";
 import uuid from 'uuid-browser/v4';
 import {Container} from "inversify";
-import {ActivityDriver, Symbols} from "../../services";
+import {ActivityDefinitionStore, ActivityDriver, DisplayManager, Symbols} from "../../services";
 import {WriteLineDriver} from "../../drivers/activity-drivers/write-line-driver";
 
 
@@ -20,8 +19,12 @@ export class DesignerHostComponent {
   private lastClickedLocation: { x: number, y: number } = {x: 150, y: 150};
 
   constructor() {
-    this.container = new Container();
-    this.container.bind<ActivityDriver>(Symbols.ActivityDriver).to(WriteLineDriver);
+    const container = new Container();
+    container.bind<ActivityDefinitionStore>(ActivityDefinitionStore).toSelf().inSingletonScope();
+    container.bind<DisplayManager>(DisplayManager).toSelf().inSingletonScope();
+    container.bind<ActivityDriver>(Symbols.ActivityDriver).to(WriteLineDriver).inSingletonScope();
+
+    this.container = container;
   }
 
   @Prop() container: Container;
@@ -31,7 +34,12 @@ export class DesignerHostComponent {
   @State() private showActivityPicker: boolean;
   @State() private showActivityEditor: boolean;
   @State() private selectedActivity?: Activity;
-  @State() private selectedActivityDefinition?: ActivityDefinition;
+
+  @Watch('activityDefinitions')
+  activityDefinitionsHandler(newValue: Array<ActivityDefinition>){
+    const store = this.container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
+    store.initialize(newValue);
+  }
 
   @Listen('add-activity')
   handleDesignerAddActivity(e: CustomEvent<AddActivityArgs>) {
@@ -45,7 +53,6 @@ export class DesignerHostComponent {
   async handleDesignerEditActivity(e: CustomEvent<EditActivityArgs>) {
     const activityId = e.detail.activityId;
     this.selectedActivity = await this.designer.getActivity(activityId);
-    this.selectedActivityDefinition = this.activityDefinitions.find(x => x.type === this.selectedActivity.type);
     this.showActivityEditor = true;
   }
 
@@ -80,7 +87,6 @@ export class DesignerHostComponent {
         />
         <elsa-activity-editor
           container={this.container}
-          activityDefinition={this.selectedActivityDefinition}
           activity={this.selectedActivity}
           showModal={this.showActivityEditor}
           onHidden={() => this.showActivityEditor = false}

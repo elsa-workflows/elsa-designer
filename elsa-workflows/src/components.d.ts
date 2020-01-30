@@ -23,7 +23,6 @@ import {
 export namespace Components {
   interface ElsaActivityEditor {
     'activity'?: Activity;
-    'activityDefinition'?: ActivityDefinition;
     'container': Container;
     'showModal': boolean;
   }
@@ -57,6 +56,11 @@ export namespace Components {
 }
 
 declare global {
+
+  // Adding a global JSX for backcompatibility with legacy dependencies
+  export namespace JSX {
+    export interface Element {}
+  }
 
 
   interface HTMLElsaActivityEditorElement extends Components.ElsaActivityEditor, HTMLStencilElement {}
@@ -107,7 +111,6 @@ declare global {
 declare namespace LocalJSX {
   interface ElsaActivityEditor {
     'activity'?: Activity;
-    'activityDefinition'?: ActivityDefinition;
     'container'?: Container;
     'onHidden'?: (event: CustomEvent<any>) => void;
     'showModal'?: boolean;
