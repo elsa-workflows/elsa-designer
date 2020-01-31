@@ -1,18 +1,18 @@
 ﻿import {Activity, ActivityDefinition} from "../models";
 import {ActivityState, Render} from "./types";
 
-export interface ActivityEditorContext {
+export interface ActivityDisplayContext {
   activityDefinition: ActivityDefinition
   activity: Activity
   state: ActivityState
 }
 
-export interface UpdateActivityContext extends ActivityEditorContext {
-  formData: FormData;
-}
-
 ﻿export interface ActivityDriver {
-  readonly activityType: string
-  getEditDisplay(context: ActivityEditorContext): Promise<Render>
-  updateActivity(context: UpdateActivityContext): Promise<void>
+  supportsActivity(context: ActivityDisplayContext): boolean;
+
+  displayDesigner(context: ActivityDisplayContext): Promise<Render>
+
+  displayEditor(context: ActivityDisplayContext): Promise<Render>
+
+  updateActivity(context: ActivityDisplayContext, formData: FormData): Promise<void>
 }

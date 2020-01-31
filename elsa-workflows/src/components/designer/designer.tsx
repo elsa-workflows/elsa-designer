@@ -9,12 +9,17 @@ import {
 import {createPanzoom} from "./panzoom-utils";
 import {PanzoomObject} from "@panzoom/panzoom/dist/src/types";
 import {Container} from "inversify";
+import {DisplayManager, Render} from "../../services";
 
 const emptyWorkflow: Workflow = {
   id: null,
   activities: [],
   connections: []
 };
+
+interface ActivityDisplayMap {
+  [id: string]: Render;
+}
 
 export interface AddActivityArgs {
   mouseEvent: MouseEvent
@@ -36,6 +41,8 @@ export class DesignerComponent {
   private activityContextMenu: HTMLElsaContextMenuElement;
   private jsPlumb: jsPlumbInstance;
   private panzoom: PanzoomObject;
+  private displayManager: DisplayManager;
+  private activityDisplays: ActivityDisplayMap;
 
   @Element() private element: HTMLElsaDesignerElement;
 
@@ -50,6 +57,7 @@ export class DesignerComponent {
 
   @Watch('workflow')
   workflowHandler(newValue: Workflow | string) {
+    debugger;
     this.workflowModel = this.parseWorkflow(newValue);
   }
 
@@ -84,10 +92,20 @@ export class DesignerComponent {
 
   componentWillLoad() {
     this.workflowModel = this.parseWorkflow(this.workflow);
+    this.displayManager = this.container.get<DisplayManager>(DisplayManager);
   }
 
   componentDidLoad() {
     this.panzoom = createPanzoom(this.workflowCanvasElement, zoom => this.jsPlumb.setZoom(zoom));
+  }
+
+  async componentWillRender() {
+    const displayManager = this.displayManager;
+    const workflow = this.workflowOrDefault();
+    const map = this.activityDisplays = {};
+
+    for (const activity of workflow.activities)
+      map[activity.id] = await displayManager.displayDesigner(activity);
   }
 
   componentDidRender() {
@@ -165,13 +183,22 @@ export class DesignerComponent {
 
   private renderActivity = (activity: Activity) => {
 
+    if(!this.activityDisplays)
+      return;
+
     const activityDefinition = this.activityDefinitions.find(x => x.type === activity.type);
     const displayName = activity.displayName || activityDefinition.displayName;
+    const icon = activityDefinition.icon || 'fas fa-cog';
 
     const styles = {
       left: `${activity.left}px`,
       top: `${activity.top}px`
     };
+
+    let display = this.activityDisplays[activity.id];
+
+    if(display.length === 0)
+      display = (<h5><i class={icon}/>{displayName}</h5>);
 
     return (
       <div key={activity.id} id={createActivityElementId(activity.id)}
@@ -180,7 +207,7 @@ export class DesignerComponent {
            style={styles}
            onContextMenu={e => this.onActivityContextMenu(e, activity)}
            onDblClick={() => this.onActivityDoubleClick(activity.id)}>
-        <h5><i class="fas fa-cog"/>{displayName}</h5>
+        {display}
       </div>
     );
   };

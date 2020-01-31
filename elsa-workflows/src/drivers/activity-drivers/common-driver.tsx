@@ -2,22 +2,21 @@
 import {ActivityDisplayContext, ActivityDriverBase, Render} from '../../services';
 import {injectable} from "inversify";
 
-interface TextState {
-  type: string;
-  expression: string;
+interface State {
+  name: string;
+  displayName: string;
 }
 
 @injectable()
-export class WriteLineDriver extends ActivityDriverBase {
-  readonly activityType: string = 'WriteLine';
+export class CommonDriver extends ActivityDriverBase {
+  supportsActivity = (context: ActivityDisplayContext): boolean => true;
 
   async displayEditor(context: ActivityDisplayContext): Promise<Render> {
-    const state: TextState = context.state.text || {type: '', expression: ''};
-    const expression = state.expression;
+
     return (
       <div class="form-group">
-        <label htmlFor="exampleInputEmail1">Text</label>
-        <input type="text" name='expression' class="form-control" value={expression}/>
+        <label htmlFor="exampleInputEmail1">Name</label>
+        <input type="text" name='expression' class="form-control" value=""/>
       </div>
     );
   }

@@ -16,6 +16,9 @@ import {
   Workflow,
 } from './models';
 import {
+  ActivityUpdatedArgs,
+} from './components/activity-editor/activity-editor';
+import {
   AddActivityArgs,
   EditActivityArgs,
 } from './components/designer/designer';
@@ -49,9 +52,7 @@ export namespace Components {
     'workflow': Workflow | string;
   }
   interface ElsaDesignerHost {
-    'activityDefinitions': Array<ActivityDefinition>;
     'container': Container;
-    'workflow': Workflow | string;
   }
 }
 
@@ -112,6 +113,7 @@ declare namespace LocalJSX {
   interface ElsaActivityEditor {
     'activity'?: Activity;
     'container'?: Container;
+    'onActivity-updated'?: (event: CustomEvent<ActivityUpdatedArgs>) => void;
     'onHidden'?: (event: CustomEvent<any>) => void;
     'showModal'?: boolean;
   }
@@ -136,9 +138,7 @@ declare namespace LocalJSX {
     'workflow'?: Workflow | string;
   }
   interface ElsaDesignerHost {
-    'activityDefinitions'?: Array<ActivityDefinition>;
     'container'?: Container;
-    'workflow'?: Workflow | string;
   }
 
   interface IntrinsicElements {

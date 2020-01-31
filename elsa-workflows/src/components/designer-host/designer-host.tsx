@@ -1,11 +1,13 @@
 import 'bs-components';
-import {Component, Host, h, State, Listen, Prop, Watch} from '@stencil/core';
+import {Component, h, Host, Listen, Prop, State} from '@stencil/core';
 import {Activity, ActivityDefinition, Workflow} from "../../models";
 import {AddActivityArgs, EditActivityArgs} from "../designer/designer";
 import uuid from 'uuid-browser/v4';
 import {Container} from "inversify";
-import {ActivityDefinitionStore, ActivityDriver, DisplayManager, Symbols} from "../../services";
+import {ActivityDefinitionStore, ActivityDriver, DisplayManager, Symbols, WorkflowStore} from "../../services";
 import {WriteLineDriver} from "../../drivers/activity-drivers/write-line-driver";
+import {ActivityUpdatedArgs} from "../activity-editor/activity-editor";
+import {CommonDriver} from "../../drivers/activity-drivers/common-driver";
 
 
 @Component({
@@ -17,29 +19,29 @@ export class DesignerHostComponent {
 
   private designer: HTMLElsaDesignerElement;
   private lastClickedLocation: { x: number, y: number } = {x: 150, y: 150};
+  private workflowStore: WorkflowStore;
+  private activityDefinitionStore: ActivityDefinitionStore;
 
   constructor() {
     const container = new Container();
     container.bind<ActivityDefinitionStore>(ActivityDefinitionStore).toSelf().inSingletonScope();
+    container.bind<WorkflowStore>(WorkflowStore).toSelf().inSingletonScope();
     container.bind<DisplayManager>(DisplayManager).toSelf().inSingletonScope();
+    container.bind<ActivityDriver>(Symbols.ActivityDriver).to(CommonDriver).inSingletonScope();
     container.bind<ActivityDriver>(Symbols.ActivityDriver).to(WriteLineDriver).inSingletonScope();
 
     this.container = container;
+    this.workflowStore = container.get<WorkflowStore>(WorkflowStore);
+    this.activityDefinitionStore = container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
   }
 
   @Prop() container: Container;
-  @Prop() activityDefinitions: Array<ActivityDefinition>;
-  @Prop() workflow: Workflow | string;
 
+  @State() activityDefinitions: Array<ActivityDefinition>;
+  @State() workflow: Workflow | string;
   @State() private showActivityPicker: boolean;
   @State() private showActivityEditor: boolean;
   @State() private selectedActivity?: Activity;
-
-  @Watch('activityDefinitions')
-  activityDefinitionsHandler(newValue: Array<ActivityDefinition>){
-    const store = this.container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
-    store.initialize(newValue);
-  }
 
   @Listen('add-activity')
   handleDesignerAddActivity(e: CustomEvent<AddActivityArgs>) {
@@ -56,6 +58,16 @@ export class DesignerHostComponent {
     this.showActivityEditor = true;
   }
 
+  @Listen('activity-updated')
+  async handleActivityEditorActivityUpdated(e: CustomEvent<ActivityUpdatedArgs>) {
+    const activity = e.detail.activity;
+
+    if (!activity.id) {
+      activity.id = uuid();
+      await this.designer.addActivity(activity)
+    }
+  }
+
   @Listen('activity-selected')
   async handleActivityPickerSelected(e: CustomEvent<ActivityDefinition>) {
     const activityDefinition = e.detail;
@@ -63,16 +75,21 @@ export class DesignerHostComponent {
     const left = (this.lastClickedLocation.x / transform.scale) - (transform.x / transform.scale);
     const top = (this.lastClickedLocation.y / transform.scale) - (transform.y / transform.scale);
 
-    const activity: Activity = {
+    this.selectedActivity = {
+      id: null,
       type: activityDefinition.type,
       displayName: activityDefinition.displayName,
-      id: uuid(),
       left: left,
       top: top,
       state: {}
     };
 
-    await this.designer.addActivity(activity);
+    this.showActivityEditor = true;
+  }
+
+  async componentWillLoad() {
+    this.activityDefinitions = await this.activityDefinitionStore.list();
+    this.workflow = await this.workflowStore.get('1');
   }
 
   render() {

@@ -1,7 +1,11 @@
-import {Component, Element, Event, EventEmitter, h, Prop, State, Watch} from '@stencil/core';
-import {Activity, ActivityDefinition} from "../../models";
-import {Container, inject} from "inversify";
-import {ActivityDefinitionStore, ActivityDriver, ActivityEditorContext, DisplayManager, Render, Symbols, UpdateActivityContext} from "../../services";
+import {Component, Element, Event, EventEmitter, h, Host, Prop, State, Watch} from '@stencil/core';
+import {Activity} from "../../models";
+import {Container} from "inversify";
+import {DisplayManager, Symbols } from "../../services";
+
+export interface ActivityUpdatedArgs{
+  activity: Activity
+}
 
 @Component({
   tag: 'elsa-activity-editor',
@@ -11,7 +15,6 @@ import {ActivityDefinitionStore, ActivityDriver, ActivityEditorContext, DisplayM
 export class ActivityEditor {
 
   private modal: HTMLBsModalElement;
-  private displayManager: DisplayManager;
 
   @Element() el: HTMLElement;
 
@@ -20,20 +23,9 @@ export class ActivityEditor {
   @Prop({attribute: 'show-modal', reflect: true}) showModal: boolean;
 
   @Event({eventName: 'hidden'}) hiddenEvent: EventEmitter;
+  @Event({eventName: 'activity-updated'}) activityUpdated: EventEmitter<ActivityUpdatedArgs>;
 
-  @State() private activityDisplays: Array<string>;
-
-
-  @Watch('activity')
-  async handleActivityChanged(newValue: Activity) {
-    const drivers = this.container.getAll<ActivityDriver>(Symbols.ActivityDriver);
-    const store = this.container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
-    const activity = newValue;
-    const activityDefinition = store.get(activity.type);
-    const activityDrivers = drivers.filter(x => x.activityType === activity.type);
-    const editorContext: ActivityEditorContext = {activity: activity, state: activity.state || {}, activityDefinition};
-    this.activityDisplays = await Promise.all(activityDrivers.map(async x => await x.getEditDisplay(editorContext)));
-  }
+  private activityDisplays: Array<string>;
 
   componentDidRender() {
     if (!!this.modal) {
@@ -42,27 +34,29 @@ export class ActivityEditor {
     }
   }
 
+  async componentWillRender(){
+    const activity = this.activity;
+
+    if(!activity)
+      return;
+
+    const displayManager = this.container.get<DisplayManager>(DisplayManager);
+    this.activityDisplays = await displayManager.displayEditor(this.activity);
+  }
+
   private emitHiddenEvent = () => this.hiddenEvent.emit();
 
   private onSubmit = async (e: Event) => {
     e.preventDefault();
 
-    const drivers = this.container.getAll<ActivityDriver>(Symbols.ActivityDriver);
-    const store = this.container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
-    const activity = this.activity;
-    const activityDefinition = store.get(activity.type);
-    const activityDrivers = drivers.filter(x => x.activityType === activity.type);
     const formElement = e.target as HTMLFormElement;
-    const updateContext: UpdateActivityContext = {
-      activity: activity,
-      state: activity.state || {},
-      activityDefinition,
-      formData: new FormData(formElement)
-    };
+    const formData = new FormData(formElement);
+    const displayManager = this.container.get<DisplayManager>(DisplayManager);
 
-    for (const driver of activityDrivers) {
-      await driver.updateActivity(updateContext);
-    }
+    await displayManager.updateActivity(this.activity, formData);
+
+    this.activityUpdated.emit({ activity: this.activity });
+    this.modal.showModal = false;
   };
 
   render() {
@@ -70,9 +64,9 @@ export class ActivityEditor {
     const activityDisplayName = !!activity ? activity.displayName : null;
     const activityId = !!activity ? activity.id : null;
     const activityDisplays = this.activityDisplays || [];
-    const displayManager = this.container.get<DisplayManager>(DisplayManager);
 
     return (
+
       <div>
         <bs-modal class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" showModal={this.showModal} ref={el => this.modal = el}>
           <form method="POST" onSubmit={this.onSubmit}>
@@ -85,7 +79,7 @@ export class ActivityEditor {
                   </button>
                 </div>
                 <div class="modal-body" key={activityId}>
-                  {displayManager.display(activityDisplays)}
+                  {activityDisplays}
                 </div>
                 <div class="modal-footer">
                   <button type="submit" class="btn btn-primary">Save</button>
