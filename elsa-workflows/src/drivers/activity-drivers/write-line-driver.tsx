@@ -16,8 +16,8 @@ export class WriteLineDriver extends ActivityDriverBase {
     const expression = state.expression;
     return (
       <div class="form-group">
-        <label htmlFor="exampleInputEmail1">Text</label>
-        <input type="text" name='expression' class="form-control" value={expression}/>
+        <label htmlFor="expression">Text</label>
+        <input id="expression" type="text" name="expression" class="form-control" value={expression}/>
       </div>
     );
   }

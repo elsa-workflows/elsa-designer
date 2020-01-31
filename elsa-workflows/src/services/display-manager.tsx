@@ -18,17 +18,17 @@ export class DisplayManager {
 
   displayDesigner = async (activity: Activity): Promise<Render> => this.invokeDriversFor(activity, (driver, context) => driver.displayDesigner(context));
   displayEditor = async (activity: Activity): Promise<Render> => this.invokeDriversFor(activity, (driver, context) => driver.displayEditor(context));
-  getDriversFor = (activityType: string): Array<ActivityDriver> => this.drivers.filter(x => x.activityType === activityType && this.activityDefinitionStore.contains(activityType));
+  getDriversFor = (context: ActivityDisplayContext): Array<ActivityDriver> => this.drivers.filter(x => x.supportsActivity(context));
 
   updateActivity = async (activity: Activity, formData: FormData): Promise<void> => {
-    const activityDrivers = this.getDriversFor(activity.type);
     const displayContext = this.createDisplayContextFor(activity);
+    const activityDrivers = this.getDriversFor(displayContext);
     await Promise.all(activityDrivers.map(async x => await x.updateActivity(displayContext, formData)));
   };
 
   private invokeDriversFor = async (activity: Activity, displayAction: (driver: ActivityDriver, context: ActivityDisplayContext) => Promise<Render>) => {
-    const activityDrivers = this.getDriversFor(activity.type);
     const displayContext = this.createDisplayContextFor(activity);
+    const activityDrivers = this.getDriversFor(displayContext);
     let renders = await Promise.all(activityDrivers.map(async x => await displayAction(x, displayContext)));
 
     renders = renders.filter(x => !!x);
