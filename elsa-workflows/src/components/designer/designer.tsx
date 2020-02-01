@@ -57,7 +57,6 @@ export class DesignerComponent {
 
   @Watch('workflow')
   workflowHandler(newValue: Workflow | string) {
-    debugger;
     this.workflowModel = this.parseWorkflow(newValue);
   }
 
@@ -80,6 +79,16 @@ export class DesignerComponent {
   @Method()
   async addActivity(activity: Activity) {
     const activities = [...this.workflowModel.activities, activity];
+    this.workflowModel = {...this.workflowModel, activities};
+  }
+
+  @Method()
+  async updateActivity(activity: Activity) {
+    const activities = [...this.workflowModel.activities];
+    const index = activities.findIndex(x => x.id == activity.id);
+
+    activities[index] = {...activity};
+
     this.workflowModel = {...this.workflowModel, activities};
   }
 
@@ -118,15 +127,19 @@ export class DesignerComponent {
   private setupJsPlumb = () => {
     let jsPlumb = this.jsPlumb;
 
-    if (!jsPlumb)
+    if (!!jsPlumb) {
+      jsPlumb.unbind('connection');
+      jsPlumb.unbind('connectionDetached');
+    } else
       jsPlumb = this.jsPlumb = createJsPlumb(this.workflowCanvasElement);
 
-    jsPlumb.reset();
+    jsPlumb.deleteEveryEndpoint();
+    jsPlumb.deleteEveryConnection();
+
+    displayWorkflow(jsPlumb, this.workflowCanvasElement, this.workflowModel, this.activityDefinitions);
+
     jsPlumb.bind('connection', this.connectionCreated);
     jsPlumb.bind('connectionDetached', this.connectionDetached);
-
-    const workflow = this.workflowOrDefault();
-    displayWorkflow(jsPlumb, this.workflowCanvasElement, workflow, this.activityDefinitions);
   };
 
   private connectionCreated = (info) => {
@@ -183,7 +196,7 @@ export class DesignerComponent {
 
   private renderActivity = (activity: Activity) => {
 
-    if(!this.activityDisplays)
+    if (!this.activityDisplays)
       return;
 
     const activityDefinition = this.activityDefinitions.find(x => x.type === activity.type);
@@ -197,7 +210,7 @@ export class DesignerComponent {
 
     let display = this.activityDisplays[activity.id];
 
-    if(display.length === 0)
+    if (display.length === 0)
       display = (<h5><i class={icon}/>{displayName}</h5>);
 
     return (

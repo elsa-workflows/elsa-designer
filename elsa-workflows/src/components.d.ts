@@ -49,6 +49,7 @@ export namespace Components {
     'getTransform': () => Promise<{ x: number; y: number; scale: number; }>;
     'getWorkflow': () => Promise<Workflow>;
     'registerService': (action: (container: Container) => void) => Promise<void>;
+    'updateActivity': (activity: Activity) => Promise<void>;
     'workflow': Workflow | string;
   }
   interface ElsaDesignerHost {

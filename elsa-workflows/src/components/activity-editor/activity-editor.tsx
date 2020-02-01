@@ -1,9 +1,9 @@
 import {Component, Element, Event, EventEmitter, h, Host, Prop, State, Watch} from '@stencil/core';
 import {Activity} from "../../models";
 import {Container} from "inversify";
-import {DisplayManager, Symbols } from "../../services";
+import {ActivityDefinitionStore, DisplayManager, Symbols} from "../../services";
 
-export interface ActivityUpdatedArgs{
+export interface ActivityUpdatedArgs {
   activity: Activity
 }
 
@@ -34,10 +34,10 @@ export class ActivityEditor {
     }
   }
 
-  async componentWillRender(){
+  async componentWillRender() {
     const activity = this.activity;
 
-    if(!activity)
+    if (!activity)
       return;
 
     const displayManager = this.container.get<DisplayManager>(DisplayManager);
@@ -55,15 +55,19 @@ export class ActivityEditor {
 
     await displayManager.updateActivity(this.activity, formData);
 
-    this.activityUpdated.emit({ activity: this.activity });
+    this.activityUpdated.emit({activity: this.activity});
     this.modal.showModal = false;
   };
 
   render() {
     const activity = this.activity;
+    const activityDefinitionStore = this.container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
     const activityDisplayName = !!activity ? activity.displayName : null;
     const activityId = !!activity ? activity.id : null;
     const activityDisplays = this.activityDisplays || [];
+    const activityDefinition = !!activity ? activityDefinitionStore.get(activity.type) : null;
+    const icon = !!activityDefinition ? activityDefinition.icon || 'fas fa-cog' : null;
+    const title = !!activity && !!activity.id ? `Edit ${activityDisplayName}` : `Add ${activityDisplayName}`;
 
     return (
 
@@ -73,7 +77,7 @@ export class ActivityEditor {
             <div class="modal-dialog modal-xl" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title">Edit {activityDisplayName}</h5>
+                  <h5 class="modal-title"><i class={icon}/>{title}</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>

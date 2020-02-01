@@ -18,6 +18,7 @@ export class WriteLineDriver extends ActivityDriverBase {
       <div class="form-group">
         <label htmlFor="expression">Text</label>
         <input id="expression" type="text" name="expression" class="form-control" value={expression}/>
+        <small class="form-text text-muted">The text to write.</small>
       </div>
     );
   }

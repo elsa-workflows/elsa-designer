@@ -65,6 +65,8 @@ export class DesignerHostComponent {
     if (!activity.id) {
       activity.id = uuid();
       await this.designer.addActivity(activity)
+    } else {
+      await this.designer.updateActivity(activity);
     }
   }
 
