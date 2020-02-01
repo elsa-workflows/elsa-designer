@@ -7,19 +7,19 @@
 
 ## Properties
 
-| Property             | Attribute    | Description | Type                 | Default     |
-| -------------------- | ------------ | ----------- | -------------------- | ----------- |
-| `activity`           | --           |             | `Activity`           | `undefined` |
-| `activityDefinition` | --           |             | `ActivityDefinition` | `undefined` |
-| `container`          | --           |             | `Container`          | `undefined` |
-| `showModal`          | `show-modal` |             | `boolean`            | `undefined` |
+| Property    | Attribute    | Description | Type        | Default     |
+| ----------- | ------------ | ----------- | ----------- | ----------- |
+| `activity`  | --           |             | `Activity`  | `undefined` |
+| `container` | --           |             | `Container` | `undefined` |
+| `showModal` | `show-modal` |             | `boolean`   | `undefined` |
 
 
 ## Events
 
-| Event    | Description | Type               |
-| -------- | ----------- | ------------------ |
-| `hidden` |             | `CustomEvent<any>` |
+| Event              | Description | Type                               |
+| ------------------ | ----------- | ---------------------------------- |
+| `activity-updated` |             | `CustomEvent<ActivityUpdatedArgs>` |
+| `hidden`           |             | `CustomEvent<any>`                 |
 
 
 ## Dependencies

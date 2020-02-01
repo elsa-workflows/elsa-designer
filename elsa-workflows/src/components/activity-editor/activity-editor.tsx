@@ -1,7 +1,7 @@
 import {Component, Element, Event, EventEmitter, h, Host, Prop, State, Watch} from '@stencil/core';
 import {Activity} from "../../models";
 import {Container} from "inversify";
-import {ActivityDefinitionStore, DisplayManager, Symbols} from "../../services";
+import {ActivityDefinitionStore, ActivityDisplayManager, Symbols} from "../../services";
 
 export interface ActivityUpdatedArgs {
   activity: Activity
@@ -40,7 +40,7 @@ export class ActivityEditor {
     if (!activity)
       return;
 
-    const displayManager = this.container.get<DisplayManager>(DisplayManager);
+    const displayManager = this.container.get<ActivityDisplayManager>(ActivityDisplayManager);
     this.activityDisplays = await displayManager.displayEditor(this.activity);
   }
 
@@ -51,7 +51,7 @@ export class ActivityEditor {
 
     const formElement = e.target as HTMLFormElement;
     const formData = new FormData(formElement);
-    const displayManager = this.container.get<DisplayManager>(DisplayManager);
+    const displayManager = this.container.get<ActivityDisplayManager>(ActivityDisplayManager);
 
     await displayManager.updateActivity(this.activity, formData);
 
@@ -72,7 +72,7 @@ export class ActivityEditor {
     return (
 
       <div>
-        <bs-modal class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" showModal={this.showModal} ref={el => this.modal = el}>
+        <bs-modal class="modal" tabindex="-1" role="dialog" aria-hidden="true" showModal={this.showModal} ref={el => this.modal = el}>
           <form method="POST" onSubmit={this.onSubmit}>
             <div class="modal-dialog modal-xl" role="document">
               <div class="modal-content">

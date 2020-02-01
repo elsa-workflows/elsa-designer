@@ -1,3 +1,3 @@
 ﻿export type Jsx = any;
-export type Render = string | Jsx | Array<Render>;
+export type Node = string | Jsx | Array<Node>;
 export type ActivityState = any;

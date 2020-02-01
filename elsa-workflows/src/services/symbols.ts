@@ -1,3 +1,4 @@
 ﻿export const Symbols = {
-  ActivityDriver: Symbol.for('ActivityDriver')
+  ActivityDriver: Symbol.for('ActivityDriver'),
+  FieldDriver: Symbol.for('FieldDriver')
 };

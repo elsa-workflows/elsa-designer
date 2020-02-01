@@ -7,11 +7,9 @@
 
 ## Properties
 
-| Property              | Attribute  | Description | Type                   | Default     |
-| --------------------- | ---------- | ----------- | ---------------------- | ----------- |
-| `activityDefinitions` | --         |             | `ActivityDefinition[]` | `undefined` |
-| `container`           | --         |             | `Container`            | `undefined` |
-| `workflow`            | `workflow` |             | `Workflow \| string`   | `undefined` |
+| Property    | Attribute | Description | Type        | Default     |
+| ----------- | --------- | ----------- | ----------- | ----------- |
+| `container` | --        |             | `Container` | `undefined` |
 
 
 ## Dependencies

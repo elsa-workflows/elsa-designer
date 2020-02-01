@@ -1,13 +1,14 @@
 import 'bs-components';
 import {Component, h, Host, Listen, Prop, State} from '@stencil/core';
-import {Activity, ActivityDefinition, Workflow} from "../../models";
-import {AddActivityArgs, EditActivityArgs} from "../designer/designer";
+import {Activity, ActivityDefinition, Workflow} from '../../models';
+import {AddActivityArgs, EditActivityArgs} from '../designer/designer';
 import uuid from 'uuid-browser/v4';
 import {Container} from "inversify";
-import {ActivityDefinitionStore, ActivityDriver, DisplayManager, Symbols, WorkflowStore} from "../../services";
-import {WriteLineDriver} from "../../drivers/activity-drivers/write-line-driver";
-import {ActivityUpdatedArgs} from "../activity-editor/activity-editor";
-import {CommonDriver} from "../../drivers/activity-drivers/common-driver";
+import {ActivityDefinitionStore, ActivityDriver, CustomDriverStore, ActivityDisplayManager, FieldDriver, Symbols, WorkflowStore} from '../../services';
+import {CommonDriver, DynamicPropsDriver, WriteLineDriver} from '../../drivers/activity-drivers';
+import {ActivityUpdatedArgs} from '../activity-editor/activity-editor';
+import {TextDriver} from '../../drivers/field-drivers';
+import {FieldDisplayManager} from "../../services/field-display-manager";
 
 
 @Component({
@@ -21,18 +22,27 @@ export class DesignerHostComponent {
   private lastClickedLocation: { x: number, y: number } = {x: 150, y: 150};
   private workflowStore: WorkflowStore;
   private activityDefinitionStore: ActivityDefinitionStore;
+  private customDriverStore: CustomDriverStore;
 
   constructor() {
     const container = new Container();
+    container.bind<Container>(Container).toConstantValue(container);
     container.bind<ActivityDefinitionStore>(ActivityDefinitionStore).toSelf().inSingletonScope();
     container.bind<WorkflowStore>(WorkflowStore).toSelf().inSingletonScope();
-    container.bind<DisplayManager>(DisplayManager).toSelf().inSingletonScope();
+    container.bind<ActivityDisplayManager>(ActivityDisplayManager).toSelf().inSingletonScope();
+    container.bind<FieldDisplayManager>(FieldDisplayManager).toSelf().inSingletonScope();
+    container.bind<CustomDriverStore>(CustomDriverStore).toSelf().inSingletonScope();
     container.bind<ActivityDriver>(Symbols.ActivityDriver).to(CommonDriver).inSingletonScope();
+    container.bind<ActivityDriver>(Symbols.ActivityDriver).to(DynamicPropsDriver).inSingletonScope();
     container.bind<ActivityDriver>(Symbols.ActivityDriver).to(WriteLineDriver).inSingletonScope();
+    container.bind<FieldDriver>(Symbols.FieldDriver).to(TextDriver).inSingletonScope();
 
     this.container = container;
     this.workflowStore = container.get<WorkflowStore>(WorkflowStore);
     this.activityDefinitionStore = container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
+    this.customDriverStore = container.get<CustomDriverStore>(CustomDriverStore);
+
+    this.customDriverStore.useCustomDriverFor('WriteLine');
   }
 
   @Prop() container: Container;

@@ -1,5 +1,6 @@
 ﻿import {ActivityDefinition} from "../models";
 import {injectable} from "inversify";
+import {PropertyTypes} from "./property-types";
 
 @injectable()
 export class ActivityDefinitionStore {
@@ -18,31 +19,43 @@ export class ActivityDefinitionStore {
   contains = (type: string): boolean => this.items.findIndex(x => x.type === type) >= 0;
 
   private loadActivityDefinitions = ()=> {
-    const readLine = {
+    const readLine: ActivityDefinition = {
       type: 'ReadLine',
       displayName: 'Read Line',
       description: 'Read a line of text from an input stream.',
       category: 'Console',
       icon: 'fas fa-terminal',
-      outcomes: ['Done']
+      outcomes: ['Done'],
     };
 
-    const writeLine = {
+    const writeLine: ActivityDefinition = {
       type: 'WriteLine',
       displayName: 'Write Line',
       description: 'Write a line of text to an output stream.',
       category: 'Console',
       icon: 'fas fa-terminal',
-      outcomes: ['Done']
+      outcomes: ['Done'],
+      properties: [{
+        name: 'Text',
+        type: PropertyTypes.Expression,
+        label: 'Text',
+        hint: 'The text to write.'
+      }]
     };
 
-    const httpRequestReceived = {
+    const httpRequestReceived: ActivityDefinition = {
       type: 'HttpRequestReceived',
       displayName: 'Receive HTTP Request',
       description: 'Block execution until an HTTP request is received.',
       category: 'HTTP',
       icon: 'fas fa-cloud',
-      outcomes: ['Done']
+      outcomes: ['Done'],
+      properties: [{
+        name: 'RequestPath',
+        type: PropertyTypes.Text,
+        label: 'Request Path',
+        hint: 'The path that, when requested, invokes this workflow.'
+      }]
     };
 
     return [readLine, writeLine, httpRequestReceived];

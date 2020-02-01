@@ -9,7 +9,7 @@ import {
 import {createPanzoom} from "./panzoom-utils";
 import {PanzoomObject} from "@panzoom/panzoom/dist/src/types";
 import {Container} from "inversify";
-import {DisplayManager, Render} from "../../services";
+import {ActivityDisplayManager, Node} from "../../services";
 
 const emptyWorkflow: Workflow = {
   id: null,
@@ -18,7 +18,7 @@ const emptyWorkflow: Workflow = {
 };
 
 interface ActivityDisplayMap {
-  [id: string]: Render;
+  [id: string]: Node;
 }
 
 export interface AddActivityArgs {
@@ -41,7 +41,7 @@ export class DesignerComponent {
   private activityContextMenu: HTMLElsaContextMenuElement;
   private jsPlumb: jsPlumbInstance;
   private panzoom: PanzoomObject;
-  private displayManager: DisplayManager;
+  private displayManager: ActivityDisplayManager;
   private activityDisplays: ActivityDisplayMap;
 
   @Element() private element: HTMLElsaDesignerElement;
@@ -101,7 +101,7 @@ export class DesignerComponent {
 
   componentWillLoad() {
     this.workflowModel = this.parseWorkflow(this.workflow);
-    this.displayManager = this.container.get<DisplayManager>(DisplayManager);
+    this.displayManager = this.container.get<ActivityDisplayManager>(ActivityDisplayManager);
   }
 
   componentDidLoad() {

@@ -1,14 +1,15 @@
 ﻿import {inject, injectable, multiInject} from "inversify";
-import {Render} from "./types";
+import {Node} from "./types";
 import {HtmlFragment} from "../components/html-fragment/html-fragment";
 import {h} from "@stencil/core";
 import {Activity} from "../models";
 import {ActivityDefinitionStore} from "./activity-definition-store";
 import {ActivityDisplayContext, ActivityDriver} from "./activity-driver";
 import {Symbols} from "./symbols";
+import {NodeUtils} from "../utils/node-utils";
 
 @injectable()
-export class DisplayManager {
+export class ActivityDisplayManager {
 
   constructor(
     @inject(ActivityDefinitionStore) private activityDefinitionStore: ActivityDefinitionStore,
@@ -16,8 +17,8 @@ export class DisplayManager {
   ) {
   }
 
-  displayDesigner = async (activity: Activity): Promise<Render> => this.invokeDriversFor(activity, (driver, context) => driver.displayDesigner(context));
-  displayEditor = async (activity: Activity): Promise<Render> => this.invokeDriversFor(activity, (driver, context) => driver.displayEditor(context));
+  displayDesigner = async (activity: Activity): Promise<Node> => this.invokeDriversFor(activity, (driver, context) => driver.displayDesigner(context));
+  displayEditor = async (activity: Activity): Promise<Node> => this.invokeDriversFor(activity, (driver, context) => driver.displayEditor(context));
   getDriversFor = (context: ActivityDisplayContext): Array<ActivityDriver> => this.drivers.filter(x => x.supportsActivity(context));
 
   updateActivity = async (activity: Activity, formData: FormData): Promise<void> => {
@@ -26,28 +27,16 @@ export class DisplayManager {
     await Promise.all(activityDrivers.map(async x => await x.updateActivity(displayContext, formData)));
   };
 
-  private invokeDriversFor = async (activity: Activity, displayAction: (driver: ActivityDriver, context: ActivityDisplayContext) => Promise<Render>) => {
+  private invokeDriversFor = async (activity: Activity, displayAction: (driver: ActivityDriver, context: ActivityDisplayContext) => Promise<Node>) => {
     const displayContext = this.createDisplayContextFor(activity);
     const activityDrivers = this.getDriversFor(displayContext);
-    let renders = await Promise.all(activityDrivers.map(async x => await displayAction(x, displayContext)));
+    let nodes = await Promise.all(activityDrivers.map(async x => await displayAction(x, displayContext)));
 
-    renders = renders.filter(x => !!x);
-    return DisplayManager.normalize(renders);
+    return NodeUtils.normalize(nodes);
   };
 
   private createDisplayContextFor = (activity: Activity): ActivityDisplayContext => {
     const activityDefinition = this.activityDefinitionStore.get(activity.type);
     return {activity: activity, state: activity.state || {}, activityDefinition};
   };
-
-  // A 'Render' can be an array of html string literals, JSX nodes (vdoms) or Render objects themselves.
-  // So for each element, see if it is an array and map each element to either an HTML fragment or return the node as-is.
-  private static normalize = (render: Render): Render => {
-    if (Array.isArray(render))
-      return render.map(DisplayManager.normalize);
-    if (typeof render === 'string')
-      return <HtmlFragment content={render}/>;
-    else return render;
-  };
-
 }

@@ -1,6 +1,7 @@
 ﻿﻿﻿import {h} from '@stencil/core';
-import {ActivityDisplayContext, ActivityDriverBase, Render} from '../../services';
 import {injectable} from "inversify";
+import {ActivityDisplayContext, ActivityDriverBase, Node} from '../../services';
+import {FormGroup} from '../../components/form-group/form-group'
 
 interface TextState {
   type: string;
@@ -11,17 +12,16 @@ interface TextState {
 export class WriteLineDriver extends ActivityDriverBase {
   readonly activityType: string = 'WriteLine';
 
-  async displayEditor(context: ActivityDisplayContext): Promise<Render> {
+  displayEditor = async (context: ActivityDisplayContext): Promise<Node> => {
     const state: TextState = context.state.text || {type: '', expression: ''};
     const expression = state.expression;
+
     return (
-      <div class="form-group">
-        <label htmlFor="expression">Text</label>
+      <FormGroup htmlId="textExpression" label="Text" hint="The text to write.">
         <input id="expression" type="text" name="expression" class="form-control" value={expression}/>
-        <small class="form-text text-muted">The text to write.</small>
-      </div>
+      </FormGroup>
     );
-  }
+  };
 
   updateActivity = async (context: ActivityDisplayContext, formData: FormData): Promise<void> => {
     context.activity.state.text = {type: 'Literal', expression: formData.get('expression')};

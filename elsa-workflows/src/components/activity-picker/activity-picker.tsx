@@ -42,8 +42,8 @@ export class ActivityPicker {
 
   private onActivitySelectClick = (e: Event, activity: ActivityDefinition) => {
     e.preventDefault();
-    this.activitySelectedEvent.emit(activity);
     this.showModal = false;
+    this.activitySelectedEvent.emit(activity);
   };
 
   private onCategoryClick = (e: MouseEvent, category: string) => {
@@ -85,7 +85,7 @@ export class ActivityPicker {
 
     return (
       <div>
-        <bs-modal class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" showModal={this.showModal} ref={el => this.modal = el}>
+        <bs-modal class="modal" tabindex="-1" role="dialog" aria-hidden="true" showModal={this.showModal} ref={el => this.modal = el}>
           <div class="modal-dialog modal-xl" role="document">
             <div class="modal-content">
               <div class="modal-header">
