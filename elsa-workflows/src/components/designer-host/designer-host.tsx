@@ -46,8 +46,9 @@ export class DesignerHostComponent {
     this.customDriverStore = container.get<CustomDriverStore>(CustomDriverStore);
   }
 
-  @Prop() container: Container;
+  @Prop() server: string;
 
+  @State() container: Container;
   @State() activityDefinitions: Array<ActivityDefinition>;
   @State() workflow: Workflow | string;
   @State() private showActivityPicker: boolean;
@@ -116,6 +117,8 @@ export class DesignerHostComponent {
   }
 
   async componentWillLoad() {
+    const server = this.server;
+    debugger;
     this.activityDefinitions = await this.activityDefinitionStore.list();
     this.workflow = await this.workflowStore.get('1');
   }

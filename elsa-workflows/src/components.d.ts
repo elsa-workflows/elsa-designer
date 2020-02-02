@@ -62,7 +62,7 @@ export namespace Components {
     'addActivityDriver': (constructor: new (...args: any[]) => ActivityDriver) => Promise<void>;
     'addFieldDriver': (constructor: new (...args: any[]) => FieldDriver) => Promise<void>;
     'configureServices': (action: (container: Container) => void) => Promise<void>;
-    'container': Container;
+    'server': string;
   }
   interface ElsaExpressionField {
     'availableTypes': Array<ExpressionType>;
@@ -164,7 +164,7 @@ declare namespace LocalJSX {
     'workflow'?: Workflow | string;
   }
   interface ElsaDesignerHost {
-    'container'?: Container;
+    'server'?: string;
   }
   interface ElsaExpressionField {
     'availableTypes'?: Array<ExpressionType>;
