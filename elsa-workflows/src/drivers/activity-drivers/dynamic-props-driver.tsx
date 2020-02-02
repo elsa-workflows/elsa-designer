@@ -23,8 +23,12 @@ export class DynamicPropsDriver extends ActivityDriverBase {
   };
 
   updateActivity = async (context: ActivityDisplayContext, formData: FormData): Promise<void> => {
-    context.activity.name = formData.get('name') as string;
-    context.activity.displayName = formData.get('displayName') as string;
+    const activityDefinition = context.activityDefinition;
+    const props = activityDefinition.properties || [];
+
+    for (const prop of props) {
+      this.fieldDisplayManager.update(prop, context.state, formData);
+    }
   };
 
   private renderField = (state: ActivityState, property: ActivityPropertyDescriptor): Node => this.fieldDisplayManager.display(property, state)

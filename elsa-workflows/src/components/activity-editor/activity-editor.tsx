@@ -62,12 +62,12 @@ export class ActivityEditor {
   render() {
     const activity = this.activity;
     const activityDefinitionStore = this.container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
-    const activityDisplayName = !!activity ? activity.displayName : null;
+    const activityDefinition = !!activity ? activityDefinitionStore.get(activity.type) : null;
+    const activityDefinitionDisplayName = !!activityDefinition ? activityDefinition.displayName : null;
     const activityId = !!activity ? activity.id : null;
     const activityDisplays = this.activityDisplays || [];
-    const activityDefinition = !!activity ? activityDefinitionStore.get(activity.type) : null;
     const icon = !!activityDefinition ? activityDefinition.icon || 'fas fa-cog' : null;
-    const title = !!activity && !!activity.id ? `Edit ${activityDisplayName}` : `Add ${activityDisplayName}`;
+    const title = !!activity && !!activity.id ? `Edit ${activityDefinitionDisplayName}` : `Add ${activityDefinitionDisplayName}`;
 
     return (
 

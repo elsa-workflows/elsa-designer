@@ -31,7 +31,7 @@ export class CommonDriver extends ActivityDriverBase {
   };
 
   updateActivity = async (context: ActivityDisplayContext, formData: FormData): Promise<void> => {
-    context.activity.name = formData.get('name') as string;
-    context.activity.displayName = formData.get('displayName') as string;
+    context.activity.name = formData.get('name').toString().trim();
+    context.activity.displayName = formData.get('displayName').toString().trim();
   }
 }

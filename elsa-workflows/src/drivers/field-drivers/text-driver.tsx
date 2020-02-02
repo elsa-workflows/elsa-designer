@@ -9,7 +9,7 @@ export class TextDriver extends FieldDriverBase {
 
   display = (context: FieldDisplayContext): Node => {
     const property = context.descriptor;
-    const value = context.value;
+    const value = context.value || null;
 
     return (
       <FormGroup htmlId={property.name} label={property.label} hint={property.hint}>
@@ -17,4 +17,8 @@ export class TextDriver extends FieldDriverBase {
       </FormGroup>
     );
   };
+
+  update = (context: FieldDisplayContext, formData: FormData): void => {
+    context.state[context.descriptor.name] = formData.get(context.descriptor.name).toString().trim();
+  }
 }

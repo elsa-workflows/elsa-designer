@@ -28,5 +28,5 @@ export class FieldDisplayManager {
     return NodeUtils.normalize(nodes);
   };
 
-  private createDisplayContextFor = (descriptor: ActivityPropertyDescriptor, state: ActivityState): FieldDisplayContext => ({descriptor, value: state});
+  private createDisplayContextFor = (descriptor: ActivityPropertyDescriptor, state: ActivityState): FieldDisplayContext => ({descriptor, state, value: state[descriptor.name]});
 }

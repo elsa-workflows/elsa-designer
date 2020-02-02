@@ -54,7 +54,7 @@ export class ActivityDefinitionStore {
         name: 'RequestPath',
         type: PropertyTypes.Text,
         label: 'Request Path',
-        hint: 'The path that, when requested, invokes this workflow.'
+        hint: 'The request path that invokes this workflow.'
       }]
     };
 

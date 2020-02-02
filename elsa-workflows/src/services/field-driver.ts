@@ -1,10 +1,11 @@
-﻿import {Node} from "./types";
+﻿import {ActivityState, Node} from "./types";
 import {ActivityPropertyDescriptor} from "../models";
 import {injectable} from "inversify";
 
 export interface FieldDisplayContext {
   descriptor: ActivityPropertyDescriptor
-  value: any
+  state: ActivityState
+  value?: any
 }
 
 ﻿export interface FieldDriver {
