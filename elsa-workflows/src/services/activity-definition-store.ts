@@ -18,7 +18,7 @@ export class ActivityDefinitionStore {
   get = (type: string) => this.items.find(x => x.type === type);
   contains = (type: string): boolean => this.items.findIndex(x => x.type === type) >= 0;
 
-  private loadActivityDefinitions = ()=> {
+  private loadActivityDefinitions = () => {
     const readLine: ActivityDefinition = {
       type: 'ReadLine',
       displayName: 'Read Line',
@@ -58,6 +58,28 @@ export class ActivityDefinitionStore {
       }]
     };
 
-    return [readLine, writeLine, httpRequestReceived];
+    const sendHttpRequest: ActivityDefinition = {
+      type: 'SendHttpRequest',
+      displayName: 'Send HTTP Request',
+      description: 'Send an HTTP request.',
+      category: 'HTTP',
+      icon: 'fas fa-cloud',
+      outcomes: ['Done'],
+      properties: [{
+        name: 'Url',
+        type: PropertyTypes.Text,
+        label: 'URL',
+        hint: 'The URL the request.'
+      }, {
+        name: 'Content',
+        type: PropertyTypes.Expression,
+        label: 'Content',
+        hint: 'The content the request.',
+        options: {multiline: true}
+      }
+      ]
+    };
+
+    return [readLine, writeLine, httpRequestReceived, sendHttpRequest];
   };
 }

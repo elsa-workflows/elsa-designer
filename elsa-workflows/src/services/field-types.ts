@@ -1,3 +1,4 @@
 ﻿export const FieldTypes = {
-  Text: 'Text'
+  Text: 'Text',
+  Expression: 'Expression'
 };

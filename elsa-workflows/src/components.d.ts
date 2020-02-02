@@ -13,6 +13,8 @@ import {
 import {
   Activity,
   ActivityDefinition,
+  Expression,
+  ExpressionType,
   Workflow,
 } from './models';
 import {
@@ -54,6 +56,15 @@ export namespace Components {
   }
   interface ElsaDesignerHost {
     'container': Container;
+  }
+  interface ElsaExpressionField {
+    'availableTypes': Array<ExpressionType>;
+    'defaultType': string;
+    'expression': string;
+    'getExpression': () => Promise<Expression>;
+    'multiline': boolean;
+    'name': string;
+    'type': string;
   }
 }
 
@@ -100,6 +111,12 @@ declare global {
     prototype: HTMLElsaDesignerHostElement;
     new (): HTMLElsaDesignerHostElement;
   };
+
+  interface HTMLElsaExpressionFieldElement extends Components.ElsaExpressionField, HTMLStencilElement {}
+  var HTMLElsaExpressionFieldElement: {
+    prototype: HTMLElsaExpressionFieldElement;
+    new (): HTMLElsaExpressionFieldElement;
+  };
   interface HTMLElementTagNameMap {
     'elsa-activity-editor': HTMLElsaActivityEditorElement;
     'elsa-activity-picker': HTMLElsaActivityPickerElement;
@@ -107,6 +124,7 @@ declare global {
     'elsa-context-menu-item': HTMLElsaContextMenuItemElement;
     'elsa-designer': HTMLElsaDesignerElement;
     'elsa-designer-host': HTMLElsaDesignerHostElement;
+    'elsa-expression-field': HTMLElsaExpressionFieldElement;
   }
 }
 
@@ -141,6 +159,14 @@ declare namespace LocalJSX {
   interface ElsaDesignerHost {
     'container'?: Container;
   }
+  interface ElsaExpressionField {
+    'availableTypes'?: Array<ExpressionType>;
+    'defaultType'?: string;
+    'expression'?: string;
+    'multiline'?: boolean;
+    'name'?: string;
+    'type'?: string;
+  }
 
   interface IntrinsicElements {
     'elsa-activity-editor': ElsaActivityEditor;
@@ -149,6 +175,7 @@ declare namespace LocalJSX {
     'elsa-context-menu-item': ElsaContextMenuItem;
     'elsa-designer': ElsaDesigner;
     'elsa-designer-host': ElsaDesignerHost;
+    'elsa-expression-field': ElsaExpressionField;
   }
 }
 
@@ -164,6 +191,7 @@ declare module "@stencil/core" {
       'elsa-context-menu-item': LocalJSX.ElsaContextMenuItem & JSXBase.HTMLAttributes<HTMLElsaContextMenuItemElement>;
       'elsa-designer': LocalJSX.ElsaDesigner & JSXBase.HTMLAttributes<HTMLElsaDesignerElement>;
       'elsa-designer-host': LocalJSX.ElsaDesignerHost & JSXBase.HTMLAttributes<HTMLElsaDesignerHostElement>;
+      'elsa-expression-field': LocalJSX.ElsaExpressionField & JSXBase.HTMLAttributes<HTMLElsaExpressionFieldElement>;
     }
   }
 }

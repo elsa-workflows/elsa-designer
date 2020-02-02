@@ -7,7 +7,7 @@ import {FormGroup} from "../../components/form-group/form-group";
 export class TextDriver extends FieldDriverBase {
   fieldType: string = FieldTypes.Text;
 
-  display = (context: FieldDisplayContext): Node => {
+  display = async (context: FieldDisplayContext): Promise<Node> => {
     const property = context.descriptor;
     const value = context.value || null;
 
@@ -18,7 +18,7 @@ export class TextDriver extends FieldDriverBase {
     );
   };
 
-  update = (context: FieldDisplayContext, formData: FormData): void => {
+  update = async (context: FieldDisplayContext, formData: FormData): Promise<void> => {
     context.state[context.descriptor.name] = formData.get(context.descriptor.name).toString().trim();
   }
 }

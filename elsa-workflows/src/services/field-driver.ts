@@ -9,7 +9,7 @@ export interface FieldDisplayContext {
 }
 
 ﻿export interface FieldDriver {
-  supports(context: FieldDisplayContext): boolean;
+  supports(context: FieldDisplayContext): Promise<boolean>;
 
   display(context: FieldDisplayContext): Node
 
@@ -20,10 +20,10 @@ export interface FieldDisplayContext {
 export class FieldDriverBase implements FieldDriver {
   fieldType: string = null;
 
-  supports = (context: FieldDisplayContext): boolean => context.descriptor.type === this.fieldType;
+  supports = async (context: FieldDisplayContext): Promise<boolean> => context.descriptor.type === this.fieldType;
 
-  display = (context: FieldDisplayContext): Node => null;
+  display = async (context: FieldDisplayContext): Promise<Node> => null;
 
-  update = (context: FieldDisplayContext, formData: FormData): void => {
+  update = async (context: FieldDisplayContext, formData: FormData): Promise<void> => {
   };
 }

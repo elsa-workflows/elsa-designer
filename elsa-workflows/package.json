@@ -23,16 +23,16 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "latest",
+    "@panzoom/panzoom": "latest",
     "@stencil/core": "latest",
     "@stencil/sass": "latest",
     "bootstrap-scss": "latest",
     "bs-components": "latest",
     "inversify": "latest",
     "jsplumb": "latest",
-    "@panzoom/panzoom": "latest",
+    "monaco-editor": "latest",
     "reflect-metadata": "latest",
     "rollup-plugin-node-polyfills": "^0.2.1",
-    "stencil-fragment": "latest",
     "uuid-browser": "^3.1.0"
   },
   "dependencies": {},

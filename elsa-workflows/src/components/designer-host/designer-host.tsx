@@ -7,8 +7,9 @@ import {Container} from "inversify";
 import {ActivityDefinitionStore, ActivityDriver, CustomDriverStore, ActivityDisplayManager, FieldDriver, Symbols, WorkflowStore} from '../../services';
 import {CommonDriver, DynamicPropsDriver, WriteLineDriver} from '../../drivers/activity-drivers';
 import {ActivityUpdatedArgs} from '../activity-editor/activity-editor';
-import {TextDriver} from '../../drivers/field-drivers';
+import {ExpressionDriver, TextDriver} from '../../drivers/field-drivers';
 import {FieldDisplayManager} from "../../services/field-display-manager";
+import {ExpressionTypeStore} from "../../services/expression-type-store";
 
 
 @Component({
@@ -32,10 +33,12 @@ export class DesignerHostComponent {
     container.bind<ActivityDisplayManager>(ActivityDisplayManager).toSelf().inSingletonScope();
     container.bind<FieldDisplayManager>(FieldDisplayManager).toSelf().inSingletonScope();
     container.bind<CustomDriverStore>(CustomDriverStore).toSelf().inSingletonScope();
+    container.bind<ExpressionTypeStore>(ExpressionTypeStore).toSelf().inSingletonScope();
     container.bind<ActivityDriver>(Symbols.ActivityDriver).to(CommonDriver).inSingletonScope();
     container.bind<ActivityDriver>(Symbols.ActivityDriver).to(DynamicPropsDriver).inSingletonScope();
     container.bind<ActivityDriver>(Symbols.ActivityDriver).to(WriteLineDriver).inSingletonScope();
     container.bind<FieldDriver>(Symbols.FieldDriver).to(TextDriver).inSingletonScope();
+    container.bind<FieldDriver>(Symbols.FieldDriver).to(ExpressionDriver).inSingletonScope();
 
     this.container = container;
     this.workflowStore = container.get<WorkflowStore>(WorkflowStore);

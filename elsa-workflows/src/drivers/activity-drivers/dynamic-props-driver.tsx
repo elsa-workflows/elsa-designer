@@ -2,7 +2,7 @@
 import {ActivityDisplayContext, ActivityDriverBase, ActivityState, CustomDriverStore, Node, Symbols} from '../../services'
 import {inject, injectable} from 'inversify'
 import {ActivityPropertyDescriptor} from '../../models'
-import {FieldDisplayManager} from '../../services/field-display-manager';
+import {FieldDisplayManager} from '../../services/field-display-manager'
 
 ﻿
 @injectable()
@@ -19,7 +19,7 @@ export class DynamicPropsDriver extends ActivityDriverBase {
   displayEditor = async (context: ActivityDisplayContext): Promise<Node> => {
     const activityDefinition = context.activityDefinition;
     const props = activityDefinition.properties || [];
-    return props.map(x => this.renderField(context.state, x));
+    return await Promise.all(props.map(async x => await this.renderField(context.state, x)));
   };
 
   updateActivity = async (context: ActivityDisplayContext, formData: FormData): Promise<void> => {
@@ -27,7 +27,7 @@ export class DynamicPropsDriver extends ActivityDriverBase {
     const props = activityDefinition.properties || [];
 
     for (const prop of props) {
-      this.fieldDisplayManager.update(prop, context.state, formData);
+      await this.fieldDisplayManager.update(prop, context.state, formData);
     }
   };
 
