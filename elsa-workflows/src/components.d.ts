@@ -24,6 +24,10 @@ import {
   AddActivityArgs,
   EditActivityArgs,
 } from './components/designer/designer';
+import {
+  ActivityDriver,
+  FieldDriver,
+} from './services';
 
 export namespace Components {
   interface ElsaActivityEditor {
@@ -55,6 +59,9 @@ export namespace Components {
     'workflow': Workflow | string;
   }
   interface ElsaDesignerHost {
+    'addActivityDriver': (constructor: new (...args: any[]) => ActivityDriver) => Promise<void>;
+    'addFieldDriver': (constructor: new (...args: any[]) => FieldDriver) => Promise<void>;
+    'configureServices': (action: (container: Container) => void) => Promise<void>;
     'container': Container;
   }
   interface ElsaExpressionField {

@@ -17,7 +17,7 @@ export class WorkflowStore {
       id: '1',
       type: 'WriteLine',
       displayName: 'Write Line',
-      state: {text: {type: 'Literal', expression: 'Hello World!'}},
+      state: {text: {type: 'Liquid', expression: 'Hello World!'}},
       outcomes: ['Done'],
       left: 700,
       top: 650

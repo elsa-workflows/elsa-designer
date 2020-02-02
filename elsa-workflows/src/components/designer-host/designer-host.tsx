@@ -1,5 +1,5 @@
 import 'bs-components';
-import {Component, h, Host, Listen, Prop, State} from '@stencil/core';
+import {Component, h, Host, Listen, Method, Prop, State} from '@stencil/core';
 import {Activity, ActivityDefinition, Workflow} from '../../models';
 import {AddActivityArgs, EditActivityArgs} from '../designer/designer';
 import uuid from 'uuid-browser/v4';
@@ -34,18 +34,16 @@ export class DesignerHostComponent {
     container.bind<FieldDisplayManager>(FieldDisplayManager).toSelf().inSingletonScope();
     container.bind<CustomDriverStore>(CustomDriverStore).toSelf().inSingletonScope();
     container.bind<ExpressionTypeStore>(ExpressionTypeStore).toSelf().inSingletonScope();
-    container.bind<ActivityDriver>(Symbols.ActivityDriver).to(CommonDriver).inSingletonScope();
-    container.bind<ActivityDriver>(Symbols.ActivityDriver).to(DynamicPropsDriver).inSingletonScope();
-    container.bind<ActivityDriver>(Symbols.ActivityDriver).to(WriteLineDriver).inSingletonScope();
-    container.bind<FieldDriver>(Symbols.FieldDriver).to(TextDriver).inSingletonScope();
-    container.bind<FieldDriver>(Symbols.FieldDriver).to(ExpressionDriver).inSingletonScope();
+
+    this.addActivityDriverInternal(container, CommonDriver);
+    this.addActivityDriverInternal(container, DynamicPropsDriver);
+    this.addFieldDriverInternal(container, TextDriver);
+    this.addFieldDriverInternal(container, ExpressionDriver);
 
     this.container = container;
     this.workflowStore = container.get<WorkflowStore>(WorkflowStore);
     this.activityDefinitionStore = container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
     this.customDriverStore = container.get<CustomDriverStore>(CustomDriverStore);
-
-    this.customDriverStore.useCustomDriverFor('WriteLine');
   }
 
   @Prop() container: Container;
@@ -55,6 +53,21 @@ export class DesignerHostComponent {
   @State() private showActivityPicker: boolean;
   @State() private showActivityEditor: boolean;
   @State() private selectedActivity?: Activity;
+
+  @Method()
+  async configureServices(action: (container: Container) => void): Promise<void> {
+    action(this.container);
+  }
+
+  @Method()
+  async addActivityDriver(constructor: { new(...args: any[]): ActivityDriver }): Promise<void> {
+    this.addActivityDriverInternal(this.container, constructor);
+  }
+
+  @Method()
+  async addFieldDriver(constructor: { new(...args: any[]): FieldDriver }): Promise<void> {
+    this.addFieldDriverInternal(this.container, constructor);
+  }
 
   @Listen('add-activity')
   handleDesignerAddActivity(e: CustomEvent<AddActivityArgs>) {
@@ -106,6 +119,9 @@ export class DesignerHostComponent {
     this.activityDefinitions = await this.activityDefinitionStore.list();
     this.workflow = await this.workflowStore.get('1');
   }
+
+  private addActivityDriverInternal = (container: Container, constructor: { new(...args: any[]): ActivityDriver }) => container.bind<ActivityDriver>(Symbols.ActivityDriver).to(constructor).inSingletonScope();
+  private addFieldDriverInternal = (container: Container, constructor: { new(...args: any[]): FieldDriver }) => container.bind<FieldDriver>(Symbols.FieldDriver).to(constructor).inSingletonScope();
 
   render() {
     return (

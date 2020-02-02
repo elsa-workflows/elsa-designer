@@ -36,7 +36,7 @@ export class ActivityDefinitionStore {
       icon: 'fas fa-terminal',
       outcomes: ['Done'],
       properties: [{
-        name: 'Text',
+        name: 'text',
         type: PropertyTypes.Expression,
         label: 'Text',
         hint: 'The text to write.'

@@ -15,16 +15,17 @@ export class CommonDriver extends ActivityDriverBase {
 
   displayEditor = async (context: ActivityDisplayContext): Promise<Node> => {
 
-    const props: CommonProps = context.state;
+    const activity = context.activity;
     const defaultDisplayName = context.activityDefinition.displayName;
+    const displayName = activity.displayName === defaultDisplayName ? '' : activity.displayName;
 
     return (
       [
         <FormGroup htmlId="name" label="Name" hint="Optionally provide a technical name for this activity that can be used to reference it from workflow expressions used in other activities.">
-          <input id="name" type="text" name='name' class="form-control" value={props.name}/>
+          <input id="name" type="text" name='name' class="form-control" value={activity.name}/>
         </FormGroup>,
         <FormGroup htmlId="displayName" label="Display Name" hint="Optionally provide a friendly name for this activity that is used on the workflow designer, making it easier to see what this activity does in a quick glance.">
-          <input id="displayName" type="text" name='displayName' class="form-control" value={props.displayName} placeholder={defaultDisplayName}/>
+          <input id="displayName" type="text" name='displayName' class="form-control" value={displayName} placeholder={defaultDisplayName}/>
         </FormGroup>
       ]
     );
