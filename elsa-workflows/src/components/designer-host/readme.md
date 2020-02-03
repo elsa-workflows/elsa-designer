@@ -7,9 +7,42 @@
 
 ## Properties
 
-| Property    | Attribute | Description | Type        | Default     |
-| ----------- | --------- | ----------- | ----------- | ----------- |
-| `container` | --        |             | `Container` | `undefined` |
+| Property    | Attribute    | Description | Type     | Default     |
+| ----------- | ------------ | ----------- | -------- | ----------- |
+| `serverUrl` | `server-url` |             | `string` | `undefined` |
+
+
+## Methods
+
+### `addActivityDriver(constructor: new (...args: any[]) => ActivityDriver) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `addFieldDriver(constructor: new (...args: any[]) => FieldDriver) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `configureServices(action: (container: Container) => void) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
 
 
 ## Dependencies

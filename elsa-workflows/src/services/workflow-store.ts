@@ -13,19 +13,9 @@ export class WorkflowStore {
   get = async (id: string): Promise<Workflow> => this.workflow;
 
   private loadWorkflow = () => {
-    const writeLine1 = {
-      id: '1',
-      type: 'WriteLine',
-      displayName: 'Write Line',
-      state: {text: {type: 'Liquid', expression: 'Hello World!'}},
-      outcomes: ['Done'],
-      left: 700,
-      top: 650
-    };
-
     return {
       id: '1',
-      activities: [writeLine1],
+      activities: [],
       connections: []
     };
   };

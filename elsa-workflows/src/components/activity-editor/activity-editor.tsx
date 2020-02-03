@@ -1,7 +1,7 @@
-import {Component, Element, Event, EventEmitter, h, Host, Prop, State, Watch} from '@stencil/core';
-import {Activity} from "../../models";
+import {Component, Element, Event, EventEmitter, h, Prop} from '@stencil/core';
+import {Activity, ActivityDefinition} from "../../models";
 import {Container} from "inversify";
-import {ActivityDefinitionStore, ActivityDisplayManager, Symbols} from "../../services";
+import {ActivityDefinitionStore, ActivityDisplayManager} from "../../services";
 
 export interface ActivityUpdatedArgs {
   activity: Activity
@@ -26,6 +26,7 @@ export class ActivityEditor {
   @Event({eventName: 'activity-updated'}) activityUpdated: EventEmitter<ActivityUpdatedArgs>;
 
   private activityDisplays: Array<string>;
+  private activityDefinition: ActivityDefinition;
 
   componentDidRender() {
     if (!!this.modal) {
@@ -41,6 +42,8 @@ export class ActivityEditor {
       return;
 
     const displayManager = this.container.get<ActivityDisplayManager>(ActivityDisplayManager);
+    const activityDefinitionStore = this.container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
+    this.activityDefinition = await activityDefinitionStore.get(activity.type);
     this.activityDisplays = await displayManager.displayEditor(this.activity);
   }
 
@@ -61,8 +64,7 @@ export class ActivityEditor {
 
   render() {
     const activity = this.activity;
-    const activityDefinitionStore = this.container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
-    const activityDefinition = !!activity ? activityDefinitionStore.get(activity.type) : null;
+    const activityDefinition = this.activityDefinition;
     const activityDefinitionDisplayName = !!activityDefinition ? activityDefinition.displayName : null;
     const activityId = !!activity ? activity.id : null;
     const activityDisplays = this.activityDisplays || [];

@@ -1,5 +1,6 @@
 ﻿import {jsPlumb, jsPlumbInstance} from 'jsplumb';
 import {ActivityDefinition, Workflow} from "../../models";
+import {evaluateOutcome} from "./outcome-evaluator";
 
 const jsPlumbKey = {};
 
@@ -76,9 +77,10 @@ export function displayWorkflow(jsPlumb: jsPlumbInstance, workflowCanvasElement:
         return;
       }
 
-      const outcomes = activityDefinition.outcomes || [];
+      const outcomes: Array<string> = activityDefinition.outcomes || [];
+      const evaluatedOutcomes = outcomes.map(x => evaluateOutcome(x, activity, activityDefinition)).reduce((a, b) => a.concat(b));
 
-      for (const outcome of outcomes) {
+      for (const outcome of evaluatedOutcomes) {
         const sourceEndpointOptions: any = createSourceEndpoint(activity.id, outcome);
         const endpointOptions: any = {
           connectorOverlays: [['Label', {label: outcome, cssClass: 'connection-label'}]],

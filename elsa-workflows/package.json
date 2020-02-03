@@ -28,6 +28,7 @@
     "@stencil/sass": "latest",
     "bootstrap-scss": "latest",
     "bs-components": "latest",
+    "graphql-request": "latest",
     "inversify": "latest",
     "jsplumb": "latest",
     "monaco-editor": "latest",

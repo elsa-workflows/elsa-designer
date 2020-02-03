@@ -55,7 +55,7 @@ export class ExpressionField {
     return (
       <bs-dropdown class="dropdown">
         <div class="input-group">
-          <input name={`${name}.type`} value={selectedType} type="hidden"/>
+          <input type="hidden" name={`${name}.type`} value={selectedType} />
           {this.renderInputField()}
 
           <div class="input-group-append">

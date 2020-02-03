@@ -22,21 +22,21 @@ export class ActivityDisplayManager {
   getDriversFor = (context: ActivityDisplayContext): Array<ActivityDriver> => this.drivers.filter(x => x.supportsActivity(context));
 
   updateActivity = async (activity: Activity, formData: FormData): Promise<void> => {
-    const displayContext = this.createDisplayContextFor(activity);
+    const displayContext = await this.createDisplayContextFor(activity);
     const activityDrivers = this.getDriversFor(displayContext);
     await Promise.all(activityDrivers.map(async x => await x.updateActivity(displayContext, formData)));
   };
 
   private invokeDriversFor = async (activity: Activity, displayAction: (driver: ActivityDriver, context: ActivityDisplayContext) => Promise<Node>) => {
-    const displayContext = this.createDisplayContextFor(activity);
+    const displayContext = await this.createDisplayContextFor(activity);
     const activityDrivers = this.getDriversFor(displayContext);
     let nodes = await Promise.all(activityDrivers.map(async x => await displayAction(x, displayContext)));
 
     return NodeUtils.normalize(nodes);
   };
 
-  private createDisplayContextFor = (activity: Activity): ActivityDisplayContext => {
-    const activityDefinition = this.activityDefinitionStore.get(activity.type);
+  private createDisplayContextFor = async (activity: Activity): Promise<ActivityDisplayContext> => {
+    const activityDefinition = await this.activityDefinitionStore.get(activity.type);
     return {activity: activity, state: activity.state || {}, activityDefinition};
   };
 }

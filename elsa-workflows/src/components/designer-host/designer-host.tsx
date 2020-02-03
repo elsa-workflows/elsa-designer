@@ -4,12 +4,13 @@ import {Activity, ActivityDefinition, Workflow} from '../../models';
 import {AddActivityArgs, EditActivityArgs} from '../designer/designer';
 import uuid from 'uuid-browser/v4';
 import {Container} from "inversify";
-import {ActivityDefinitionStore, ActivityDriver, CustomDriverStore, ActivityDisplayManager, FieldDriver, Symbols, WorkflowStore} from '../../services';
+import {ActivityDefinitionStore, ActivityDriver, CustomDriverStore, ActivityDisplayManager, FieldDriver, Symbols, WorkflowStore, ServerConfiguration} from '../../services';
 import {CommonDriver, DynamicPropsDriver, WriteLineDriver} from '../../drivers/activity-drivers';
 import {ActivityUpdatedArgs} from '../activity-editor/activity-editor';
 import {ExpressionDriver, TextDriver} from '../../drivers/field-drivers';
 import {FieldDisplayManager} from "../../services/field-display-manager";
 import {ExpressionTypeStore} from "../../services/expression-type-store";
+import {createContainer} from "../../services/container";
 
 
 @Component({
@@ -26,27 +27,10 @@ export class DesignerHostComponent {
   private customDriverStore: CustomDriverStore;
 
   constructor() {
-    const container = new Container();
-    container.bind<Container>(Container).toConstantValue(container);
-    container.bind<ActivityDefinitionStore>(ActivityDefinitionStore).toSelf().inSingletonScope();
-    container.bind<WorkflowStore>(WorkflowStore).toSelf().inSingletonScope();
-    container.bind<ActivityDisplayManager>(ActivityDisplayManager).toSelf().inSingletonScope();
-    container.bind<FieldDisplayManager>(FieldDisplayManager).toSelf().inSingletonScope();
-    container.bind<CustomDriverStore>(CustomDriverStore).toSelf().inSingletonScope();
-    container.bind<ExpressionTypeStore>(ExpressionTypeStore).toSelf().inSingletonScope();
 
-    this.addActivityDriverInternal(container, CommonDriver);
-    this.addActivityDriverInternal(container, DynamicPropsDriver);
-    this.addFieldDriverInternal(container, TextDriver);
-    this.addFieldDriverInternal(container, ExpressionDriver);
-
-    this.container = container;
-    this.workflowStore = container.get<WorkflowStore>(WorkflowStore);
-    this.activityDefinitionStore = container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
-    this.customDriverStore = container.get<CustomDriverStore>(CustomDriverStore);
   }
 
-  @Prop() server: string;
+  @Prop({attribute: 'server-url'}) serverUrl: string;
 
   @State() container: Container;
   @State() activityDefinitions: Array<ActivityDefinition>;
@@ -117,8 +101,13 @@ export class DesignerHostComponent {
   }
 
   async componentWillLoad() {
-    const server = this.server;
-    debugger;
+    const serverUrl = this.serverUrl;
+    const container = createContainer(serverUrl);
+
+    this.container = container;
+    this.workflowStore = container.get<WorkflowStore>(WorkflowStore);
+    this.activityDefinitionStore = container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
+    this.customDriverStore = container.get<CustomDriverStore>(CustomDriverStore);
     this.activityDefinitions = await this.activityDefinitionStore.list();
     this.workflow = await this.workflowStore.get('1');
   }
