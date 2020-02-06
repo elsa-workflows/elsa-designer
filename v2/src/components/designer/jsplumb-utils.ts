@@ -107,8 +107,8 @@ export function displayWorkflow(jsPlumb: jsPlumbInstance, workflowCanvasElement:
           if (!hasDragged)
             return;
 
-          activity.left = params.pos[0];
-          activity.top = params.pos[1];
+          activity.left = Math.round(params.pos[0]);
+          activity.top = Math.round(params.pos[1]);
         }
       };
 
@@ -123,7 +123,9 @@ export function displayWorkflow(jsPlumb: jsPlumbInstance, workflowCanvasElement:
   };
 
   const createConnections = () => {
-    for (const connection of workflow.connections) {
+    const connections = workflow.connections || [];
+
+    for (const connection of connections) {
       const sourceEndpointId = createEndpointUuid(connection.sourceActivityId, connection.outcome);
       const sourceEndpoint = jsPlumb.getEndpoint(sourceEndpointId);
       const targetElementId = createActivityElementId(connection.targetActivityId);

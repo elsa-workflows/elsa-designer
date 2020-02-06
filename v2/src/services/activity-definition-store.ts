@@ -3,34 +3,20 @@ import {inject, injectable} from "inversify";
 import {ServerConfiguration} from "./server-configuration";
 import request from "graphql-request";
 
-const activityDescriptorFragment = `
-type
-category
-description
-displayName
-icon
-outcomes
-properties {
-  name
-  type
-  label
-  hint
-}`;
-
 @injectable()
 export class ActivityDefinitionStore {
 
   private items: Array<ActivityDefinition> = [];
 
 
-  constructor(@inject(ServerConfiguration) private configuration: ServerConfiguration) {
+  constructor(@inject(ServerConfiguration) private config: ServerConfiguration) {
   }
 
   initialize = (items?: Array<ActivityDefinition>) => this.items = !!items ? [...this.items] : [];
   addRange = (items: Array<ActivityDefinition>) => this.items = [...this.items, ...items];
 
   list = async (): Promise<Array<ActivityDefinition>> => {
-    const url = this.configuration.serverUrl;
+    const url = this.config.serverUrl;
     const query = `{
         activityDescriptors {
           type
@@ -46,7 +32,7 @@ export class ActivityDefinitionStore {
   };
 
   get = async (type: string): Promise<ActivityDefinition> => {
-    const url = this.configuration.serverUrl;
+    const url = this.config.serverUrl;
     const query = `
     query getActivityDescriptor($typeName: String!) {
         activityDescriptor(typeName: $typeName) {

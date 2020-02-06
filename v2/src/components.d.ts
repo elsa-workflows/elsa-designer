@@ -23,11 +23,16 @@ import {
 import {
   AddActivityArgs,
   EditActivityArgs,
+  LoadWorkflowArgs,
+  SaveWorkflowArgs,
 } from './components/designer/designer';
 import {
   ActivityDriver,
   FieldDriver,
 } from './services';
+import {
+  WorkflowDefinitionVersionSelectedArgs,
+} from './components/workflow-picker/workflow-picker';
 
 export namespace Components {
   interface ElsaActivityEditor {
@@ -72,6 +77,10 @@ export namespace Components {
     'multiline': boolean;
     'name': string;
     'type': string;
+  }
+  interface ElsaWorkflowPicker {
+    'container': Container;
+    'showModal': boolean;
   }
 }
 
@@ -124,6 +133,12 @@ declare global {
     prototype: HTMLElsaExpressionFieldElement;
     new (): HTMLElsaExpressionFieldElement;
   };
+
+  interface HTMLElsaWorkflowPickerElement extends Components.ElsaWorkflowPicker, HTMLStencilElement {}
+  var HTMLElsaWorkflowPickerElement: {
+    prototype: HTMLElsaWorkflowPickerElement;
+    new (): HTMLElsaWorkflowPickerElement;
+  };
   interface HTMLElementTagNameMap {
     'elsa-activity-editor': HTMLElsaActivityEditorElement;
     'elsa-activity-picker': HTMLElsaActivityPickerElement;
@@ -132,6 +147,7 @@ declare global {
     'elsa-designer': HTMLElsaDesignerElement;
     'elsa-designer-host': HTMLElsaDesignerHostElement;
     'elsa-expression-field': HTMLElsaExpressionFieldElement;
+    'elsa-workflow-picker': HTMLElsaWorkflowPickerElement;
   }
 }
 
@@ -161,6 +177,8 @@ declare namespace LocalJSX {
     'container'?: Container;
     'onAdd-activity'?: (event: CustomEvent<AddActivityArgs>) => void;
     'onEdit-activity'?: (event: CustomEvent<EditActivityArgs>) => void;
+    'onLoad-workflow'?: (event: CustomEvent<LoadWorkflowArgs>) => void;
+    'onSave-workflow'?: (event: CustomEvent<SaveWorkflowArgs>) => void;
     'workflow'?: Workflow | string;
   }
   interface ElsaDesignerHost {
@@ -174,6 +192,12 @@ declare namespace LocalJSX {
     'name'?: string;
     'type'?: string;
   }
+  interface ElsaWorkflowPicker {
+    'container'?: Container;
+    'onHidden'?: (event: CustomEvent<any>) => void;
+    'onWorkflow-definition-version-selected'?: (event: CustomEvent<WorkflowDefinitionVersionSelectedArgs>) => void;
+    'showModal'?: boolean;
+  }
 
   interface IntrinsicElements {
     'elsa-activity-editor': ElsaActivityEditor;
@@ -183,6 +207,7 @@ declare namespace LocalJSX {
     'elsa-designer': ElsaDesigner;
     'elsa-designer-host': ElsaDesignerHost;
     'elsa-expression-field': ElsaExpressionField;
+    'elsa-workflow-picker': ElsaWorkflowPicker;
   }
 }
 
@@ -199,6 +224,7 @@ declare module "@stencil/core" {
       'elsa-designer': LocalJSX.ElsaDesigner & JSXBase.HTMLAttributes<HTMLElsaDesignerElement>;
       'elsa-designer-host': LocalJSX.ElsaDesignerHost & JSXBase.HTMLAttributes<HTMLElsaDesignerHostElement>;
       'elsa-expression-field': LocalJSX.ElsaExpressionField & JSXBase.HTMLAttributes<HTMLElsaExpressionFieldElement>;
+      'elsa-workflow-picker': LocalJSX.ElsaWorkflowPicker & JSXBase.HTMLAttributes<HTMLElsaWorkflowPickerElement>;
     }
   }
 }

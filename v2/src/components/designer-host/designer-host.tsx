@@ -1,16 +1,14 @@
 import 'bs-components';
+import '../../utils/array-utils';
 import {Component, h, Host, Listen, Method, Prop, State} from '@stencil/core';
 import {Activity, ActivityDefinition, Workflow} from '../../models';
-import {AddActivityArgs, EditActivityArgs} from '../designer/designer';
+import {AddActivityArgs, EditActivityArgs, SaveWorkflowArgs} from '../designer/designer';
 import uuid from 'uuid-browser/v4';
 import {Container} from "inversify";
-import {ActivityDefinitionStore, ActivityDriver, CustomDriverStore, ActivityDisplayManager, FieldDriver, Symbols, WorkflowStore, ServerConfiguration} from '../../services';
-import {CommonDriver, DynamicPropsDriver, WriteLineDriver} from '../../drivers/activity-drivers';
+import {ActivityDefinitionStore, ActivityDriver, CustomDriverStore, FieldDriver, Symbols, WorkflowStore} from '../../services';
 import {ActivityUpdatedArgs} from '../activity-editor/activity-editor';
-import {ExpressionDriver, TextDriver} from '../../drivers/field-drivers';
-import {FieldDisplayManager} from "../../services/field-display-manager";
-import {ExpressionTypeStore} from "../../services/expression-type-store";
 import {createContainer} from "../../services/container";
+import {WorkflowDefinitionVersionSelectedArgs} from "../workflow-picker/workflow-picker";
 
 
 @Component({
@@ -26,10 +24,6 @@ export class DesignerHostComponent {
   private activityDefinitionStore: ActivityDefinitionStore;
   private customDriverStore: CustomDriverStore;
 
-  constructor() {
-
-  }
-
   @Prop({attribute: 'server-url'}) serverUrl: string;
 
   @State() container: Container;
@@ -38,6 +32,7 @@ export class DesignerHostComponent {
   @State() private showActivityPicker: boolean;
   @State() private showActivityEditor: boolean;
   @State() private selectedActivity?: Activity;
+  @State() private showWorkflowPicker: boolean;
 
   @Method()
   async configureServices(action: (container: Container) => void): Promise<void> {
@@ -100,6 +95,27 @@ export class DesignerHostComponent {
     this.showActivityEditor = true;
   }
 
+  @Listen('load-workflow')
+  handleLoadWorkflow() {
+    this.showWorkflowPicker = true;
+  }
+
+  @Listen('workflow-definition-version-selected')
+  async handleWorkflowSelected(e: CustomEvent<WorkflowDefinitionVersionSelectedArgs>) {
+    const id = e.detail.id;
+    const workflow = await this.workflowStore.get(id);
+
+    this.workflow = {...workflow};
+  }
+
+  @Listen('save-workflow')
+  async handleSaveWorkflow(e: CustomEvent<SaveWorkflowArgs>) {
+    const publish = e.detail.publish;
+    const workflow = e.detail.workflow;
+
+    this.workflow = await this.workflowStore.save(workflow, publish);
+  }
+
   async componentWillLoad() {
     const serverUrl = this.serverUrl;
     const container = createContainer(serverUrl);
@@ -109,7 +125,6 @@ export class DesignerHostComponent {
     this.activityDefinitionStore = container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
     this.customDriverStore = container.get<CustomDriverStore>(CustomDriverStore);
     this.activityDefinitions = await this.activityDefinitionStore.list();
-    this.workflow = await this.workflowStore.get('1');
   }
 
   private addActivityDriverInternal = (container: Container, constructor: { new(...args: any[]): ActivityDriver }) => container.bind<ActivityDriver>(Symbols.ActivityDriver).to(constructor).inSingletonScope();
@@ -131,6 +146,7 @@ export class DesignerHostComponent {
           showModal={this.showActivityEditor}
           onHidden={() => this.showActivityEditor = false}
         />
+        <elsa-workflow-picker container={this.container} showModal={this.showWorkflowPicker} onHidden={() => this.showWorkflowPicker = false}/>
       </Host>
     );
   }
