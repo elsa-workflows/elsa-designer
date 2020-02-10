@@ -21,6 +21,7 @@
 | `add-activity`  |             | `CustomEvent<AddActivityArgs>`  |
 | `edit-activity` |             | `CustomEvent<EditActivityArgs>` |
 | `load-workflow` |             | `CustomEvent<LoadWorkflowArgs>` |
+| `save-workflow` |             | `CustomEvent<SaveWorkflowArgs>` |
 
 
 ## Methods

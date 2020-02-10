@@ -47,17 +47,7 @@ export class ActivityDefinitionStore {
             type
             label
             hint
-            options {
-              ... on SelectOptions {
-                items {
-                  label
-                  value
-                }
-              }
-              ... on ExpressionOptions {
-                multiline
-              }
-            }
+            options
           }
         }
       }

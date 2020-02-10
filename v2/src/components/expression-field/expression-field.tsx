@@ -1,5 +1,9 @@
-import {Component, Host, h, Prop, State, Watch, Method} from '@stencil/core';
+import {Component, Host, h, Prop, State, Watch, Method, Listen} from '@stencil/core';
 import {Expression, ExpressionType} from '../../models';
+
+export interface ExpressionChangedArgs {
+  expression: string
+}
 
 @Component({
   tag: 'elsa-expression-field',
@@ -10,39 +14,25 @@ export class ExpressionField {
 
   @Prop() name: string;
   @Prop() multiline: boolean;
-  @Prop({mutable: true}) expression: string;
-  @Prop({mutable: true}) type: string;
-  @Prop() defaultType: string = 'Literal';
+  @Prop({mutable: true}) expression: Expression;
+  @Prop({mutable: true}) selectedType: ExpressionType;
   @Prop() availableTypes: Array<ExpressionType> = [];
 
-  @Method()
-  async getExpression(): Promise<Expression> {
-    return {
-      type: this.type,
-      expression: this.expression
-    };
+  @Listen('expression-changed')
+  expressionChangedHandler(e: CustomEvent<ExpressionChangedArgs>) {
+    this.expression = e.detail.expression;
   }
 
   private onTypeOptionClick = (e: Event, expressionType: ExpressionType) => {
     e.preventDefault();
-    this.type = expressionType.type;
-  };
-
-  private onExpressionChange = (e: Event) => {
-    if (e.target instanceof HTMLTextAreaElement)
-      this.expression = (e.target as HTMLTextAreaElement).value;
-    else
-      this.expression = (e.target as HTMLInputElement).value;
+    this.selectedType = expressionType;
   };
 
   private renderInputField = () => {
     const name = this.name;
     const expression = this.expression;
 
-    if (this.multiline)
-      return <textarea id={name} name={`${name}.expression`} class="form-control" rows={3} onChange={this.onExpressionChange}>{expression}</textarea>;
-
-    return <input type="text" id={name} name={`${name}.expression`} value={expression} class="form-control" onChange={this.onExpressionChange}/>;
+    return this.selectedType.editor(name, expression);
   };
 
   private renderTypeOption = (expressionType: ExpressionType) => <a onClick={e => this.onTypeOptionClick(e, expressionType)} class="dropdown-item" href="#">{expressionType.displayName}</a>;
@@ -50,17 +40,21 @@ export class ExpressionField {
   render() {
     const name = this.name;
     const types = this.availableTypes;
-    const selectedType = this.type || this.defaultType;
+    const selectedType = this.selectedType;
+
+    if (!selectedType)
+      return null;
 
     return (
       <bs-dropdown class="dropdown">
         <div class="input-group">
-          <input type="hidden" name={`${name}.type`} value={selectedType} />
+          <input type="hidden" name={`${name}.type`} value={selectedType.type}/>
+          <input type="hidden" name={`${name}.typeName`} value={selectedType.typeName}/>
           {this.renderInputField()}
 
           <div class="input-group-append">
 
-            <button class="btn btn-primary dropdown-toggle" type="button" id={`${name}_dropdownMenuButton`} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{selectedType}</button>
+            <button class="btn btn-primary dropdown-toggle" type="button" id={`${name}_dropdownMenuButton`} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{selectedType.displayName}</button>
             <div class="dropdown-menu" aria-labelledby={`${name}_dropdownMenuButton`}>
               {types.map(this.renderTypeOption)}
             </div>

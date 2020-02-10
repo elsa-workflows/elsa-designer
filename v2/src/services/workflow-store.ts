@@ -1,4 +1,4 @@
-﻿import {ActivityDefinition, VersionOptions, Workflow, WorkflowDefinitionSummary, WorkflowPersistenceBehavior} from "../models";
+﻿import {VersionOptions, Workflow, WorkflowDefinitionSummary} from "../models";
 import {inject, injectable} from "inversify";
 import request from "graphql-request";
 import {ServerConfiguration} from "./server-configuration";
@@ -35,9 +35,6 @@ const workflowDetailFragment = `
 
 @injectable()
 export class WorkflowStore {
-
-  private workflow: Workflow;
-
 
   constructor(@inject(ServerConfiguration) private config: ServerConfiguration) {
   }
@@ -77,14 +74,14 @@ export class WorkflowStore {
 
     const variables = {id};
     const graph = await request(url, query, variables);
-    return graph.workflowDefinition;
+    return this.readWorkflowDefinition(graph.workflowDefinition);
   };
 
   save = async (workflow: Workflow, publish: boolean): Promise<Workflow> => {
     const url = this.config.serverUrl;
     const query = `
       mutation saveWorkflowDefinition(
-        $id: String!
+        $id: String
         $saveAction: WorkflowSaveAction!
         $workflowInput: WorkflowInput!
       ) {
@@ -100,29 +97,56 @@ export class WorkflowStore {
 
     const id = workflow.id;
     const saveAction = publish ? 'PUBLISH' : 'DRAFT';
+
+    const transformState = (state: any) => {
+      const newState = {};
+
+      for (const key of Object.keys(state)) {
+        newState[key] = {value: state[key]};
+      }
+
+      return JSON.stringify(newState);
+    };
+
     const workflowInput = {
       name: workflow.name,
       description: workflow.description,
       isSingleton: workflow.isSingleton,
       isDisabled: workflow.isDisabled,
       deleteCompletedInstances: workflow.deleteCompletedInstances,
-      variables: workflow.variables,
+      variables: !!workflow.variables ? JSON.stringify(workflow.variables) : null,
       persistenceBehavior: workflow.persistenceBehavior,
       activities: workflow.activities.map(x => ({
         ...x,
         left: Math.round(x.left),
         top: Math.round(x.top),
-        state: typeof(x.state) === `object` ? JSON.stringify(x.state) : x.state
+        state: transformState(x.state)
       })),
       connections: workflow.connections
     };
+
     const variables = {id, saveAction, workflowInput};
-
-    debugger;
     const graph = await request(url, query, variables);
+    return this.readWorkflowDefinition(graph.saveWorkflowDefinition);
+  };
 
-    debugger;
-    return graph.saveWorkflowDefinition;
+  private readWorkflowDefinition = (model: any): Workflow => {
+    const workflow: Workflow = {...model};
+
+    workflow.activities = model.activities.map(x => ({...x, state: this.readState(x.state)}));
+
+    return workflow;
+  };
+
+  private readState = (state: any): any => {
+    const newState = {};
+
+    for (const key of Object.keys(state)) {
+      const item = state[key];
+      newState[key] = item.value;
+    }
+
+    return newState;
   }
 
 }

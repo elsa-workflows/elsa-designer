@@ -7,27 +7,13 @@
 
 ## Properties
 
-| Property         | Attribute      | Description | Type               | Default     |
-| ---------------- | -------------- | ----------- | ------------------ | ----------- |
-| `availableTypes` | --             |             | `ExpressionType[]` | `[]`        |
-| `defaultType`    | `default-type` |             | `string`           | `'Literal'` |
-| `expression`     | `expression`   |             | `string`           | `undefined` |
-| `multiline`      | `multiline`    |             | `boolean`          | `undefined` |
-| `name`           | `name`         |             | `string`           | `undefined` |
-| `type`           | `type`         |             | `string`           | `undefined` |
-
-
-## Methods
-
-### `getExpression() => Promise<Expression>`
-
-
-
-#### Returns
-
-Type: `Promise<Expression>`
-
-
+| Property         | Attribute    | Description | Type               | Default     |
+| ---------------- | ------------ | ----------- | ------------------ | ----------- |
+| `availableTypes` | --           |             | `ExpressionType[]` | `[]`        |
+| `expression`     | `expression` |             | `any`              | `undefined` |
+| `multiline`      | `multiline`  |             | `boolean`          | `undefined` |
+| `name`           | `name`       |             | `string`           | `undefined` |
+| `selectedType`   | --           |             | `ExpressionType`   | `undefined` |
 
 
 ## Dependencies

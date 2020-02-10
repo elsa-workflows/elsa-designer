@@ -31,6 +31,12 @@ import {
   FieldDriver,
 } from './services';
 import {
+  ExpressionChangedArgs,
+} from './components/expression-field/expression-field';
+import {
+  Notification,
+} from './components/notifications/models';
+import {
   WorkflowDefinitionVersionSelectedArgs,
 } from './components/workflow-picker/workflow-picker';
 
@@ -71,12 +77,28 @@ export namespace Components {
   }
   interface ElsaExpressionField {
     'availableTypes': Array<ExpressionType>;
-    'defaultType': string;
-    'expression': string;
-    'getExpression': () => Promise<Expression>;
+    'expression': Expression;
     'multiline': boolean;
     'name': string;
-    'type': string;
+    'selectedType': ExpressionType;
+  }
+  interface ElsaJavascriptExpression {
+    'expression': string;
+    'multiline': boolean;
+    'name': string;
+  }
+  interface ElsaLiquidExpression {
+    'expression': string;
+    'multiline': boolean;
+    'name': string;
+  }
+  interface ElsaLiteralExpression {
+    'expression': string;
+    'multiline': boolean;
+    'name': string;
+  }
+  interface ElsaNotifications {
+    'notifications': Array<Notification>;
   }
   interface ElsaWorkflowPicker {
     'container': Container;
@@ -85,11 +107,6 @@ export namespace Components {
 }
 
 declare global {
-
-  // Adding a global JSX for backcompatibility with legacy dependencies
-  export namespace JSX {
-    export interface Element {}
-  }
 
 
   interface HTMLElsaActivityEditorElement extends Components.ElsaActivityEditor, HTMLStencilElement {}
@@ -134,6 +151,30 @@ declare global {
     new (): HTMLElsaExpressionFieldElement;
   };
 
+  interface HTMLElsaJavascriptExpressionElement extends Components.ElsaJavascriptExpression, HTMLStencilElement {}
+  var HTMLElsaJavascriptExpressionElement: {
+    prototype: HTMLElsaJavascriptExpressionElement;
+    new (): HTMLElsaJavascriptExpressionElement;
+  };
+
+  interface HTMLElsaLiquidExpressionElement extends Components.ElsaLiquidExpression, HTMLStencilElement {}
+  var HTMLElsaLiquidExpressionElement: {
+    prototype: HTMLElsaLiquidExpressionElement;
+    new (): HTMLElsaLiquidExpressionElement;
+  };
+
+  interface HTMLElsaLiteralExpressionElement extends Components.ElsaLiteralExpression, HTMLStencilElement {}
+  var HTMLElsaLiteralExpressionElement: {
+    prototype: HTMLElsaLiteralExpressionElement;
+    new (): HTMLElsaLiteralExpressionElement;
+  };
+
+  interface HTMLElsaNotificationsElement extends Components.ElsaNotifications, HTMLStencilElement {}
+  var HTMLElsaNotificationsElement: {
+    prototype: HTMLElsaNotificationsElement;
+    new (): HTMLElsaNotificationsElement;
+  };
+
   interface HTMLElsaWorkflowPickerElement extends Components.ElsaWorkflowPicker, HTMLStencilElement {}
   var HTMLElsaWorkflowPickerElement: {
     prototype: HTMLElsaWorkflowPickerElement;
@@ -147,6 +188,10 @@ declare global {
     'elsa-designer': HTMLElsaDesignerElement;
     'elsa-designer-host': HTMLElsaDesignerHostElement;
     'elsa-expression-field': HTMLElsaExpressionFieldElement;
+    'elsa-javascript-expression': HTMLElsaJavascriptExpressionElement;
+    'elsa-liquid-expression': HTMLElsaLiquidExpressionElement;
+    'elsa-literal-expression': HTMLElsaLiteralExpressionElement;
+    'elsa-notifications': HTMLElsaNotificationsElement;
     'elsa-workflow-picker': HTMLElsaWorkflowPickerElement;
   }
 }
@@ -186,11 +231,31 @@ declare namespace LocalJSX {
   }
   interface ElsaExpressionField {
     'availableTypes'?: Array<ExpressionType>;
-    'defaultType'?: string;
+    'expression'?: Expression;
+    'multiline'?: boolean;
+    'name'?: string;
+    'selectedType'?: ExpressionType;
+  }
+  interface ElsaJavascriptExpression {
     'expression'?: string;
     'multiline'?: boolean;
     'name'?: string;
-    'type'?: string;
+    'onExpression-changed'?: (event: CustomEvent<ExpressionChangedArgs>) => void;
+  }
+  interface ElsaLiquidExpression {
+    'expression'?: string;
+    'multiline'?: boolean;
+    'name'?: string;
+    'onExpression-changed'?: (event: CustomEvent<ExpressionChangedArgs>) => void;
+  }
+  interface ElsaLiteralExpression {
+    'expression'?: string;
+    'multiline'?: boolean;
+    'name'?: string;
+    'onExpression-changed'?: (event: CustomEvent<ExpressionChangedArgs>) => void;
+  }
+  interface ElsaNotifications {
+    'notifications'?: Array<Notification>;
   }
   interface ElsaWorkflowPicker {
     'container'?: Container;
@@ -207,6 +272,10 @@ declare namespace LocalJSX {
     'elsa-designer': ElsaDesigner;
     'elsa-designer-host': ElsaDesignerHost;
     'elsa-expression-field': ElsaExpressionField;
+    'elsa-javascript-expression': ElsaJavascriptExpression;
+    'elsa-liquid-expression': ElsaLiquidExpression;
+    'elsa-literal-expression': ElsaLiteralExpression;
+    'elsa-notifications': ElsaNotifications;
     'elsa-workflow-picker': ElsaWorkflowPicker;
   }
 }
@@ -224,6 +293,10 @@ declare module "@stencil/core" {
       'elsa-designer': LocalJSX.ElsaDesigner & JSXBase.HTMLAttributes<HTMLElsaDesignerElement>;
       'elsa-designer-host': LocalJSX.ElsaDesignerHost & JSXBase.HTMLAttributes<HTMLElsaDesignerHostElement>;
       'elsa-expression-field': LocalJSX.ElsaExpressionField & JSXBase.HTMLAttributes<HTMLElsaExpressionFieldElement>;
+      'elsa-javascript-expression': LocalJSX.ElsaJavascriptExpression & JSXBase.HTMLAttributes<HTMLElsaJavascriptExpressionElement>;
+      'elsa-liquid-expression': LocalJSX.ElsaLiquidExpression & JSXBase.HTMLAttributes<HTMLElsaLiquidExpressionElement>;
+      'elsa-literal-expression': LocalJSX.ElsaLiteralExpression & JSXBase.HTMLAttributes<HTMLElsaLiteralExpressionElement>;
+      'elsa-notifications': LocalJSX.ElsaNotifications & JSXBase.HTMLAttributes<HTMLElsaNotificationsElement>;
       'elsa-workflow-picker': LocalJSX.ElsaWorkflowPicker & JSXBase.HTMLAttributes<HTMLElsaWorkflowPickerElement>;
     }
   }

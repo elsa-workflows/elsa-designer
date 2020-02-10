@@ -5,5 +5,5 @@ interface HtmlFragmentProps {
 }
 
 export const HtmlFragment: FunctionalComponent<HtmlFragmentProps> = ({ content }) => (
-  <div innerHTML={content}></div>
+  <div innerHTML={content}/>
 );

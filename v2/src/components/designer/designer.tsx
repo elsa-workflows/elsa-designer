@@ -214,7 +214,7 @@ export class DesignerComponent {
 
     let display = this.activityDisplays[activity.id];
 
-    if (display.length === 0)
+    if (!display || display.length === 0)
       display = (<h5><i class={icon}/>{displayName}</h5>);
 
     return (

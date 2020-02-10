@@ -27,7 +27,7 @@
     "@stencil/core": "latest",
     "@stencil/sass": "latest",
     "bootstrap-scss": "latest",
-    "bs-components": "latest",
+    "bs-components": "https://www.myget.org/F/bs-components/npm/bs-components/-/0.1.10.tgz",
     "graphql-request": "latest",
     "inversify": "latest",
     "jsplumb": "latest",

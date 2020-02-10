@@ -1,4 +1,5 @@
-﻿export interface Expression {
-  type: string;
-  expression: string;
-}
+﻿export type Expression = {
+  type: string
+  typeName: string
+  expression: string
+} | any;

@@ -53,6 +53,9 @@ Type: `Promise<void>`
 - [elsa-activity-picker](../activity-picker)
 - [elsa-activity-editor](../activity-editor)
 - [elsa-workflow-picker](../workflow-picker)
+- [elsa-literal-expression](../literal-expression)
+- [elsa-javascript-expression](../javascript-expression)
+- [elsa-liquid-expression](../liquid-expression)
 
 ### Graph
 ```mermaid
@@ -61,6 +64,9 @@ graph TD;
   elsa-designer-host --> elsa-activity-picker
   elsa-designer-host --> elsa-activity-editor
   elsa-designer-host --> elsa-workflow-picker
+  elsa-designer-host --> elsa-literal-expression
+  elsa-designer-host --> elsa-javascript-expression
+  elsa-designer-host --> elsa-liquid-expression
   elsa-designer --> elsa-context-menu
   elsa-designer --> elsa-context-menu-item
   elsa-activity-picker --> bs-modal

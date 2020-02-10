@@ -9,7 +9,7 @@ import {ActivityDefinitionStore, ActivityDriver, CustomDriverStore, FieldDriver,
 import {ActivityUpdatedArgs} from '../activity-editor/activity-editor';
 import {createContainer} from "../../services/container";
 import {WorkflowDefinitionVersionSelectedArgs} from "../workflow-picker/workflow-picker";
-
+import {Notification, NotificationType} from "../notifications/models";
 
 @Component({
   tag: 'elsa-designer-host',
@@ -26,13 +26,14 @@ export class DesignerHostComponent {
 
   @Prop({attribute: 'server-url'}) serverUrl: string;
 
-  @State() container: Container;
-  @State() activityDefinitions: Array<ActivityDefinition>;
-  @State() workflow: Workflow | string;
+  @State() private container: Container;
+  @State() private activityDefinitions: Array<ActivityDefinition>;
+  @State() private workflow: Workflow | string;
   @State() private showActivityPicker: boolean;
   @State() private showActivityEditor: boolean;
   @State() private selectedActivity?: Activity;
   @State() private showWorkflowPicker: boolean;
+  @State() private notifications: Array<Notification> = [];
 
   @Method()
   async configureServices(action: (container: Container) => void): Promise<void> {
@@ -111,9 +112,14 @@ export class DesignerHostComponent {
   @Listen('save-workflow')
   async handleSaveWorkflow(e: CustomEvent<SaveWorkflowArgs>) {
     const publish = e.detail.publish;
-    const workflow = e.detail.workflow;
+    let workflow = e.detail.workflow;
 
-    this.workflow = await this.workflowStore.save(workflow, publish);
+    workflow = this.workflow = await this.workflowStore.save(workflow, publish);
+    const message = publish ? `Workflow published as version ${workflow.version}` : `Workflow saved as draft version ${workflow.version}`;
+    const title = publish ? 'Published' : 'Saved as Draft';
+    const notification: Notification = {title, message, type: NotificationType.Success};
+
+    this.notifications = [notification];
   }
 
   async componentWillLoad() {
@@ -134,6 +140,7 @@ export class DesignerHostComponent {
     return (
       <Host>
         <elsa-designer container={this.container} workflow={this.workflow} activityDefinitions={this.activityDefinitions} ref={el => this.designer = el}/>
+        <elsa-notifications notifications={this.notifications}/>
         <elsa-activity-picker
           container={this.container}
           activityDefinitions={this.activityDefinitions}
