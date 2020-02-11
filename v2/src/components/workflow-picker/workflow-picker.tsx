@@ -46,7 +46,7 @@ export class WorkflowPicker {
 
   private selectWorkflow = (e: MouseEvent, id: string) => {
     e.preventDefault();
-    
+
     this.showModal = false;
     this.workflowSelectedEvent.emit({id});
   };
@@ -76,7 +76,6 @@ export class WorkflowPicker {
                     <th scope="col">Latest Version</th>
                     <th scope="col">Published Version</th>
                     <th scope="col">Enabled</th>
-                    <th scope="col"/>
                   </tr>
                   </thead>
                   <tbody>
@@ -98,7 +97,7 @@ export class WorkflowPicker {
     const latest = group.filter(x => x.isLatest)[0];
     const published = group.filter(x => x.isPublished);
     const publishedVersion = published.length > 0 ? published[0].version.toString() : "-";
-    const name = latest.name;
+    const name = !!latest.name && latest.name.trim().length > 0 ? latest.name : '[Untitled]';
     const description = latest.description;
     const latestVersion = latest.version;
 
@@ -122,24 +121,10 @@ export class WorkflowPicker {
         </td>
         <td>{latestVersion}</td>
         <td>{publishedVersion}</td>
-        <td>
-          <span class="fas fa-check"/>
-        </td>
-        <td class="text-right">
-          <bs-dropdown class="dropdown">
-            <a class="btn btn-sm btn-icon-only" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <i class="fas fa-ellipsis-v"/>
-            </a>
-            <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-              <a class="dropdown-item" href="#">Edit</a>
-              <a class="dropdown-item" href="#">Publish Draft</a>
-              <a class="dropdown-item" href="#">Unpublish</a>
-              <a class="dropdown-item" href="#">History</a>
-              <a class="dropdown-item" href="#">Delete</a>
-            </div>
-          </bs-dropdown>
-        </td>
+        <td>{this.renderEnabledIcon(latest)}</td>
       </tr>
     )
   };
+
+  private renderEnabledIcon = (latest: WorkflowDefinitionSummary) => latest.isDisabled ? null : <span class="fas fa-check"/>
 }

@@ -2,7 +2,6 @@ import 'bs-components';
 import '../../utils/array-utils';
 import {Component, h, Host, Listen, Method, Prop, State} from '@stencil/core';
 import {Activity, ActivityDefinition, Workflow} from '../../models';
-import {AddActivityArgs, EditActivityArgs, SaveWorkflowArgs} from '../designer/designer';
 import uuid from 'uuid-browser/v4';
 import {Container} from "inversify";
 import {ActivityDefinitionStore, ActivityDriver, CustomDriverStore, FieldDriver, Symbols, WorkflowStore} from '../../services';
@@ -10,6 +9,7 @@ import {ActivityUpdatedArgs} from '../activity-editor/activity-editor';
 import {createContainer} from "../../services/container";
 import {WorkflowDefinitionVersionSelectedArgs} from "../workflow-picker/workflow-picker";
 import {Notification, NotificationType} from "../notifications/models";
+import {ActivityArgs, WorkflowArgs} from "../designer/models";
 
 @Component({
   tag: 'elsa-designer-host',
@@ -23,13 +23,15 @@ export class DesignerHostComponent {
   private workflowStore: WorkflowStore;
   private activityDefinitionStore: ActivityDefinitionStore;
   private customDriverStore: CustomDriverStore;
+  private workflowContextMenu: HTMLElsaContextMenuElement;
+  private activityContextMenu: HTMLElsaContextMenuElement;
 
   @Prop({attribute: 'server-url'}) serverUrl: string;
 
   @State() private container: Container;
   @State() private activityDefinitions: Array<ActivityDefinition>;
   @State() private workflow: Workflow | string;
-  @State() private showActivityPicker: boolean;
+  @State() private activityPickerIsVisible: boolean;
   @State() private showActivityEditor: boolean;
   @State() private selectedActivity?: Activity;
   @State() private showWorkflowPicker: boolean;
@@ -50,19 +52,19 @@ export class DesignerHostComponent {
     this.addFieldDriverInternal(this.container, constructor);
   }
 
-  @Listen('add-activity')
-  handleDesignerAddActivity(e: CustomEvent<AddActivityArgs>) {
-    const x = e.detail.mouseEvent.x;
-    const y = e.detail.mouseEvent.y;
-    this.lastClickedLocation = {x, y};
-    this.showActivityPicker = true;
+  @Listen('workflow-contextmenu')
+  async handleWorkflowContextMenu(e: CustomEvent<WorkflowArgs>) {
+    await this.workflowContextMenu.show(e.detail.mouseEvent);
   }
 
-  @Listen('edit-activity')
-  async handleDesignerEditActivity(e: CustomEvent<EditActivityArgs>) {
-    const activityId = e.detail.activityId;
-    this.selectedActivity = await this.designer.getActivity(activityId);
-    this.showActivityEditor = true;
+  @Listen('activity-contextmenu')
+  async handleActivityContextMenu(e: CustomEvent<ActivityArgs>) {
+    await this.activityContextMenu.show(e.detail.mouseEvent, e.detail.activity);
+  }
+
+  @Listen('activity-doubleclick')
+  async handleActivityDoubleClick(e: CustomEvent<ActivityArgs>) {
+    await this.editActivity(e.detail.activity.id);
   }
 
   @Listen('activity-updated')
@@ -96,30 +98,12 @@ export class DesignerHostComponent {
     this.showActivityEditor = true;
   }
 
-  @Listen('load-workflow')
-  handleLoadWorkflow() {
-    this.showWorkflowPicker = true;
-  }
-
   @Listen('workflow-definition-version-selected')
   async handleWorkflowSelected(e: CustomEvent<WorkflowDefinitionVersionSelectedArgs>) {
     const id = e.detail.id;
     const workflow = await this.workflowStore.get(id);
 
     this.workflow = {...workflow};
-  }
-
-  @Listen('save-workflow')
-  async handleSaveWorkflow(e: CustomEvent<SaveWorkflowArgs>) {
-    const publish = e.detail.publish;
-    let workflow = e.detail.workflow;
-
-    workflow = this.workflow = await this.workflowStore.save(workflow, publish);
-    const message = publish ? `Workflow published as version ${workflow.version}` : `Workflow saved as draft version ${workflow.version}`;
-    const title = publish ? 'Published' : 'Saved as Draft';
-    const notification: Notification = {title, message, type: NotificationType.Success};
-
-    this.notifications = [notification];
   }
 
   async componentWillLoad() {
@@ -133,8 +117,40 @@ export class DesignerHostComponent {
     this.activityDefinitions = await this.activityDefinitionStore.list();
   }
 
+  private editActivity = async (id: string) => {
+    this.selectedActivity = await this.designer.getActivity(id);
+    this.showActivityEditor = true;
+  };
+
+  private onAddActivityClick = (e: MouseEvent) => {
+    const x = e.x;
+    const y = e.y;
+    this.lastClickedLocation = {x, y};
+    this.activityPickerIsVisible = true;
+  };
+
+  private saveWorkflow = async (publish: boolean) => {
+    let workflow = await this.designer.getWorkflow();
+
+    workflow = this.workflow = await this.workflowStore.save(workflow, publish);
+    const message = publish ? `Workflow published as version ${workflow.version}` : `Workflow saved as draft version ${workflow.version}`;
+    const title = publish ? 'Published' : 'Saved as Draft';
+    const notification: Notification = {title, message, type: NotificationType.Success};
+
+    this.notifications = [notification];
+  };
+
+  private onWorkflowContextMenu = async (e: MouseEvent) => await this.workflowContextMenu.show(e);
+  private onActivityContextMenu = async (e: MouseEvent, activity: Activity) => await this.activityContextMenu.show(e, activity);
+  private deleteActivity = async (id: string) => await this.designer.deleteActivity(id);
   private addActivityDriverInternal = (container: Container, constructor: { new(...args: any[]): ActivityDriver }) => container.bind<ActivityDriver>(Symbols.ActivityDriver).to(constructor).inSingletonScope();
   private addFieldDriverInternal = (container: Container, constructor: { new(...args: any[]): FieldDriver }) => container.bind<FieldDriver>(Symbols.FieldDriver).to(constructor).inSingletonScope();
+  private onEditActivityClick = async () => this.editActivity((await this.activityContextMenu.getContext() as Activity).id);
+  private onActivityDoubleClick = (id: string) => this.editActivity(id);
+  private onDeleteActivityClick = async () => this.deleteActivity((await this.activityContextMenu.getContext() as Activity).id);
+  private onLoadWorkflowClick = () => this.showWorkflowPicker = true;
+  private onSaveDraftClick = () => this.saveWorkflow(false);
+  private onPublishClick = () => this.saveWorkflow(true);
 
   render() {
     return (
@@ -144,8 +160,8 @@ export class DesignerHostComponent {
         <elsa-activity-picker
           container={this.container}
           activityDefinitions={this.activityDefinitions}
-          showModal={this.showActivityPicker}
-          onHidden={() => this.showActivityPicker = false}
+          showModal={this.activityPickerIsVisible}
+          onHidden={() => this.activityPickerIsVisible = false}
         />
         <elsa-activity-editor
           container={this.container}
@@ -154,6 +170,16 @@ export class DesignerHostComponent {
           onHidden={() => this.showActivityEditor = false}
         />
         <elsa-workflow-picker container={this.container} showModal={this.showWorkflowPicker} onHidden={() => this.showWorkflowPicker = false}/>
+        <elsa-context-menu ref={el => this.workflowContextMenu = el}>
+          <elsa-context-menu-item onClick={this.onAddActivityClick}>Add Activity</elsa-context-menu-item>
+          <elsa-context-menu-item onClick={this.onLoadWorkflowClick}>Load Workflow</elsa-context-menu-item>
+          <elsa-context-menu-item onClick={this.onSaveDraftClick}>Save Draft</elsa-context-menu-item>
+          <elsa-context-menu-item onClick={this.onPublishClick}>Publish</elsa-context-menu-item>
+        </elsa-context-menu>
+        <elsa-context-menu ref={el => this.activityContextMenu = el}>
+          <elsa-context-menu-item onClick={this.onEditActivityClick}>Edit Activity</elsa-context-menu-item>
+          <elsa-context-menu-item onClick={this.onDeleteActivityClick}>Delete Activity</elsa-context-menu-item>
+        </elsa-context-menu>
       </Host>
     );
   }

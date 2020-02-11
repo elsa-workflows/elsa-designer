@@ -21,11 +21,9 @@ import {
   ActivityUpdatedArgs,
 } from './components/activity-editor/activity-editor';
 import {
-  AddActivityArgs,
-  EditActivityArgs,
-  LoadWorkflowArgs,
-  SaveWorkflowArgs,
-} from './components/designer/designer';
+  ActivityArgs,
+  WorkflowArgs,
+} from './components/designer/models';
 import {
   ActivityDriver,
   FieldDriver,
@@ -62,6 +60,7 @@ export namespace Components {
     'activityDefinitions': Array<ActivityDefinition>;
     'addActivity': (activity: Activity) => Promise<void>;
     'container': Container;
+    'deleteActivity': (id: string) => Promise<void>;
     'getActivity': (id: string) => Promise<Activity>;
     'getTransform': () => Promise<{ x: number; y: number; scale: number; }>;
     'getWorkflow': () => Promise<Workflow>;
@@ -220,10 +219,9 @@ declare namespace LocalJSX {
   interface ElsaDesigner {
     'activityDefinitions'?: Array<ActivityDefinition>;
     'container'?: Container;
-    'onAdd-activity'?: (event: CustomEvent<AddActivityArgs>) => void;
-    'onEdit-activity'?: (event: CustomEvent<EditActivityArgs>) => void;
-    'onLoad-workflow'?: (event: CustomEvent<LoadWorkflowArgs>) => void;
-    'onSave-workflow'?: (event: CustomEvent<SaveWorkflowArgs>) => void;
+    'onActivity-contextmenu'?: (event: CustomEvent<ActivityArgs>) => void;
+    'onActivity-doubleclick'?: (event: CustomEvent<ActivityArgs>) => void;
+    'onWorkflow-contextmenu'?: (event: CustomEvent<WorkflowArgs>) => void;
     'workflow'?: Workflow | string;
   }
   interface ElsaDesignerHost {

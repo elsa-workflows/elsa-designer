@@ -10,25 +10,10 @@ import {createPanzoom} from "./panzoom-utils";
 import {PanzoomObject} from "@panzoom/panzoom/dist/src/types";
 import {Container} from "inversify";
 import {ActivityDisplayManager, Node} from "../../services";
+import {ActivityArgs, WorkflowArgs} from "./models";
 
 interface ActivityDisplayMap {
   [id: string]: Node;
-}
-
-export interface AddActivityArgs {
-  mouseEvent: MouseEvent
-}
-
-export interface EditActivityArgs {
-  activityId: string
-}
-
-export interface LoadWorkflowArgs {
-}
-
-export interface SaveWorkflowArgs {
-  workflow: Workflow
-  publish: boolean
 }
 
 @Component({
@@ -39,8 +24,6 @@ export interface SaveWorkflowArgs {
 export class DesignerComponent {
 
   private workflowCanvasElement: HTMLElement;
-  private workflowContextMenu: HTMLElsaContextMenuElement;
-  private activityContextMenu: HTMLElsaContextMenuElement;
   private jsPlumb: jsPlumbInstance;
   private panzoom: PanzoomObject;
   private displayManager: ActivityDisplayManager;
@@ -52,12 +35,11 @@ export class DesignerComponent {
   @Prop() activityDefinitions: Array<ActivityDefinition> = [];
   @Prop() workflow: Workflow | string;
 
-  @Event({eventName: 'add-activity'}) addActivityEvent: EventEmitter<AddActivityArgs>;
-  @Event({eventName: 'edit-activity'}) editActivityEvent: EventEmitter<EditActivityArgs>;
-  @Event({eventName: 'load-workflow'}) loadWorkflowEvent: EventEmitter<LoadWorkflowArgs>;
-  @Event({eventName: 'save-workflow'}) saveWorkflowEvent: EventEmitter<SaveWorkflowArgs>;
-
   @State() private workflowModel: Workflow = emptyWorkflow;
+
+  @Event({eventName: 'workflow-contextmenu'}) workflowContextMenuEvent: EventEmitter<WorkflowArgs>;
+  @Event({eventName: 'activity-contextmenu'}) activityContextMenuEvent: EventEmitter<ActivityArgs>;
+  @Event({eventName: 'activity-doubleclick'}) activityDoubleClickEvent: EventEmitter<ActivityArgs>;
 
   @Watch('workflow')
   workflowHandler(newValue: Workflow | string) {
@@ -85,6 +67,12 @@ export class DesignerComponent {
     const activities = [...this.workflowModel.activities, activity];
     this.workflowModel = {...this.workflowModel, activities};
   }
+
+  @Method()
+  async deleteActivity(id: string): Promise<void> {
+    const activities = this.workflowModel.activities.filter(x => x.id !== id);
+    this.workflowModel = {...this.workflowModel, activities: activities};
+  };
 
   @Method()
   async updateActivity(activity: Activity) {
@@ -181,23 +169,6 @@ export class DesignerComponent {
     workflow.connections = workflow.connections.filter(x => !(x.sourceActivityId === sourceActivityId && x.targetActivityId === targetActivityId && x.outcome === outcome));
   };
 
-  private editActivity = (id: string) => this.editActivityEvent.emit({activityId: id});
-
-  private deleteActivity = (id: string) => {
-    const activities = this.workflowModel.activities.filter(x => x.id !== id);
-    this.workflowModel = {...this.workflowModel, activities: activities};
-  };
-
-  private onWorkflowContextMenu = async (e: MouseEvent) => await this.workflowContextMenu.show(e);
-  private onActivityContextMenu = async (e: MouseEvent, activity: Activity) => await this.activityContextMenu.show(e, activity);
-  private onEditActivityClick = async e => this.editActivity((await this.activityContextMenu.getContext() as Activity).id);
-  private onDeleteActivityClick = async e => this.deleteActivity((await this.activityContextMenu.getContext() as Activity).id);
-  private onActivityDoubleClick = (id: string) => this.editActivity(id);
-  private onAddActivityClick = (e: MouseEvent) => this.addActivityEvent.emit({mouseEvent: e});
-  private onLoadWorkflowClick = (e: MouseEvent) => this.loadWorkflowEvent.emit({mouseEvent: e});
-  private onSaveDraftClick = (e: MouseEvent) => this.saveWorkflowEvent.emit({workflow: this.workflowModel, publish: false});
-  private onPublishClick = (e: MouseEvent) => this.saveWorkflowEvent.emit({workflow: this.workflowModel, publish: true});
-
   private renderActivity = (activity: Activity) => {
 
     if (!this.activityDisplays)
@@ -222,8 +193,8 @@ export class DesignerComponent {
            data-activity-id={activity.id}
            class="activity noselect panzoom-exclude"
            style={styles}
-           onContextMenu={e => this.onActivityContextMenu(e, activity)}
-           onDblClick={() => this.onActivityDoubleClick(activity.id)}>
+           onContextMenu={e => this.activityContextMenuEvent.emit({activity, mouseEvent: e})}
+           onDblClick={e => this.activityDoubleClickEvent.emit({activity, mouseEvent: e})}>
         {display}
       </div>
     );
@@ -237,20 +208,11 @@ export class DesignerComponent {
         <div class="workflow-canvas-container">
           <div class="workflow-canvas"
                ref={el => this.workflowCanvasElement = el}
-               onContextMenu={this.onWorkflowContextMenu}>
+               onContextMenu={e => this.workflowContextMenuEvent.emit({mouseEvent: e})}>
             {workflow.activities.map(this.renderActivity)}
           </div>
         </div>
-        <elsa-context-menu ref={el => this.workflowContextMenu = el}>
-          <elsa-context-menu-item onClick={this.onAddActivityClick}>Add Activity</elsa-context-menu-item>
-          <elsa-context-menu-item onClick={this.onLoadWorkflowClick}>Load Workflow</elsa-context-menu-item>
-          <elsa-context-menu-item onClick={this.onSaveDraftClick}>Save Draft</elsa-context-menu-item>
-          <elsa-context-menu-item onClick={this.onPublishClick}>Publish</elsa-context-menu-item>
-        </elsa-context-menu>
-        <elsa-context-menu ref={el => this.activityContextMenu = el}>
-          <elsa-context-menu-item onClick={this.onEditActivityClick}>Edit Activity</elsa-context-menu-item>
-          <elsa-context-menu-item onClick={this.onDeleteActivityClick}>Delete Activity</elsa-context-menu-item>
-        </elsa-context-menu>
+
       </Host>
     );
   }
