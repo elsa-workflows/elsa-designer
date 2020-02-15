@@ -1,6 +1,6 @@
 ﻿import {Activity} from "./activity";
 import {Connection} from "./connection";
-import {WorkflowPersistenceBehavior} from "./workflow-persistence-behavior";
+import {WorkflowPersistenceBehavior, WorkflowPersistenceBehaviors} from "./workflow-persistence-behavior";
 
 export interface Workflow {
   id: string
@@ -21,6 +21,10 @@ export interface Workflow {
 
 export const emptyWorkflow: Workflow = {
   id: null,
+  name: 'New Workflow',
+  version: 1,
+  isLatest: true,
+  persistenceBehavior: WorkflowPersistenceBehaviors.Suspended,
   definitionId: null,
   activities: [],
   connections: []

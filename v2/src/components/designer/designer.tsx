@@ -1,4 +1,4 @@
-import {Component, Event, Prop, Element, h, Host, Watch, State, Method, EventEmitter} from '@stencil/core';
+import {Component, Event, Prop, Element, h, Host, Method, EventEmitter} from '@stencil/core';
 import {jsPlumbInstance} from "jsplumb";
 import {Activity, ActivityDefinition, emptyWorkflow, Workflow} from "../../models";
 import {
@@ -33,18 +33,11 @@ export class DesignerComponent {
 
   @Prop() container: Container;
   @Prop() activityDefinitions: Array<ActivityDefinition> = [];
-  @Prop() workflow: Workflow | string;
-
-  @State() private workflowModel: Workflow = emptyWorkflow;
+  @Prop({mutable: true}) workflow: Workflow = {...emptyWorkflow};
 
   @Event({eventName: 'workflow-contextmenu'}) workflowContextMenuEvent: EventEmitter<WorkflowArgs>;
   @Event({eventName: 'activity-contextmenu'}) activityContextMenuEvent: EventEmitter<ActivityArgs>;
   @Event({eventName: 'activity-doubleclick'}) activityDoubleClickEvent: EventEmitter<ActivityArgs>;
-
-  @Watch('workflow')
-  workflowHandler(newValue: Workflow | string) {
-    this.workflowModel = this.parseWorkflow(newValue);
-  }
 
   @Method()
   async registerService(action: (container: Container) => void): Promise<void> {
@@ -53,35 +46,35 @@ export class DesignerComponent {
 
   @Method()
   async getWorkflow(): Promise<Workflow> {
-    return {...this.workflowModel};
+    return {...this.workflow};
   }
 
   @Method()
   async getActivity(id: string): Promise<Activity> {
-    const activity = this.workflowModel.activities.find(x => x.id === id);
+    const activity = this.workflow.activities.find(x => x.id === id);
     return {...activity};
   }
 
   @Method()
   async addActivity(activity: Activity) {
-    const activities = [...this.workflowModel.activities, activity];
-    this.workflowModel = {...this.workflowModel, activities};
+    const activities = [...this.workflow.activities, activity];
+    this.workflow = {...this.workflow, activities};
   }
 
   @Method()
   async deleteActivity(id: string): Promise<void> {
-    const activities = this.workflowModel.activities.filter(x => x.id !== id);
-    this.workflowModel = {...this.workflowModel, activities: activities};
+    const activities = this.workflow.activities.filter(x => x.id !== id);
+    this.workflow = {...this.workflow, activities: activities};
   };
 
   @Method()
   async updateActivity(activity: Activity) {
-    const activities = [...this.workflowModel.activities];
+    const activities = [...this.workflow.activities];
     const index = activities.findIndex(x => x.id == activity.id);
 
     activities[index] = {...activity};
 
-    this.workflowModel = {...this.workflowModel, activities};
+    this.workflow = {...this.workflow, activities};
   }
 
   @Method()
@@ -92,7 +85,6 @@ export class DesignerComponent {
   }
 
   componentWillLoad() {
-    this.workflowModel = this.parseWorkflow(this.workflow) || {...emptyWorkflow};
     this.displayManager = this.container.get<ActivityDisplayManager>(ActivityDisplayManager);
   }
 
@@ -113,8 +105,7 @@ export class DesignerComponent {
     this.setupJsPlumb();
   }
 
-  private parseWorkflow = (value: Workflow | string): Workflow => !!value ? value instanceof String ? JSON.parse(value as string) : value as Workflow : null;
-  private workflowOrDefault = () => this.workflowModel || emptyWorkflow;
+  private workflowOrDefault = () => this.workflow || {...emptyWorkflow};
 
   private setupJsPlumb = () => {
     let jsPlumb = this.jsPlumb;
@@ -128,7 +119,7 @@ export class DesignerComponent {
     jsPlumb.deleteEveryEndpoint();
     jsPlumb.deleteEveryConnection();
 
-    displayWorkflow(jsPlumb, this.workflowCanvasElement, this.workflowModel, this.activityDefinitions);
+    displayWorkflow(jsPlumb, this.workflowCanvasElement, this.workflow, this.activityDefinitions);
 
     jsPlumb.bind('connection', this.connectionCreated);
     jsPlumb.bind('connectionDetached', this.connectionDetached);

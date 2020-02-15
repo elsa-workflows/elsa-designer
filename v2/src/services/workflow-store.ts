@@ -81,7 +81,7 @@ export class WorkflowStore {
     const url = this.config.serverUrl;
     const query = `
       mutation saveWorkflowDefinition(
-        $id: String
+        $id: ID
         $saveAction: WorkflowSaveAction!
         $workflowInput: WorkflowInput!
       ) {
@@ -130,6 +130,18 @@ export class WorkflowStore {
     return this.readWorkflowDefinition(graph.saveWorkflowDefinition);
   };
 
+  deleteDefinition = async (id: string): Promise<void> => {
+    const url = this.config.serverUrl;
+    const query = `
+      mutation deleteWorkflowDefinition($id: ID!) {
+        deleteWorkflowDefinition(id: $id)
+      }
+    `;
+
+    const variables = {id};
+    await request(url, query, variables);
+  };
+
   private readWorkflowDefinition = (model: any): Workflow => {
     const workflow: Workflow = {...model};
 
@@ -147,6 +159,5 @@ export class WorkflowStore {
     }
 
     return newState;
-  }
-
+  };
 }

@@ -1,17 +1,19 @@
 import {h, FunctionalComponent} from '@stencil/core';
+import {Hint} from "../hint/hint";
 
 interface Props {
-  htmlId: string;
-  label: string;
+  htmlId?: string;
+  label?: string;
   hint?: string;
 }
 
-const renderHint = (hint?: string) => !!hint ? <small class="form-text text-muted">{hint}</small> : null;
+const renderLabel = (props: Props) => !!props && !!props.label ? <label htmlFor={props.htmlId}>{props.label}</label> : null;
+const renderHint = (props: Props) => !!props && !!props.hint ? <Hint text={props.hint}/> : null;
 
-export const FormGroup: FunctionalComponent<Props> = ({htmlId, label, hint}, children) => (
+export const FormGroup: FunctionalComponent<Props> = (props: Props, children) => (
   <div class="form-group">
-    <label htmlFor={htmlId}>{label}</label>
+    {renderLabel(props)}
     {children}
-    {renderHint(hint)}
+    {renderHint(props)}
   </div>
 );

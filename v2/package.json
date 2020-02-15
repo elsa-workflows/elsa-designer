@@ -1,7 +1,7 @@
 {
   "name": "elsa-workflows",
   "version": "2.0.0",
-  "description": "Stencil Component Starter",
+  "description": "Elsa Designer is a standalone client-side HTML5 web component that allows you to visually design Elsa workflows that are stored in Elsa Workflow servers",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "es2015": "dist/esm/index.mjs",

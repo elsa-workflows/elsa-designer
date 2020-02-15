@@ -72,7 +72,6 @@ export class WorkflowPicker {
                   <tr>
                     <th scope="col">Name</th>
                     <th scope="col">Description</th>
-                    <th scope="col">Instances</th>
                     <th scope="col">Latest Version</th>
                     <th scope="col">Published Version</th>
                     <th scope="col">Enabled</th>
@@ -100,6 +99,7 @@ export class WorkflowPicker {
     const name = !!latest.name && latest.name.trim().length > 0 ? latest.name : '[Untitled]';
     const description = latest.description;
     const latestVersion = latest.version;
+    const enabledStateIcon = latest.isDisabled ? 'fas fa-times' : 'fas fa-check';
 
     return (
       <tr>
@@ -111,20 +111,10 @@ export class WorkflowPicker {
           </div>
         </th>
         <td>{description}</td>
-        <td>
-          <ul class="list-unstyled">
-            <li>
-              <i class="bg-info"/>
-              <a>1 Executing</a>
-            </li>
-          </ul>
-        </td>
         <td>{latestVersion}</td>
         <td>{publishedVersion}</td>
-        <td>{this.renderEnabledIcon(latest)}</td>
+        <td><span class={enabledStateIcon}/></td>
       </tr>
     )
   };
-
-  private renderEnabledIcon = (latest: WorkflowDefinitionSummary) => latest.isDisabled ? null : <span class="fas fa-check"/>
 }

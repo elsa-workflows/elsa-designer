@@ -19,7 +19,7 @@ export class ExpressionDriver extends FieldDriverBase {
     const options = property.options;
     const baseTypeName = 'LiteralExpression';
     const returnType = options.returnType;
-    const typeName = returnType === 'Object' ? baseTypeName : `${baseTypeName}[${returnType}]`;
+    const typeName = `${baseTypeName}[${returnType}]`;
     const value: Expression = context.value || { type: 'Literal', typeName, expression: '' };
     const expression = value.expression;
     const multiline: boolean = (property.options || {}).multiline || false;
@@ -44,7 +44,7 @@ export class ExpressionDriver extends FieldDriverBase {
     const type = formData.get(typeFieldName).toString();
     const baseTypeName = formData.get(typeNameFieldName).toString();
     const returnType = options.returnType;
-    const typeName = returnType === 'Object' ? baseTypeName : `${baseTypeName}[${returnType}]`;
+    const typeName = `${baseTypeName}[${returnType}]`;
 
     state[property.name] = {
       type: type,

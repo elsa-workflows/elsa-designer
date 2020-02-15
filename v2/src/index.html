@@ -11,63 +11,10 @@
   <script type="module" src="/build/elsa-workflows.esm.js"></script>
   <script nomodule src="/build/elsa-workflows.js"></script>
 
-  <style type="text/css">
-    html {
-      font-size: 14px;
-    }
-
-    .nav-item {
-      margin-left: 1em;
-    }
-
-    #header h5 {
-      color: white;
-    }
-
-  </style>
-
 </head>
 <body>
 
-<div id="header"
-     class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-dark border-bottom shadow-sm">
-  <h5 class="my-0 mr-md-auto font-weight-normal">Workflow Designer</h5>
-
-  <ul class="nav">
-    <li class="nav-item">
-      <button class="btn btn-primary" onclick="addActivity()">Add Activity</button>
-    </li>
-    <li class="nav-item">
-
-    </li>
-    <li class="nav-item">
-      <button class="btn btn-secondary" onclick="importWorkflow()">Import</button>
-    </li>
-    <li class="nav-item">
-      <button class="btn btn-secondary" onclick="createNewWorkflow()">New Workflow</button>
-    </li>
-  </ul>
-</div>
-
 <elsa-designer-host id="designer-host" server-url="http://localhost:11000/graphql"></elsa-designer-host>
 
-<script type="text/javascript">
-
-  const designerHost = document.getElementById('designer-host');
-
-  function addActivity() {
-    designerHost.showActivityPicker();
-  }
-
-  function createNewWorkflow() {
-    if (confirm('Are you sure you want to discard current changes?'))
-      designerHost.newWorkflow();
-  }
-
-  function importWorkflow() {
-    designerHost.import();
-  }
-
-</script>
 </body>
 </html>

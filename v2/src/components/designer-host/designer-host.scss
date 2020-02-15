@@ -1,6 +1,18 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  width: 100%;
   position: relative;
+}
+
+html {
+  font-size: 14px;
+}
+
+.nav-item {
+  margin-left: 1em;
+}
+
+#header h5 {
+  color: white;
 }
