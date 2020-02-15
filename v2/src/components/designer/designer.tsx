@@ -1,6 +1,6 @@
 import {Component, Event, Prop, Element, h, Host, Method, EventEmitter} from '@stencil/core';
 import {jsPlumbInstance} from "jsplumb";
-import {Activity, ActivityDefinition, emptyWorkflow, Workflow} from "../../models";
+import {Activity, ActivityDefinition, ActivityDescriptor, emptyWorkflow, Workflow} from "../../models";
 import {
   createActivityElementId,
   createJsPlumb,
@@ -11,6 +11,7 @@ import {PanzoomObject} from "@panzoom/panzoom/dist/src/types";
 import {Container} from "inversify";
 import {ActivityDisplayManager, Node} from "../../services";
 import {ActivityArgs, WorkflowArgs} from "./models";
+import {CssClassMap} from "../../utils/css-class-map";
 
 interface ActivityDisplayMap {
   [id: string]: Node;
@@ -32,8 +33,9 @@ export class DesignerComponent {
   @Element() private element: HTMLElsaDesignerElement;
 
   @Prop() container: Container;
-  @Prop() activityDefinitions: Array<ActivityDefinition> = [];
+  @Prop() activityDescriptors: Array<ActivityDescriptor> = [];
   @Prop({mutable: true}) workflow: Workflow = {...emptyWorkflow};
+  @Prop() readonly: boolean;
 
   @Event({eventName: 'workflow-contextmenu'}) workflowContextMenuEvent: EventEmitter<WorkflowArgs>;
   @Event({eventName: 'activity-contextmenu'}) activityContextMenuEvent: EventEmitter<ActivityArgs>;
@@ -119,7 +121,7 @@ export class DesignerComponent {
     jsPlumb.deleteEveryEndpoint();
     jsPlumb.deleteEveryConnection();
 
-    displayWorkflow(jsPlumb, this.workflowCanvasElement, this.workflow, this.activityDefinitions);
+    displayWorkflow(jsPlumb, this.workflowCanvasElement, this.workflow, this.activityDescriptors);
 
     jsPlumb.bind('connection', this.connectionCreated);
     jsPlumb.bind('connectionDetached', this.connectionDetached);
@@ -165,9 +167,16 @@ export class DesignerComponent {
     if (!this.activityDisplays)
       return;
 
-    const activityDefinition = this.activityDefinitions.find(x => x.type === activity.type);
+    const activityDefinition = this.activityDescriptors.find(x => x.type === activity.type);
     const displayName = activity.displayName || activityDefinition.displayName;
     const icon = activityDefinition.icon || 'fas fa-cog';
+    const statusClass = activity.executed ? 'activity-executed' : null;
+    const classes: CssClassMap = {
+      ['activity noselect panzoom-exclude']: true,
+      ['activity-executed']: !!activity.executed,
+      ['activity-blocking']: !!activity.blocking,
+      ['activity-faulted']: !!activity.faulted
+    };
 
     const styles = {
       left: `${activity.left}px`,
@@ -182,7 +191,7 @@ export class DesignerComponent {
     return (
       <div key={activity.id} id={createActivityElementId(activity.id)}
            data-activity-id={activity.id}
-           class="activity noselect panzoom-exclude"
+           class={classes}
            style={styles}
            onContextMenu={e => this.activityContextMenuEvent.emit({activity, mouseEvent: e})}
            onDblClick={e => this.activityDoubleClickEvent.emit({activity, mouseEvent: e})}>

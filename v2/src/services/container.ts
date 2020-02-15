@@ -1,7 +1,5 @@
 ﻿import {Container} from "inversify";
 import {ServerConfiguration} from "./server-configuration";
-import {ActivityDefinitionStore} from "./activity-definition-store";
-import {WorkflowStore} from "./workflow-store";
 import {ActivityDisplayManager} from "./activity-display-manager";
 import {FieldDisplayManager} from "./field-display-manager";
 import {CustomDriverStore} from "./custom-driver-store";
@@ -11,6 +9,10 @@ import {ExpressionDriver, ListDriver, SelectDriver, TextDriver} from "../drivers
 import {ActivityDriver} from "./activity-driver";
 import {Symbols} from "./symbols";
 import {FieldDriver} from "./field-driver";
+import {WorkflowInstanceStore} from "./workflow-instance-store";
+import {WorkflowFactory} from "./workflow-factory";
+import {WorkflowDefinitionStore} from "./workflow-definition-store";
+import {ActivityDescriptorStore} from "./activity-descriptor-store";
 
 export const createContainer = (serverUrl: string): Container => {
   const container = new Container();
@@ -18,8 +20,10 @@ export const createContainer = (serverUrl: string): Container => {
 
   container.bind<Container>(Container).toConstantValue(container);
   container.bind<ServerConfiguration>(ServerConfiguration).toConstantValue(configuration);
-  container.bind<ActivityDefinitionStore>(ActivityDefinitionStore).toSelf().inSingletonScope();
-  container.bind<WorkflowStore>(WorkflowStore).toSelf().inSingletonScope();
+  container.bind<ActivityDescriptorStore>(ActivityDescriptorStore).toSelf().inSingletonScope();
+  container.bind<WorkflowDefinitionStore>(WorkflowDefinitionStore).toSelf().inSingletonScope();
+  container.bind<WorkflowInstanceStore>(WorkflowInstanceStore).toSelf().inSingletonScope();
+  container.bind<WorkflowFactory>(WorkflowFactory).toSelf().inSingletonScope();
   container.bind<ActivityDisplayManager>(ActivityDisplayManager).toSelf().inSingletonScope();
   container.bind<FieldDisplayManager>(FieldDisplayManager).toSelf().inSingletonScope();
   container.bind<CustomDriverStore>(CustomDriverStore).toSelf().inSingletonScope();

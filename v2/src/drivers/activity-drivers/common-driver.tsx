@@ -16,7 +16,7 @@ export class CommonDriver extends ActivityDriverBase {
   displayEditor = async (context: ActivityDisplayContext): Promise<Node> => {
 
     const activity = context.activity;
-    const defaultDisplayName = context.activityDefinition.displayName;
+    const defaultDisplayName = context.activityDescriptor.displayName;
     const displayName = activity.displayName === defaultDisplayName ? '' : activity.displayName;
 
     return (

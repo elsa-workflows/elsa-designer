@@ -1,11 +1,11 @@
-﻿import {ActivityPropertyDescriptor} from "./activity-property-descriptor";
+﻿import {ActivityState} from "../services";
 
 export interface ActivityDefinition {
-  type: string
-  displayName: string
-  description: string
-  category: string
-  icon?: string
-  properties?: Array<ActivityPropertyDescriptor>
-  outcomes: Array<string>
+    id: string
+    type: string
+    name?: string
+    displayName?: string
+    state: ActivityState
+    left: number;
+    top: number
 }

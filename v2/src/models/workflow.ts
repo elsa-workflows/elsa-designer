@@ -29,3 +29,4 @@ export const emptyWorkflow: Workflow = {
   activities: [],
   connections: []
 };
+

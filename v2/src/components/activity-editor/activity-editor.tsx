@@ -1,7 +1,7 @@
 import {Component, Element, Event, EventEmitter, h, Prop} from '@stencil/core';
-import {Activity, ActivityDefinition} from "../../models";
+import {Activity, ActivityDescriptor} from "../../models";
 import {Container} from "inversify";
-import {ActivityDefinitionStore, ActivityDisplayManager} from "../../services";
+import {ActivityDescriptorStore, ActivityDisplayManager} from "../../services";
 
 export interface ActivityUpdatedArgs {
   activity: Activity
@@ -9,7 +9,6 @@ export interface ActivityUpdatedArgs {
 
 @Component({
   tag: 'elsa-activity-editor',
-  styleUrl: 'activity-editor.css',
   scoped: true
 })
 export class ActivityEditor {
@@ -26,7 +25,7 @@ export class ActivityEditor {
   @Event({eventName: 'activity-updated'}) activityUpdated: EventEmitter<ActivityUpdatedArgs>;
 
   private activityDisplays: Array<string>;
-  private activityDefinition: ActivityDefinition;
+  private activityDescriptor: ActivityDescriptor;
 
   componentDidRender() {
     if (!!this.modal) {
@@ -42,8 +41,8 @@ export class ActivityEditor {
       return;
 
     const displayManager = this.container.get<ActivityDisplayManager>(ActivityDisplayManager);
-    const activityDefinitionStore = this.container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
-    this.activityDefinition = await activityDefinitionStore.get(activity.type);
+    const activityDefinitionStore = this.container.get<ActivityDescriptorStore>(ActivityDescriptorStore);
+    this.activityDescriptor = await activityDefinitionStore.get(activity.type);
     this.activityDisplays = await displayManager.displayEditor(this.activity);
   }
 
@@ -64,7 +63,7 @@ export class ActivityEditor {
 
   render() {
     const activity = this.activity;
-    const activityDefinition = this.activityDefinition;
+    const activityDefinition = this.activityDescriptor;
     const activityDefinitionDisplayName = !!activityDefinition ? activityDefinition.displayName : null;
     const activityId = !!activity ? activity.id : null;
     const activityDisplays = this.activityDisplays || [];

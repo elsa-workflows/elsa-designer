@@ -2,6 +2,7 @@
 import {inject, injectable} from "inversify";
 import request from "graphql-request";
 import {ServerConfiguration} from "./server-configuration";
+import {WorkflowDefinition} from "../models/workflow-definition";
 
 const workflowDetailFragment = `
   id
@@ -34,7 +35,7 @@ const workflowDetailFragment = `
 `;
 
 @injectable()
-export class WorkflowStore {
+export class WorkflowDefinitionStore {
 
   constructor(@inject(ServerConfiguration) private config: ServerConfiguration) {
   }
@@ -62,22 +63,22 @@ export class WorkflowStore {
     return graph.workflowDefinitions;
   };
 
-  get = async (id: string): Promise<Workflow> => {
+  get = async (id?: string, definitionId?: string, version?: VersionOptions): Promise<WorkflowDefinition> => {
     const url = this.config.serverUrl;
     const query = `
-      query workflowDefinition($id: ID!) {
-        workflowDefinition(id: $id) {
+      query workflowDefinition($id: ID, $definitionId: ID, $version: VersionOptionsInput) {
+        workflowDefinition(id: $id, definitionId: $definitionId, version: $version) {
           ${workflowDetailFragment}
         }
       }
     `;
 
-    const variables = {id};
+    const variables = {id, definitionId, version};
     const graph = await request(url, query, variables);
     return this.readWorkflowDefinition(graph.workflowDefinition);
   };
 
-  save = async (workflow: Workflow, publish: boolean): Promise<Workflow> => {
+  save = async (workflow: Workflow, publish: boolean): Promise<WorkflowDefinition> => {
     const url = this.config.serverUrl;
     const query = `
       mutation saveWorkflowDefinition(
@@ -142,8 +143,8 @@ export class WorkflowStore {
     await request(url, query, variables);
   };
 
-  private readWorkflowDefinition = (model: any): Workflow => {
-    const workflow: Workflow = {...model};
+  private readWorkflowDefinition = (model: any): WorkflowDefinition => {
+    const workflow: WorkflowDefinition = {...model};
 
     workflow.activities = model.activities.map(x => ({...x, state: this.readState(x.state)}));
 

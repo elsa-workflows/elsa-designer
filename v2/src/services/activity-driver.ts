@@ -1,9 +1,9 @@
-﻿import {Activity, ActivityDefinition} from "../models";
+﻿import {Activity, ActivityDefinition, ActivityDescriptor} from "../models";
 import {ActivityState, Node} from "./types";
 import {injectable} from "inversify";
 
 export interface ActivityDisplayContext {
-  activityDefinition: ActivityDefinition
+  activityDescriptor: ActivityDescriptor
   activity: Activity
   state: ActivityState
 }

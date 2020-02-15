@@ -8,4 +8,7 @@ export interface Activity {
   state: ActivityState
   left: number;
   top: number
+  executed?: boolean;
+  blocking?: boolean;
+  faulted?: boolean;
 }

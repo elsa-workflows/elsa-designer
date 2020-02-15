@@ -1,8 +1,8 @@
-﻿import {Activity, ActivityDefinition} from "../../models";
+﻿import {Activity, ActivityDescriptor} from "../../models";
 
 const isExpression = (value: string) => value.indexOf('=>') >= 0;
 
-export const evaluateOutcome = (outcome: string, activity: Activity, activityDefinition: ActivityDefinition): Array<string> => {
+export const evaluateOutcome = (outcome: string, activity: Activity, activityDescriptor: ActivityDescriptor): Array<string> => {
   if(!isExpression(outcome))
     return [outcome];
 
@@ -11,7 +11,7 @@ export const evaluateOutcome = (outcome: string, activity: Activity, activityDef
 
   if (value instanceof Function) {
     try {
-      results = value({ activity, activityDefinition, state: activity.state });
+      results = value({ activity, activityDescriptor: activityDescriptor, state: activity.state });
     } catch (e) {
       console.warn(e);
     }

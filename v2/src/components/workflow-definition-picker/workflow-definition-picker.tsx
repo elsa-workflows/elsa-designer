@@ -1,21 +1,20 @@
 import {Component, Host, h, Element, Prop, State, Event, EventEmitter} from '@stencil/core';
 import {Container} from "inversify";
 import {WorkflowDefinitionSummary} from "../../models";
-import {WorkflowStore} from "../../services";
+import {WorkflowDefinitionStore} from "../../services";
 
-export interface WorkflowDefinitionVersionSelectedArgs {
+export interface WorkflowDefinitionSelectedArgs {
   id: string
 }
 
 @Component({
-  tag: 'elsa-workflow-picker',
-  styleUrl: 'workflow-picker.css',
+  tag: 'elsa-workflow-definition-picker',
   scoped: true
 })
-export class WorkflowPicker {
+export class WorkflowDefinitionPicker {
 
   private modal: HTMLBsModalElement;
-  private workflowStore: WorkflowStore;
+  private workflowDefinitionStore: WorkflowDefinitionStore;
 
   @Element() el: HTMLElement;
 
@@ -23,12 +22,12 @@ export class WorkflowPicker {
   @Prop({attribute: 'show-modal', reflect: true}) showModal: boolean;
 
   @Event({eventName: 'hidden'}) hiddenEvent: EventEmitter;
-  @Event({eventName: 'workflow-definition-version-selected'}) workflowSelectedEvent: EventEmitter<WorkflowDefinitionVersionSelectedArgs>;
+  @Event({eventName: 'workflow-definition-version-selected'}) workflowSelectedEvent: EventEmitter<WorkflowDefinitionSelectedArgs>;
 
   @State() private workflowDefinitions: Array<WorkflowDefinitionSummary> = [];
 
   componentDidLoad() {
-    this.workflowStore = this.container.get<WorkflowStore>(WorkflowStore);
+    this.workflowDefinitionStore = this.container.get<WorkflowDefinitionStore>(WorkflowDefinitionStore);
   }
 
   componentDidRender() {
@@ -41,7 +40,7 @@ export class WorkflowPicker {
   }
 
   private onShow = async () => {
-    this.workflowDefinitions = await this.workflowStore.list({latestOrPublished: true});
+    this.workflowDefinitions = await this.workflowDefinitionStore.list({latestOrPublished: true});
   };
 
   private selectWorkflow = (e: MouseEvent, id: string) => {

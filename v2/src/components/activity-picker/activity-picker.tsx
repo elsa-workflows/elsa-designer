@@ -1,11 +1,10 @@
 import {Component, Element, Prop, State, Method, Event, EventEmitter, Host, h} from '@stencil/core';
-import {ActivityDefinition} from "../../models";
+import {ActivityDescriptor} from "../../models";
 import {Container} from "inversify";
 import {ActivityDriver} from "../../services";
 
 @Component({
   tag: 'elsa-activity-picker',
-  styleUrl: 'activity-picker.css',
   scoped: true
 })
 export class ActivityPicker {
@@ -15,7 +14,7 @@ export class ActivityPicker {
   @Element() el: HTMLElement;
 
   @Prop() container: Container;
-  @Prop() activityDefinitions: Array<ActivityDefinition> = [];
+  @Prop() activityDescriptors: Array<ActivityDescriptor> = [];
   @Prop({attribute: 'show-modal', reflect: true}) showModal: boolean;
 
   @State() filterText: string = '';
@@ -40,7 +39,7 @@ export class ActivityPicker {
 
   private selectCategory = (category: string) => this.selectedCategory = category;
 
-  private onActivitySelectClick = (e: Event, activity: ActivityDefinition) => {
+  private onActivitySelectClick = (e: Event, activity: ActivityDescriptor) => {
     e.preventDefault();
     this.showModal = false;
     this.activitySelectedEvent.emit(activity);
@@ -51,7 +50,7 @@ export class ActivityPicker {
     this.selectCategory(category);
   };
 
-  private renderActivity = (activity: ActivityDefinition) => {
+  private renderActivity = (activity: ActivityDescriptor) => {
     const icon = activity.icon || 'fas fa-cog';
     const iconClass = `${icon} mr-1`;
     return (
@@ -71,17 +70,16 @@ export class ActivityPicker {
   };
 
   render() {
-    const activities = this.activityDefinitions;
+    let activities = this.activityDescriptors;
     const categories: string[] = [null, ...new Set(activities.map(x => x.category))];
     const filterText = (this.filterText || '').toLowerCase();
     const selectedCategory = this.selectedCategory;
-    let definitions = activities;
 
     if (!!selectedCategory)
-      definitions = definitions.filter(x => x.category.toLowerCase() === selectedCategory.toLowerCase());
+      activities = activities.filter(x => x.category.toLowerCase() === selectedCategory.toLowerCase());
 
     if (!!filterText)
-      definitions = definitions.filter(x => x.displayName.toLowerCase().includes(filterText) || x.category.toLowerCase().includes(filterText));
+      activities = activities.filter(x => x.displayName.toLowerCase().includes(filterText) || x.category.toLowerCase().includes(filterText));
 
     return (
       <div>
@@ -116,7 +114,7 @@ export class ActivityPicker {
                   </div>
                   <div class="col-sm-9 col-md-9 col-lg-10">
                     <div class="card-columns tab-content">
-                      {definitions.map(this.renderActivity)}
+                      {activities.map(this.renderActivity)}
                     </div>
                   </div>
                 </div>

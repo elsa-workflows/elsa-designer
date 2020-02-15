@@ -1,21 +1,21 @@
-﻿import {ActivityDefinition} from "../models";
+﻿import {ActivityDescriptor} from "../models";
 import {inject, injectable} from "inversify";
 import {ServerConfiguration} from "./server-configuration";
 import request from "graphql-request";
 
 @injectable()
-export class ActivityDefinitionStore {
+export class ActivityDescriptorStore {
 
-  private items: Array<ActivityDefinition> = [];
+  private items: Array<ActivityDescriptor> = [];
 
 
   constructor(@inject(ServerConfiguration) private config: ServerConfiguration) {
   }
 
-  initialize = (items?: Array<ActivityDefinition>) => this.items = !!items ? [...this.items] : [];
-  addRange = (items: Array<ActivityDefinition>) => this.items = [...this.items, ...items];
+  initialize = (items?: Array<ActivityDescriptor>) => this.items = !!items ? [...this.items] : [];
+  addRange = (items: Array<ActivityDescriptor>) => this.items = [...this.items, ...items];
 
-  list = async (): Promise<Array<ActivityDefinition>> => {
+  list = async (): Promise<Array<ActivityDescriptor>> => {
     const url = this.config.serverUrl;
     const query = `{
         activityDescriptors {
@@ -31,10 +31,10 @@ export class ActivityDefinitionStore {
     return graph.activityDescriptors;
   };
 
-  get = async (type: string): Promise<ActivityDefinition> => {
+  get = async (type: string): Promise<ActivityDescriptor> => {
     const url = this.config.serverUrl;
     const query = `
-    query getActivityDescriptor($typeName: String!) {
+    query getActivityDescriptor($typeName: ID!) {
         activityDescriptor(typeName: $typeName) {
           type
           category

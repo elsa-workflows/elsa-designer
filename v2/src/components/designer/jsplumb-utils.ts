@@ -1,5 +1,5 @@
 ﻿import {jsPlumb, jsPlumbInstance} from 'jsplumb';
-import {ActivityDefinition, Workflow} from "../../models";
+import {ActivityDefinition, ActivityDescriptor, Workflow} from "../../models";
 import {evaluateOutcome} from "./outcome-evaluator";
 
 const jsPlumbKey = {};
@@ -51,12 +51,12 @@ export function createJsPlumb(element) {
   return p;
 }
 
-export function displayWorkflow(jsPlumb: jsPlumbInstance, workflowCanvasElement: HTMLElement, workflow: Workflow, activityDefinitions: Array<ActivityDefinition>) {
+export function displayWorkflow(jsPlumb: jsPlumbInstance, workflowCanvasElement: HTMLElement, workflow: Workflow, activityDescriptors: Array<ActivityDescriptor>) {
 
   const setupActivities = () => {
 
     const getActivity = id => workflow.activities.find(x => x.id === id);
-    const getActivityDefinition = (type):ActivityDefinition => activityDefinitions.find(x => x.type == type);
+    const getActivityDescriptor = (type):ActivityDescriptor => activityDescriptors.find(x => x.type == type);
 
     const makeTarget = (activityElement) => {
       jsPlumb.makeTarget(activityElement, {
@@ -69,16 +69,16 @@ export function displayWorkflow(jsPlumb: jsPlumbInstance, workflowCanvasElement:
     const createOutcomeEndpoints = (activityElement: HTMLElement) => {
       const activityId = activityElement.getAttribute('data-activity-id');
       const activity = getActivity(activityId);
-      const activityDefinition = getActivityDefinition(activity.type);
+      const activityDescriptor = getActivityDescriptor(activity.type);
 
-      if(!activityDefinition)
+      if(!activityDescriptor)
       {
         console.warn(`Could not find activity of type ${activity.type}`);
         return;
       }
 
-      const outcomes: Array<string> = activityDefinition.outcomes || [];
-      const evaluatedOutcomes = outcomes.map(x => evaluateOutcome(x, activity, activityDefinition)).reduce((a, b) => a.concat(b));
+      const outcomes: Array<string> = activityDescriptor.outcomes || [];
+      const evaluatedOutcomes = outcomes.map(x => evaluateOutcome(x, activity, activityDescriptor)).reduce((a, b) => a.concat(b));
 
       for (const outcome of evaluatedOutcomes) {
         const sourceEndpointOptions: any = createSourceEndpoint(activity.id, outcome);

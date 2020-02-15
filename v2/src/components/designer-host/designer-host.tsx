@@ -1,19 +1,21 @@
 import 'bs-components';
 import '../../utils/array-utils';
-import {Component, h, Host, Listen, Method, Prop, State} from '@stencil/core';
-import {Activity, ActivityDefinition, emptyWorkflow, Workflow} from '../../models';
+import {Component, h, Host, Listen, Method, Prop, State, Watch} from '@stencil/core';
+import {Activity, ActivityDefinition, ActivityDescriptor, emptyWorkflow, VersionOptions, Workflow, WorkflowDefinition, WorkflowInstance, WorkflowInstanceStatusSummary, WorkflowStates, WorkflowStatus} from '../../models';
 import uuid from 'uuid-browser/v4';
 import {Container} from "inversify";
-import {ActivityDefinitionStore, ActivityDriver, CustomDriverStore, FieldDriver, Symbols, WorkflowStore} from '../../services';
+import {ActivityDescriptorStore, ActivityDriver, CustomDriverStore, FieldDriver, Symbols, WorkflowInstanceStore, WorkflowDefinitionStore} from '../../services';
 import {ActivityUpdatedArgs} from '../activity-editor/activity-editor';
 import {createContainer} from "../../services/container";
-import {WorkflowDefinitionVersionSelectedArgs} from "../workflow-picker/workflow-picker";
+import {WorkflowDefinitionSelectedArgs} from "../workflow-definition-picker/workflow-definition-picker";
 import {Notification, NotificationType} from "../notifications/models";
 import {ActivityArgs, WorkflowArgs} from "../designer/models";
 import {ContextMenuItem} from "../context-menu/context-menu-item";
 import {ContextMenuDivider} from "../context-menu/context-menu-divider";
 import {WorkflowUpdatedArgs} from "../workflow-properties-editor/workflow-properties-editor";
 import {Hint} from "../hint/hint";
+import {WorkflowInstanceSelectedArgs} from "../workflow-instance-picker/workflow-instance-picker";
+import {WorkflowFactory} from "../../services/workflow-factory";
 
 @Component({
   tag: 'elsa-designer-host',
@@ -24,8 +26,10 @@ export class DesignerHostComponent {
 
   private designer: HTMLElsaDesignerElement;
   private lastClickedLocation: { x: number, y: number } = {x: 250, y: 250};
-  private workflowStore: WorkflowStore;
-  private activityDefinitionStore: ActivityDefinitionStore;
+  private workflowDefinitionStore: WorkflowDefinitionStore;
+  private workflowInstanceStore: WorkflowInstanceStore;
+  private activityDescriptorStore: ActivityDescriptorStore;
+  private workflowFactory: WorkflowFactory
   private customDriverStore: CustomDriverStore;
   private workflowContextMenu: HTMLElsaContextMenuElement;
   private activityContextMenu: HTMLElsaContextMenuElement;
@@ -33,15 +37,29 @@ export class DesignerHostComponent {
   @Prop({attribute: 'server-url'}) serverUrl: string;
 
   @State() private container: Container;
-  @State() private activityDefinitions: Array<ActivityDefinition>;
+  @State() private activityDescriptors: Array<ActivityDescriptor>;
+  @State() private workflowDefinition: WorkflowDefinition;
   @State() private workflow: Workflow = {...emptyWorkflow};
+  @State() private workflowInstance: WorkflowInstance;
+  @State() private workflowInstanceDefinition: WorkflowDefinition;
+  @State() private workflowInstanceWorkflow: Workflow;
+  @State() private statusSummaries: Array<WorkflowInstanceStatusSummary> = [];
   @State() private activityPickerIsVisible: boolean;
   @State() private showActivityEditor: boolean;
   @State() private selectedActivity?: Activity;
   @State() private showWorkflowPicker: boolean;
+  @State() private showWorkflowInstancePicker: boolean;
+  @State() private workflowInstancePickerStatus: WorkflowStatus;
   @State() private showWorkflowProperties: boolean;
   @State() private showDeleteWorkflowConfirmationDialog: boolean;
   @State() private notifications: Array<Notification> = [];
+
+
+  @Watch('workflow')
+  async onWorkflowChanged(newValue: Workflow) {
+    const definitionId = newValue.definitionId;
+    this.statusSummaries = !!definitionId ? await this.workflowInstanceStore.listStatusSummaries(definitionId) : [];
+  }
 
   @Method()
   async configureServices(action: (container: Container) => void): Promise<void> {
@@ -103,18 +121,34 @@ export class DesignerHostComponent {
       displayName: activityDefinition.displayName,
       left: left,
       top: top,
-      state: {}
+      state: {},
+      executed: false
     };
 
     this.showActivityEditor = true;
   }
 
   @Listen('workflow-definition-version-selected')
-  async handleWorkflowSelected(e: CustomEvent<WorkflowDefinitionVersionSelectedArgs>) {
+  async handleWorkflowDefinitionSelected(e: CustomEvent<WorkflowDefinitionSelectedArgs>) {
     const id = e.detail.id;
-    const workflow = await this.workflowStore.get(id);
+    const workflowDefinition = await this.workflowDefinitionStore.get(id);
+    const workflow: Workflow = this.workflowFactory.fromDefinition(workflowDefinition);
 
     this.workflow = {...workflow};
+  }
+
+  @Listen('workflow-instance-selected')
+  async handleWorkflowInstanceSelected(e: CustomEvent<WorkflowInstanceSelectedArgs>) {
+    const id = e.detail.id;
+    const workflowInstance = await this.workflowInstanceStore.get(id);
+    const definitionId = workflowInstance.definitionId;
+    const version: VersionOptions = {version: workflowInstance.version};
+    const workflowDefinition = await this.workflowDefinitionStore.get(null, definitionId, version);
+    const workflow = this.workflowFactory.fromInstance(workflowInstance, workflowDefinition);
+
+    this.workflowInstance = workflowInstance;
+    this.workflowInstanceDefinition = workflowDefinition;
+    this.workflowInstanceWorkflow = {...workflow};
   }
 
   async componentWillLoad() {
@@ -122,10 +156,12 @@ export class DesignerHostComponent {
     const container = createContainer(serverUrl);
 
     this.container = container;
-    this.workflowStore = container.get<WorkflowStore>(WorkflowStore);
-    this.activityDefinitionStore = container.get<ActivityDefinitionStore>(ActivityDefinitionStore);
+    this.workflowDefinitionStore = container.get<WorkflowDefinitionStore>(WorkflowDefinitionStore);
+    this.workflowInstanceStore = container.get<WorkflowInstanceStore>(WorkflowInstanceStore);
+    this.activityDescriptorStore = container.get<ActivityDescriptorStore>(ActivityDescriptorStore);
+    this.workflowFactory = container.get<WorkflowFactory>(WorkflowFactory);
     this.customDriverStore = container.get<CustomDriverStore>(CustomDriverStore);
-    this.activityDefinitions = await this.activityDefinitionStore.list();
+    this.activityDescriptors = await this.activityDescriptorStore.list();
   }
 
   private editActivity = async (id: string) => {
@@ -144,8 +180,11 @@ export class DesignerHostComponent {
 
   private saveWorkflow = async (publish: boolean) => {
     let workflow = await this.designer.getWorkflow();
+    let workflowDefinition = this.workflowFactory.toDefinition(workflow);
 
-    workflow = this.workflow = await this.workflowStore.save(workflow, publish);
+    workflowDefinition = await this.workflowDefinitionStore.save(workflow, publish);
+    workflow = this.workflow = this.workflowFactory.fromDefinition(workflowDefinition);
+
     const message = publish ? `Workflow published as version ${workflow.version}` : `Workflow saved as draft version ${workflow.version}`;
     const title = publish ? 'Published' : 'Saved as Draft';
     const notification: Notification = {title, message, type: NotificationType.Success};
@@ -153,28 +192,63 @@ export class DesignerHostComponent {
     this.notifications = [notification];
   };
 
+  private deleteActivity = async (id: string) => await this.designer.deleteActivity(id);
+  private addActivityDriverInternal = (container: Container, constructor: { new(...args: any[]): ActivityDriver }) => container.bind<ActivityDriver>(Symbols.ActivityDriver).to(constructor).inSingletonScope();
+  private addFieldDriverInternal = (container: Container, constructor: { new(...args: any[]): FieldDriver }) => container.bind<FieldDriver>(Symbols.FieldDriver).to(constructor).inSingletonScope();
+
   private onNewWorkflowClick = (e: MouseEvent) => {
     e.preventDefault();
     this.workflow = {...emptyWorkflow};
   };
 
-  private deleteActivity = async (id: string) => await this.designer.deleteActivity(id);
-  private addActivityDriverInternal = (container: Container, constructor: { new(...args: any[]): ActivityDriver }) => container.bind<ActivityDriver>(Symbols.ActivityDriver).to(constructor).inSingletonScope();
-  private addFieldDriverInternal = (container: Container, constructor: { new(...args: any[]): FieldDriver }) => container.bind<FieldDriver>(Symbols.FieldDriver).to(constructor).inSingletonScope();
-  private onEditActivityClick = async () => this.editActivity((await this.activityContextMenu.getContext() as Activity).id);
-  private onDeleteActivityClick = async () => this.deleteActivity((await this.activityContextMenu.getContext() as Activity).id);
-  private onLoadWorkflowClick = () => this.showWorkflowPicker = true;
-  private onSaveDraftClick = () => this.saveWorkflow(false);
-  private onPublishClick = () => this.saveWorkflow(true);
-  private onPropertiesClick = () => this.showWorkflowProperties = true;
+  private onLoadWorkflowClick = (e: MouseEvent) => {
+    e.preventDefault();
+    this.showWorkflowPicker = true;
+  };
 
-  private onDeleteWorkflowClick = () => {
+  private onEditActivityClick = async (e: MouseEvent) => {
+    e.preventDefault();
+    this.editActivity((await this.activityContextMenu.getContext() as Activity).id);
+  };
+
+  private onDeleteActivityClick = async (e: MouseEvent) => {
+    e.preventDefault();
+    this.deleteActivity((await this.activityContextMenu.getContext() as Activity).id);
+  };
+
+  private onSaveDraftClick = (e: MouseEvent) => {
+    e.preventDefault();
+    this.saveWorkflow(false);
+  };
+
+  private onPublishClick = (e: MouseEvent) => {
+    e.preventDefault();
+    this.saveWorkflow(true);
+  };
+
+  private onPropertiesClick = (e: MouseEvent) => {
+    e.preventDefault();
+    this.showWorkflowProperties = true;
+  };
+
+  private onDeleteWorkflowClick = (e: MouseEvent) => {
+    e.preventDefault();
     this.showDeleteWorkflowConfirmationDialog = true;
+  };
+
+  private onShowWorkflowInstancePicker = (e: MouseEvent, status: WorkflowStatus) => {
+    e.preventDefault();
+    this.workflowInstancePickerStatus = status;
+    this.showWorkflowInstancePicker = true;
+  };
+
+  private onCloseWorkflowViewerClick = () => {
+    this.workflowInstanceDefinition = null;
   };
 
   private deleteWorkflow = async () => {
     const workflow = {...this.workflow};
-    await this.workflowStore.deleteDefinition(workflow.definitionId);
+    await this.workflowDefinitionStore.deleteDefinition(workflow.definitionId);
 
     this.showDeleteWorkflowConfirmationDialog = false;
     this.workflow = {...emptyWorkflow};
@@ -188,11 +262,14 @@ export class DesignerHostComponent {
   };
 
   render() {
-    const workflow = this.workflow;
+    return !!this.workflowInstanceDefinition ? this.renderWorkflowViewer() : this.renderWorkflowEditor();
+  }
 
+  private renderWorkflowEditor = () => {
+    const workflow = this.workflow;
     return (
       <Host>
-        <div id="header" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-dark border-bottom shadow-sm">
+        <div id="header" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-dark border-bottom shadow-sm">
           <h5 class="my-3 mr-md-auto mb-sm-3 mb-md-3 font-weight-normal">Workflow Designer</h5>
           <ul class="nav">
             <li class="nav-item">
@@ -201,11 +278,11 @@ export class DesignerHostComponent {
           </ul>
         </div>
         <div class="d-flex flex-column flex-fill">
-          <elsa-designer container={this.container} workflow={workflow} activityDefinitions={this.activityDefinitions} ref={el => this.designer = el}/>
+          <elsa-designer container={this.container} workflow={workflow} activityDescriptors={this.activityDescriptors} ref={el => this.designer = el}/>
           <elsa-notifications notifications={this.notifications}/>
           <elsa-activity-picker
             container={this.container}
-            activityDefinitions={this.activityDefinitions}
+            activityDescriptors={this.activityDescriptors}
             showModal={this.activityPickerIsVisible}
             onHidden={() => this.activityPickerIsVisible = false}
           />
@@ -216,7 +293,8 @@ export class DesignerHostComponent {
             onHidden={() => this.showActivityEditor = false}
           />
           <elsa-workflow-properties-editor workflow={workflow} showModal={this.showWorkflowProperties} onHidden={() => this.showWorkflowProperties = false}/>
-          <elsa-workflow-picker container={this.container} showModal={this.showWorkflowPicker} onHidden={() => this.showWorkflowPicker = false}/>
+          <elsa-workflow-definition-picker container={this.container} showModal={this.showWorkflowPicker} onHidden={() => this.showWorkflowPicker = false}/>
+          <elsa-workflow-instance-picker container={this.container} workflow={workflow} status={this.workflowInstancePickerStatus} showModal={this.showWorkflowInstancePicker} onHidden={() => this.showWorkflowInstancePicker = false}/>
           <elsa-confirmation-modal title="Delete Workflow" showModal={this.showDeleteWorkflowConfirmationDialog} onHidden={() => this.showDeleteWorkflowConfirmationDialog = false} onConfirmed={this.deleteWorkflow}>
             <p>Are you sure you want to permanently delete this workflow?</p>
           </elsa-confirmation-modal>
@@ -237,11 +315,7 @@ export class DesignerHostComponent {
         </div>
         <div class="d-flex p-3 px-md-4 border-top">
           <div class="ml-3">
-            <ul class="list-unstyled">
-              <li><span class="badge badge-primary">3</span> suspended</li>
-              <li><span class="badge badge-warning">3</span> faulted</li>
-              <li><span class="badge badge-success">3</span> completed</li>
-            </ul>
+            {this.renderWorkflowStatusSummaries()}
           </div>
           <div class="ml-3">
             <span>{workflow.name}</span>
@@ -277,6 +351,58 @@ export class DesignerHostComponent {
         </div>
       </Host>
     );
-  }
+  };
 
+  private renderWorkflowViewer = () => {
+    const workflowInstanceDefinition = this.workflowInstanceDefinition;
+    const workflowInstance = this.workflowInstance;
+    const workflow = this.workflowInstanceWorkflow;
+    const log = workflowInstance.executionLog;
+
+    return (
+      <Host>
+        <div id="header" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-dark border-bottom shadow-sm">
+          <h5 class="my-3 mr-md-auto mb-sm-3 mb-md-3 font-weight-normal">Workflow Viewer</h5>
+          <ul class="nav">
+          </ul>
+        </div>
+        <div class="d-flex flex-column flex-fill">
+          <div class="d-flex flex-row flex-fill">
+            <elsa-execution-log activityDescriptors={this.activityDescriptors} workflowDefinition={workflowInstanceDefinition} log={log}/>
+            <div class="flex-fill">
+              <elsa-designer container={this.container} workflow={workflow} activityDescriptors={this.activityDescriptors} readonly={true} ref={el => this.designer = el}/>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex p-3 px-md-4 border-top">
+          <div class="ml-3">
+            <span>{workflowInstanceDefinition.name}</span>
+            <Hint text={`Version ${workflowInstanceDefinition.version}`}/>
+          </div>
+          <ul class="nav ml-auto">
+            <li class="nav-item">
+              <button class="btn btn-primary" onClick={this.onCloseWorkflowViewerClick}>Close</button>
+            </li>
+          </ul>
+        </div>
+      </Host>
+    );
+  };
+
+  private renderWorkflowStatusSummaries = () => {
+    const summaries: Array<WorkflowInstanceStatusSummary> = this.statusSummaries || [];
+
+    const renderStatus = (status: WorkflowStatus, displayText: string, iconClass: string) => {
+      const count = summaries.filter(x => x.status === status).length;
+      return <li><span class={`badge badge-${iconClass}`}>{count}</span> <a href="#" onClick={e => this.onShowWorkflowInstancePicker(e, status)}>{displayText}</a></li>
+    };
+
+    return (
+      <ul class="list-unstyled">
+        {renderStatus(WorkflowStates.Suspended, 'Suspended', 'primary')}
+        {renderStatus(WorkflowStates.Faulted, 'Faulted', 'danger')}
+        {renderStatus(WorkflowStates.Completed, 'Completed', 'success')}
+      </ul>
+    )
+  };
 }

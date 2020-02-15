@@ -7,7 +7,6 @@ export interface ExpressionChangedArgs {
 
 @Component({
   tag: 'elsa-expression-field',
-  styleUrl: 'expression-field.css',
   scoped: true
 })
 export class ExpressionField {

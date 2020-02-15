@@ -1,18 +1,17 @@
 ﻿import {inject, injectable, multiInject} from "inversify";
 import {Node} from "./types";
-import {HtmlFragment} from "../components/html-fragment/html-fragment";
 import {h} from "@stencil/core";
 import {Activity} from "../models";
-import {ActivityDefinitionStore} from "./activity-definition-store";
 import {ActivityDisplayContext, ActivityDriver} from "./activity-driver";
 import {Symbols} from "./symbols";
 import {NodeUtils} from "../utils/node-utils";
+import {ActivityDescriptorStore} from "./activity-descriptor-store";
 
 @injectable()
 export class ActivityDisplayManager {
 
   constructor(
-    @inject(ActivityDefinitionStore) private activityDefinitionStore: ActivityDefinitionStore,
+    @inject(ActivityDescriptorStore) private activityDescriptorStore: ActivityDescriptorStore,
     @multiInject(Symbols.ActivityDriver) private drivers: Array<ActivityDriver>
   ) {
   }
@@ -36,7 +35,7 @@ export class ActivityDisplayManager {
   };
 
   private createDisplayContextFor = async (activity: Activity): Promise<ActivityDisplayContext> => {
-    const activityDefinition = await this.activityDefinitionStore.get(activity.type);
-    return {activity: activity, state: activity.state || {}, activityDefinition};
+    const activityDescriptor = await this.activityDescriptorStore.get(activity.type);
+    return {activity: activity, state: activity.state || {}, activityDescriptor: activityDescriptor};
   };
 }

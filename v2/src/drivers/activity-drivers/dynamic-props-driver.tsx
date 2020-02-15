@@ -17,14 +17,14 @@ export class DynamicPropsDriver extends ActivityDriverBase {
   supportsActivity = (context: ActivityDisplayContext): boolean => !this.customDriverStore.hasCustomDriverFor(context.activity.type);
 
   displayEditor = async (context: ActivityDisplayContext): Promise<Node> => {
-    const activityDefinition = context.activityDefinition;
-    const props = activityDefinition.properties || [];
+    const activityDescriptor = context.activityDescriptor;
+    const props = activityDescriptor.properties || [];
     return await Promise.all(props.map(async x => await this.renderField(context.state, x)));
   };
 
   updateActivity = async (context: ActivityDisplayContext, formData: FormData): Promise<void> => {
-    const activityDefinition = context.activityDefinition;
-    const props = activityDefinition.properties || [];
+    const activityDescriptor = context.activityDescriptor;
+    const props = activityDescriptor.properties || [];
 
     for (const prop of props) {
       await this.fieldDisplayManager.update(prop, context.state, formData);

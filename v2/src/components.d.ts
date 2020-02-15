@@ -12,10 +12,13 @@ import {
 } from 'inversify';
 import {
   Activity,
-  ActivityDefinition,
+  ActivityDescriptor,
+  ExecutionLogEntry,
   Expression,
   ExpressionType,
   Workflow,
+  WorkflowDefinition,
+  WorkflowStatus,
 } from './models';
 import {
   ActivityUpdatedArgs,
@@ -35,8 +38,11 @@ import {
   Notification,
 } from './components/notifications/models';
 import {
-  WorkflowDefinitionVersionSelectedArgs,
-} from './components/workflow-picker/workflow-picker';
+  WorkflowDefinitionSelectedArgs,
+} from './components/workflow-definition-picker/workflow-definition-picker';
+import {
+  WorkflowInstanceSelectedArgs,
+} from './components/workflow-instance-picker/workflow-instance-picker';
 import {
   WorkflowUpdatedArgs,
 } from './components/workflow-properties-editor/workflow-properties-editor';
@@ -48,7 +54,7 @@ export namespace Components {
     'showModal': boolean;
   }
   interface ElsaActivityPicker {
-    'activityDefinitions': Array<ActivityDefinition>;
+    'activityDescriptors': Array<ActivityDescriptor>;
     'container': Container;
     'showModal': boolean;
   }
@@ -61,13 +67,14 @@ export namespace Components {
     'show': (e: MouseEvent, context?: any) => Promise<void>;
   }
   interface ElsaDesigner {
-    'activityDefinitions': Array<ActivityDefinition>;
+    'activityDescriptors': Array<ActivityDescriptor>;
     'addActivity': (activity: Activity) => Promise<void>;
     'container': Container;
     'deleteActivity': (id: string) => Promise<void>;
     'getActivity': (id: string) => Promise<Activity>;
     'getTransform': () => Promise<{ x: number; y: number; scale: number; }>;
     'getWorkflow': () => Promise<Workflow>;
+    'readonly': boolean;
     'registerService': (action: (container: Container) => void) => Promise<void>;
     'updateActivity': (activity: Activity) => Promise<void>;
     'workflow': Workflow;
@@ -77,6 +84,11 @@ export namespace Components {
     'addFieldDriver': (constructor: new (...args: any[]) => FieldDriver) => Promise<void>;
     'configureServices': (action: (container: Container) => void) => Promise<void>;
     'serverUrl': string;
+  }
+  interface ElsaExecutionLog {
+    'activityDescriptors': Array<ActivityDescriptor>;
+    'log': Array<ExecutionLogEntry>;
+    'workflowDefinition': WorkflowDefinition;
   }
   interface ElsaExpressionField {
     'availableTypes': Array<ExpressionType>;
@@ -103,9 +115,15 @@ export namespace Components {
   interface ElsaNotifications {
     'notifications': Array<Notification>;
   }
-  interface ElsaWorkflowPicker {
+  interface ElsaWorkflowDefinitionPicker {
     'container': Container;
     'showModal': boolean;
+  }
+  interface ElsaWorkflowInstancePicker {
+    'container': Container;
+    'showModal': boolean;
+    'status': WorkflowStatus;
+    'workflow': Workflow;
   }
   interface ElsaWorkflowPropertiesEditor {
     'container': Container;
@@ -153,6 +171,12 @@ declare global {
     new (): HTMLElsaDesignerHostElement;
   };
 
+  interface HTMLElsaExecutionLogElement extends Components.ElsaExecutionLog, HTMLStencilElement {}
+  var HTMLElsaExecutionLogElement: {
+    prototype: HTMLElsaExecutionLogElement;
+    new (): HTMLElsaExecutionLogElement;
+  };
+
   interface HTMLElsaExpressionFieldElement extends Components.ElsaExpressionField, HTMLStencilElement {}
   var HTMLElsaExpressionFieldElement: {
     prototype: HTMLElsaExpressionFieldElement;
@@ -183,10 +207,16 @@ declare global {
     new (): HTMLElsaNotificationsElement;
   };
 
-  interface HTMLElsaWorkflowPickerElement extends Components.ElsaWorkflowPicker, HTMLStencilElement {}
-  var HTMLElsaWorkflowPickerElement: {
-    prototype: HTMLElsaWorkflowPickerElement;
-    new (): HTMLElsaWorkflowPickerElement;
+  interface HTMLElsaWorkflowDefinitionPickerElement extends Components.ElsaWorkflowDefinitionPicker, HTMLStencilElement {}
+  var HTMLElsaWorkflowDefinitionPickerElement: {
+    prototype: HTMLElsaWorkflowDefinitionPickerElement;
+    new (): HTMLElsaWorkflowDefinitionPickerElement;
+  };
+
+  interface HTMLElsaWorkflowInstancePickerElement extends Components.ElsaWorkflowInstancePicker, HTMLStencilElement {}
+  var HTMLElsaWorkflowInstancePickerElement: {
+    prototype: HTMLElsaWorkflowInstancePickerElement;
+    new (): HTMLElsaWorkflowInstancePickerElement;
   };
 
   interface HTMLElsaWorkflowPropertiesEditorElement extends Components.ElsaWorkflowPropertiesEditor, HTMLStencilElement {}
@@ -201,12 +231,14 @@ declare global {
     'elsa-context-menu': HTMLElsaContextMenuElement;
     'elsa-designer': HTMLElsaDesignerElement;
     'elsa-designer-host': HTMLElsaDesignerHostElement;
+    'elsa-execution-log': HTMLElsaExecutionLogElement;
     'elsa-expression-field': HTMLElsaExpressionFieldElement;
     'elsa-javascript-expression': HTMLElsaJavascriptExpressionElement;
     'elsa-liquid-expression': HTMLElsaLiquidExpressionElement;
     'elsa-literal-expression': HTMLElsaLiteralExpressionElement;
     'elsa-notifications': HTMLElsaNotificationsElement;
-    'elsa-workflow-picker': HTMLElsaWorkflowPickerElement;
+    'elsa-workflow-definition-picker': HTMLElsaWorkflowDefinitionPickerElement;
+    'elsa-workflow-instance-picker': HTMLElsaWorkflowInstancePickerElement;
     'elsa-workflow-properties-editor': HTMLElsaWorkflowPropertiesEditorElement;
   }
 }
@@ -220,7 +252,7 @@ declare namespace LocalJSX {
     'showModal'?: boolean;
   }
   interface ElsaActivityPicker {
-    'activityDefinitions'?: Array<ActivityDefinition>;
+    'activityDescriptors'?: Array<ActivityDescriptor>;
     'container'?: Container;
     'onActivity-selected'?: (event: CustomEvent<any>) => void;
     'onHidden'?: (event: CustomEvent<any>) => void;
@@ -236,15 +268,21 @@ declare namespace LocalJSX {
     'onContext-menu'?: (event: CustomEvent<any>) => void;
   }
   interface ElsaDesigner {
-    'activityDefinitions'?: Array<ActivityDefinition>;
+    'activityDescriptors'?: Array<ActivityDescriptor>;
     'container'?: Container;
     'onActivity-contextmenu'?: (event: CustomEvent<ActivityArgs>) => void;
     'onActivity-doubleclick'?: (event: CustomEvent<ActivityArgs>) => void;
     'onWorkflow-contextmenu'?: (event: CustomEvent<WorkflowArgs>) => void;
+    'readonly'?: boolean;
     'workflow'?: Workflow;
   }
   interface ElsaDesignerHost {
     'serverUrl'?: string;
+  }
+  interface ElsaExecutionLog {
+    'activityDescriptors'?: Array<ActivityDescriptor>;
+    'log'?: Array<ExecutionLogEntry>;
+    'workflowDefinition'?: WorkflowDefinition;
   }
   interface ElsaExpressionField {
     'availableTypes'?: Array<ExpressionType>;
@@ -274,11 +312,19 @@ declare namespace LocalJSX {
   interface ElsaNotifications {
     'notifications'?: Array<Notification>;
   }
-  interface ElsaWorkflowPicker {
+  interface ElsaWorkflowDefinitionPicker {
     'container'?: Container;
     'onHidden'?: (event: CustomEvent<any>) => void;
-    'onWorkflow-definition-version-selected'?: (event: CustomEvent<WorkflowDefinitionVersionSelectedArgs>) => void;
+    'onWorkflow-definition-version-selected'?: (event: CustomEvent<WorkflowDefinitionSelectedArgs>) => void;
     'showModal'?: boolean;
+  }
+  interface ElsaWorkflowInstancePicker {
+    'container'?: Container;
+    'onHidden'?: (event: CustomEvent<any>) => void;
+    'onWorkflow-instance-selected'?: (event: CustomEvent<WorkflowInstanceSelectedArgs>) => void;
+    'showModal'?: boolean;
+    'status'?: WorkflowStatus;
+    'workflow'?: Workflow;
   }
   interface ElsaWorkflowPropertiesEditor {
     'container'?: Container;
@@ -295,12 +341,14 @@ declare namespace LocalJSX {
     'elsa-context-menu': ElsaContextMenu;
     'elsa-designer': ElsaDesigner;
     'elsa-designer-host': ElsaDesignerHost;
+    'elsa-execution-log': ElsaExecutionLog;
     'elsa-expression-field': ElsaExpressionField;
     'elsa-javascript-expression': ElsaJavascriptExpression;
     'elsa-liquid-expression': ElsaLiquidExpression;
     'elsa-literal-expression': ElsaLiteralExpression;
     'elsa-notifications': ElsaNotifications;
-    'elsa-workflow-picker': ElsaWorkflowPicker;
+    'elsa-workflow-definition-picker': ElsaWorkflowDefinitionPicker;
+    'elsa-workflow-instance-picker': ElsaWorkflowInstancePicker;
     'elsa-workflow-properties-editor': ElsaWorkflowPropertiesEditor;
   }
 }
@@ -317,12 +365,14 @@ declare module "@stencil/core" {
       'elsa-context-menu': LocalJSX.ElsaContextMenu & JSXBase.HTMLAttributes<HTMLElsaContextMenuElement>;
       'elsa-designer': LocalJSX.ElsaDesigner & JSXBase.HTMLAttributes<HTMLElsaDesignerElement>;
       'elsa-designer-host': LocalJSX.ElsaDesignerHost & JSXBase.HTMLAttributes<HTMLElsaDesignerHostElement>;
+      'elsa-execution-log': LocalJSX.ElsaExecutionLog & JSXBase.HTMLAttributes<HTMLElsaExecutionLogElement>;
       'elsa-expression-field': LocalJSX.ElsaExpressionField & JSXBase.HTMLAttributes<HTMLElsaExpressionFieldElement>;
       'elsa-javascript-expression': LocalJSX.ElsaJavascriptExpression & JSXBase.HTMLAttributes<HTMLElsaJavascriptExpressionElement>;
       'elsa-liquid-expression': LocalJSX.ElsaLiquidExpression & JSXBase.HTMLAttributes<HTMLElsaLiquidExpressionElement>;
       'elsa-literal-expression': LocalJSX.ElsaLiteralExpression & JSXBase.HTMLAttributes<HTMLElsaLiteralExpressionElement>;
       'elsa-notifications': LocalJSX.ElsaNotifications & JSXBase.HTMLAttributes<HTMLElsaNotificationsElement>;
-      'elsa-workflow-picker': LocalJSX.ElsaWorkflowPicker & JSXBase.HTMLAttributes<HTMLElsaWorkflowPickerElement>;
+      'elsa-workflow-definition-picker': LocalJSX.ElsaWorkflowDefinitionPicker & JSXBase.HTMLAttributes<HTMLElsaWorkflowDefinitionPickerElement>;
+      'elsa-workflow-instance-picker': LocalJSX.ElsaWorkflowInstancePicker & JSXBase.HTMLAttributes<HTMLElsaWorkflowInstancePickerElement>;
       'elsa-workflow-properties-editor': LocalJSX.ElsaWorkflowPropertiesEditor & JSXBase.HTMLAttributes<HTMLElsaWorkflowPropertiesEditorElement>;
     }
   }

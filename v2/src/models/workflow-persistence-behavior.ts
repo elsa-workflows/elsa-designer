@@ -11,9 +11,4 @@ export const WorkflowPersistenceBehaviors: WorkflowPersistenceBehaviors = {
   ActivityExecuted: 'ACTIVITYEXECUTED'
 };
 
-export type WorkflowPersistenceBehavior =
-  'SUSPENDED' |
-  'WORKFLOWEXECUTED' |
-  'ACTIVITYEXECUTED';
-
-
+export type WorkflowPersistenceBehavior = 'SUSPENDED' | 'WORKFLOWEXECUTED' | 'ACTIVITYEXECUTED';
