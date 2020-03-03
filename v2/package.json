@@ -1,6 +1,6 @@
 {
-  "name": "elsa-workflows",
-  "version": "2.0.0",
+  "name": "@elsa-workflows/elsa-workflow-designer",
+  "version": "2.0.0-preview-5",
   "description": "Elsa Designer is a standalone client-side HTML5 web component that allows you to visually design Elsa workflows that are stored in Elsa Workflow servers",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -10,6 +10,15 @@
   "collection": "dist/collection/collection-manifest.json",
   "collection:main": "dist/collection/index.js",
   "unpkg": "dist/elsa-workflows/elsa-workflows.js",
+  "bugs": {
+    "url": "https://github.com/elsa-workflows/elsa-designer-html/issues"
+  },
+  "homepage": "https://github.com/elsa-workflows/elsa-designer-html",
+  "keywords": [
+    "workflow",
+    "workflow designer"
+  ],
+  "author": "Sipke Schoorstra",
   "files": [
     "dist/",
     "loader/"
@@ -26,8 +35,9 @@
     "@panzoom/panzoom": "latest",
     "@stencil/core": "latest",
     "@stencil/sass": "latest",
+    "@stencil/react-output-target": "latest",
     "bootstrap-scss": "latest",
-    "bs-components": "https://www.myget.org/F/bs-components/npm/bs-components/-/0.1.9.tgz",
+    "bs-components": "https://www.myget.org/F/bs-components/npm/bs-components/-/0.1.9-preview-1.tgz",
     "graphql-request": "latest",
     "inversify": "latest",
     "jsplumb": "latest",

@@ -39,12 +39,12 @@ Type: `Promise<void>`
 
 ### Used by
 
- - [elsa-designer](../designer)
+ - [elsa-designer-host](../designer-host)
 
 ### Graph
 ```mermaid
 graph TD;
-  elsa-designer --> elsa-context-menu
+  elsa-designer-host --> elsa-context-menu
   style elsa-context-menu fill:#f9f,stroke:#333,stroke-width:4px
 ```
 

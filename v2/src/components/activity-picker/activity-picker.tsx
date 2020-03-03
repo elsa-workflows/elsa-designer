@@ -71,7 +71,7 @@ export class ActivityPicker {
 
   render() {
     let activities = this.activityDescriptors;
-    const categories: string[] = [null, ...new Set(activities.map(x => x.category))];
+    const categories: string[] = activities.map(x => x.category);
     const filterText = (this.filterText || '').toLowerCase();
     const selectedCategory = this.selectedCategory;
 

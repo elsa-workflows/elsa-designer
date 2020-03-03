@@ -7,26 +7,36 @@
 
 ## Properties
 
-| Property              | Attribute  | Description | Type                   | Default     |
-| --------------------- | ---------- | ----------- | ---------------------- | ----------- |
-| `activityDefinitions` | --         |             | `ActivityDefinition[]` | `[]`        |
-| `container`           | --         |             | `Container`            | `undefined` |
-| `workflow`            | `workflow` |             | `Workflow \| string`   | `undefined` |
+| Property              | Attribute  | Description | Type                   | Default              |
+| --------------------- | ---------- | ----------- | ---------------------- | -------------------- |
+| `activityDescriptors` | --         |             | `ActivityDescriptor[]` | `[]`                 |
+| `container`           | --         |             | `Container`            | `undefined`          |
+| `readonly`            | `readonly` |             | `boolean`              | `undefined`          |
+| `workflow`            | --         |             | `Workflow`             | `{...emptyWorkflow}` |
 
 
 ## Events
 
-| Event           | Description | Type                            |
-| --------------- | ----------- | ------------------------------- |
-| `add-activity`  |             | `CustomEvent<AddActivityArgs>`  |
-| `edit-activity` |             | `CustomEvent<EditActivityArgs>` |
-| `load-workflow` |             | `CustomEvent<LoadWorkflowArgs>` |
-| `save-workflow` |             | `CustomEvent<SaveWorkflowArgs>` |
+| Event                  | Description | Type                        |
+| ---------------------- | ----------- | --------------------------- |
+| `activity-contextmenu` |             | `CustomEvent<ActivityArgs>` |
+| `activity-doubleclick` |             | `CustomEvent<ActivityArgs>` |
+| `workflow-contextmenu` |             | `CustomEvent<WorkflowArgs>` |
 
 
 ## Methods
 
 ### `addActivity(activity: Activity) => Promise<void>`
+
+
+
+#### Returns
+
+Type: `Promise<void>`
+
+
+
+### `deleteActivity(id: string) => Promise<void>`
 
 
 
@@ -93,16 +103,9 @@ Type: `Promise<void>`
 
  - [elsa-designer-host](../designer-host)
 
-### Depends on
-
-- [elsa-context-menu](../context-menu)
-- [elsa-context-menu-item](../context-menu-item)
-
 ### Graph
 ```mermaid
 graph TD;
-  elsa-designer --> elsa-context-menu
-  elsa-designer --> elsa-context-menu-item
   elsa-designer-host --> elsa-designer
   style elsa-designer fill:#f9f,stroke:#333,stroke-width:4px
 ```
