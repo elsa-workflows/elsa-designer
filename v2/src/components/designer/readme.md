@@ -10,7 +10,6 @@
 | Property              | Attribute  | Description | Type                   | Default              |
 | --------------------- | ---------- | ----------- | ---------------------- | -------------------- |
 | `activityDescriptors` | --         |             | `ActivityDescriptor[]` | `[]`                 |
-| `container`           | --         |             | `Container`            | `undefined`          |
 | `readonly`            | `readonly` |             | `boolean`              | `undefined`          |
 | `workflow`            | --         |             | `Workflow`             | `{...emptyWorkflow}` |
 

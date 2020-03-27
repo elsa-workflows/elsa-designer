@@ -28,10 +28,6 @@ import {
   WorkflowArgs,
 } from './components/designer/models';
 import {
-  ActivityDriver,
-  FieldDriver,
-} from './services';
-import {
   ExpressionChangedArgs,
 } from './components/expression-field/expression-field';
 import {
@@ -46,6 +42,10 @@ import {
 import {
   WorkflowUpdatedArgs,
 } from './components/workflow-properties-editor/workflow-properties-editor';
+import {
+  ActivityDriver,
+  FieldDriver,
+} from './services';
 
 export namespace Components {
   interface ElsaActivityEditor {
@@ -69,7 +69,6 @@ export namespace Components {
   interface ElsaDesigner {
     'activityDescriptors': Array<ActivityDescriptor>;
     'addActivity': (activity: Activity) => Promise<void>;
-    'container': Container;
     'deleteActivity': (id: string) => Promise<void>;
     'getActivity': (id: string) => Promise<Activity>;
     'getTransform': () => Promise<{ x: number; y: number; scale: number; }>;
@@ -78,12 +77,6 @@ export namespace Components {
     'registerService': (action: (container: Container) => void) => Promise<void>;
     'updateActivity': (activity: Activity) => Promise<void>;
     'workflow': Workflow;
-  }
-  interface ElsaDesignerHost {
-    'addActivityDriver': (constructor: new (...args: any[]) => ActivityDriver) => Promise<void>;
-    'addFieldDriver': (constructor: new (...args: any[]) => FieldDriver) => Promise<void>;
-    'configureServices': (action: (container: Container) => void) => Promise<void>;
-    'serverUrl': string;
   }
   interface ElsaExecutionLog {
     'activityDescriptors': Array<ActivityDescriptor>;
@@ -130,6 +123,18 @@ export namespace Components {
     'showModal': boolean;
     'workflow': Workflow;
   }
+  interface SampleDesignerHost1 {
+    'addActivityDriver': (constructor: new (...args: any[]) => ActivityDriver) => Promise<void>;
+    'addFieldDriver': (constructor: new (...args: any[]) => FieldDriver) => Promise<void>;
+    'configureServices': (action: (container: Container) => void) => Promise<void>;
+    'serverUrl': string;
+  }
+  interface SampleDesignerHost1 {
+    'addActivityDriver': (constructor: new (...args: any[]) => ActivityDriver) => Promise<void>;
+    'addFieldDriver': (constructor: new (...args: any[]) => FieldDriver) => Promise<void>;
+    'configureServices': (action: (container: Container) => void) => Promise<void>;
+    'serverUrl': string;
+  }
 }
 
 declare global {
@@ -163,12 +168,6 @@ declare global {
   var HTMLElsaDesignerElement: {
     prototype: HTMLElsaDesignerElement;
     new (): HTMLElsaDesignerElement;
-  };
-
-  interface HTMLElsaDesignerHostElement extends Components.ElsaDesignerHost, HTMLStencilElement {}
-  var HTMLElsaDesignerHostElement: {
-    prototype: HTMLElsaDesignerHostElement;
-    new (): HTMLElsaDesignerHostElement;
   };
 
   interface HTMLElsaExecutionLogElement extends Components.ElsaExecutionLog, HTMLStencilElement {}
@@ -224,13 +223,24 @@ declare global {
     prototype: HTMLElsaWorkflowPropertiesEditorElement;
     new (): HTMLElsaWorkflowPropertiesEditorElement;
   };
+
+  interface HTMLSampleDesignerHost1Element extends Components.SampleDesignerHost1, HTMLStencilElement {}
+  var HTMLSampleDesignerHost1Element: {
+    prototype: HTMLSampleDesignerHost1Element;
+    new (): HTMLSampleDesignerHost1Element;
+  };
+
+  interface HTMLSampleDesignerHost1Element extends Components.SampleDesignerHost1, HTMLStencilElement {}
+  var HTMLSampleDesignerHost1Element: {
+    prototype: HTMLSampleDesignerHost1Element;
+    new (): HTMLSampleDesignerHost1Element;
+  };
   interface HTMLElementTagNameMap {
     'elsa-activity-editor': HTMLElsaActivityEditorElement;
     'elsa-activity-picker': HTMLElsaActivityPickerElement;
     'elsa-confirmation-modal': HTMLElsaConfirmationModalElement;
     'elsa-context-menu': HTMLElsaContextMenuElement;
     'elsa-designer': HTMLElsaDesignerElement;
-    'elsa-designer-host': HTMLElsaDesignerHostElement;
     'elsa-execution-log': HTMLElsaExecutionLogElement;
     'elsa-expression-field': HTMLElsaExpressionFieldElement;
     'elsa-javascript-expression': HTMLElsaJavascriptExpressionElement;
@@ -240,6 +250,8 @@ declare global {
     'elsa-workflow-definition-picker': HTMLElsaWorkflowDefinitionPickerElement;
     'elsa-workflow-instance-picker': HTMLElsaWorkflowInstancePickerElement;
     'elsa-workflow-properties-editor': HTMLElsaWorkflowPropertiesEditorElement;
+    'sample-designer-host-1': HTMLSampleDesignerHost1Element;
+    'sample-designer-host-1': HTMLSampleDesignerHost1Element;
   }
 }
 
@@ -269,15 +281,11 @@ declare namespace LocalJSX {
   }
   interface ElsaDesigner {
     'activityDescriptors'?: Array<ActivityDescriptor>;
-    'container'?: Container;
     'onActivity-contextmenu'?: (event: CustomEvent<ActivityArgs>) => void;
     'onActivity-doubleclick'?: (event: CustomEvent<ActivityArgs>) => void;
     'onWorkflow-contextmenu'?: (event: CustomEvent<WorkflowArgs>) => void;
     'readonly'?: boolean;
     'workflow'?: Workflow;
-  }
-  interface ElsaDesignerHost {
-    'serverUrl'?: string;
   }
   interface ElsaExecutionLog {
     'activityDescriptors'?: Array<ActivityDescriptor>;
@@ -333,6 +341,12 @@ declare namespace LocalJSX {
     'showModal'?: boolean;
     'workflow'?: Workflow;
   }
+  interface SampleDesignerHost1 {
+    'serverUrl'?: string;
+  }
+  interface SampleDesignerHost1 {
+    'serverUrl'?: string;
+  }
 
   interface IntrinsicElements {
     'elsa-activity-editor': ElsaActivityEditor;
@@ -340,7 +354,6 @@ declare namespace LocalJSX {
     'elsa-confirmation-modal': ElsaConfirmationModal;
     'elsa-context-menu': ElsaContextMenu;
     'elsa-designer': ElsaDesigner;
-    'elsa-designer-host': ElsaDesignerHost;
     'elsa-execution-log': ElsaExecutionLog;
     'elsa-expression-field': ElsaExpressionField;
     'elsa-javascript-expression': ElsaJavascriptExpression;
@@ -350,6 +363,8 @@ declare namespace LocalJSX {
     'elsa-workflow-definition-picker': ElsaWorkflowDefinitionPicker;
     'elsa-workflow-instance-picker': ElsaWorkflowInstancePicker;
     'elsa-workflow-properties-editor': ElsaWorkflowPropertiesEditor;
+    'sample-designer-host-1': SampleDesignerHost1;
+    'sample-designer-host-1': SampleDesignerHost1;
   }
 }
 
@@ -364,7 +379,6 @@ declare module "@stencil/core" {
       'elsa-confirmation-modal': LocalJSX.ElsaConfirmationModal & JSXBase.HTMLAttributes<HTMLElsaConfirmationModalElement>;
       'elsa-context-menu': LocalJSX.ElsaContextMenu & JSXBase.HTMLAttributes<HTMLElsaContextMenuElement>;
       'elsa-designer': LocalJSX.ElsaDesigner & JSXBase.HTMLAttributes<HTMLElsaDesignerElement>;
-      'elsa-designer-host': LocalJSX.ElsaDesignerHost & JSXBase.HTMLAttributes<HTMLElsaDesignerHostElement>;
       'elsa-execution-log': LocalJSX.ElsaExecutionLog & JSXBase.HTMLAttributes<HTMLElsaExecutionLogElement>;
       'elsa-expression-field': LocalJSX.ElsaExpressionField & JSXBase.HTMLAttributes<HTMLElsaExpressionFieldElement>;
       'elsa-javascript-expression': LocalJSX.ElsaJavascriptExpression & JSXBase.HTMLAttributes<HTMLElsaJavascriptExpressionElement>;
@@ -374,6 +388,8 @@ declare module "@stencil/core" {
       'elsa-workflow-definition-picker': LocalJSX.ElsaWorkflowDefinitionPicker & JSXBase.HTMLAttributes<HTMLElsaWorkflowDefinitionPickerElement>;
       'elsa-workflow-instance-picker': LocalJSX.ElsaWorkflowInstancePicker & JSXBase.HTMLAttributes<HTMLElsaWorkflowInstancePickerElement>;
       'elsa-workflow-properties-editor': LocalJSX.ElsaWorkflowPropertiesEditor & JSXBase.HTMLAttributes<HTMLElsaWorkflowPropertiesEditorElement>;
+      'sample-designer-host-1': LocalJSX.SampleDesignerHost1 & JSXBase.HTMLAttributes<HTMLSampleDesignerHost1Element>;
+      'sample-designer-host-1': LocalJSX.SampleDesignerHost1 & JSXBase.HTMLAttributes<HTMLSampleDesignerHost1Element>;
     }
   }
 }

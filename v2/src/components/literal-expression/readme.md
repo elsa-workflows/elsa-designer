@@ -21,19 +21,6 @@
 | `expression-changed` |             | `CustomEvent<ExpressionChangedArgs>` |
 
 
-## Dependencies
-
-### Used by
-
- - [elsa-designer-host](../designer-host)
-
-### Graph
-```mermaid
-graph TD;
-  elsa-designer-host --> elsa-literal-expression
-  style elsa-literal-expression fill:#f9f,stroke:#333,stroke-width:4px
-```
-
 ----------------------------------------------
 
 *Built with [StencilJS](https://stenciljs.com/)*

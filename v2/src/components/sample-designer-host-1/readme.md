@@ -60,9 +60,6 @@ Type: `Promise<void>`
 - [elsa-context-menu](../context-menu)
 - bs-dropdown
 - [elsa-execution-log](../execution-log)
-- [elsa-literal-expression](../literal-expression)
-- [elsa-javascript-expression](../javascript-expression)
-- [elsa-liquid-expression](../liquid-expression)
 
 ### Graph
 ```mermaid
@@ -78,9 +75,6 @@ graph TD;
   elsa-designer-host --> elsa-context-menu
   elsa-designer-host --> bs-dropdown
   elsa-designer-host --> elsa-execution-log
-  elsa-designer-host --> elsa-literal-expression
-  elsa-designer-host --> elsa-javascript-expression
-  elsa-designer-host --> elsa-liquid-expression
   elsa-notifications --> bs-toast
   elsa-activity-picker --> bs-modal
   elsa-activity-editor --> bs-modal

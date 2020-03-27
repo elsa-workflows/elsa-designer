@@ -1,12 +1,34 @@
 import 'bs-components';
 import '../../utils/array-utils';
 import {Component, h, Host, Listen, Method, Prop, State, Watch} from '@stencil/core';
-import {Activity, ActivityDefinition, ActivityDescriptor, emptyWorkflow, VersionOptions, Workflow, WorkflowDefinition, WorkflowInstance, WorkflowInstanceStatusSummary, WorkflowStates, WorkflowStatus} from '../../models';
+import {
+  Activity,
+  ActivityDefinition,
+  ActivityDescriptor,
+  emptyWorkflow,
+  VersionOptions,
+  Workflow,
+  WorkflowDefinition,
+  WorkflowInstance,
+  WorkflowInstanceStatusSummary,
+  WorkflowStates,
+  WorkflowStatus
+} from '../../models';
 import uuid from 'uuid-browser/v4';
 import {Container} from "inversify";
-import {ActivityDescriptorStore, ActivityDriver, CustomDriverStore, FieldDriver, Symbols, WorkflowInstanceStore, WorkflowDefinitionStore} from '../../services';
+import {
+  ActivityDescriptorStore,
+  ActivityDriver,
+  CustomDriverStore,
+  FieldDriver,
+  Symbols,
+  WorkflowInstanceStore,
+  WorkflowDefinitionStore,
+  ServerConfiguration,
+  ActivityDisplayManager,
+  WorkflowFactory
+} from '../../services';
 import {ActivityUpdatedArgs} from '../activity-editor/activity-editor';
-import {createContainer} from "../../services/container";
 import {WorkflowDefinitionSelectedArgs} from "../workflow-definition-picker/workflow-definition-picker";
 import {Notification, NotificationType} from "../notifications/models";
 import {ActivityArgs, WorkflowArgs} from "../designer/models";
@@ -15,11 +37,15 @@ import {ContextMenuDivider} from "../context-menu/context-menu-divider";
 import {WorkflowUpdatedArgs} from "../workflow-properties-editor/workflow-properties-editor";
 import {Hint} from "../hint/hint";
 import {WorkflowInstanceSelectedArgs} from "../workflow-instance-picker/workflow-instance-picker";
-import {WorkflowFactory} from "../../services/workflow-factory";
+import request from "graphql-request";
+import {FieldDisplayManager} from "../../services/field-display-manager";
+import {ExpressionTypeStore} from "../../services/expression-type-store";
+import {CommonDriver, DynamicPropsDriver} from "../../drivers/activity-drivers";
+import {ExpressionDriver, ListDriver, SelectDriver, TextDriver} from "../../drivers/field-drivers";
 
 @Component({
-  tag: 'elsa-designer-host',
-  styleUrl: 'designer-host.scss',
+  tag: 'sample-designer-host-1',
+  styleUrl: 'sample-designer-host-1.scss',
   scoped: true
 })
 export class DesignerHostComponent {
@@ -29,7 +55,7 @@ export class DesignerHostComponent {
   private workflowDefinitionStore: WorkflowDefinitionStore;
   private workflowInstanceStore: WorkflowInstanceStore;
   private activityDescriptorStore: ActivityDescriptorStore;
-  private workflowFactory: WorkflowFactory
+  private workflowFactory: WorkflowFactory;
   private customDriverStore: CustomDriverStore;
   private workflowContextMenu: HTMLElsaContextMenuElement;
   private activityContextMenu: HTMLElsaContextMenuElement;
@@ -37,6 +63,7 @@ export class DesignerHostComponent {
   @Prop({attribute: 'server-url'}) serverUrl: string;
 
   @State() private container: Container;
+  @State() private config: ServerConfiguration;
   @State() private activityDescriptors: Array<ActivityDescriptor>;
   @State() private workflowDefinition: WorkflowDefinition;
   @State() private workflow: Workflow = {...emptyWorkflow};
@@ -153,7 +180,7 @@ export class DesignerHostComponent {
 
   async componentWillLoad() {
     const serverUrl = this.serverUrl;
-    const container = createContainer(serverUrl);
+    const container = this.createContainer(serverUrl);
 
     this.container = container;
     this.workflowDefinitionStore = container.get<WorkflowDefinitionStore>(WorkflowDefinitionStore);
@@ -161,7 +188,8 @@ export class DesignerHostComponent {
     this.activityDescriptorStore = container.get<ActivityDescriptorStore>(ActivityDescriptorStore);
     this.workflowFactory = container.get<WorkflowFactory>(WorkflowFactory);
     this.customDriverStore = container.get<CustomDriverStore>(CustomDriverStore);
-    this.activityDescriptors = await this.activityDescriptorStore.list();
+    this.config = container.get<ServerConfiguration>(ServerConfiguration);
+    this.activityDescriptors = await this.loadActivityDescriptors();
   }
 
   private editActivity = async (id: string) => {
@@ -261,24 +289,70 @@ export class DesignerHostComponent {
     this.notifications = [notification];
   };
 
+  private loadActivityDescriptors = async (): Promise<Array<ActivityDescriptor>> => {
+    const url = this.config.serverUrl;
+    const query = `{
+        activityDescriptors {
+          type
+          category
+          description
+          displayName
+          icon
+          outcomes
+        }
+      }`;
+    const graph = await request(url, query);
+    return graph.activityDescriptors;
+  };
+
+  private createContainer = (serverUrl: string): Container => {
+    const container = new Container();
+    const configuration = new ServerConfiguration(serverUrl);
+
+    container.bind<Container>(Container).toConstantValue(container);
+    container.bind<ServerConfiguration>(ServerConfiguration).toConstantValue(configuration);
+    container.bind<ActivityDescriptorStore>(ActivityDescriptorStore).toSelf().inSingletonScope();
+    container.bind<WorkflowDefinitionStore>(WorkflowDefinitionStore).toSelf().inSingletonScope();
+    container.bind<WorkflowInstanceStore>(WorkflowInstanceStore).toSelf().inSingletonScope();
+    container.bind<WorkflowFactory>(WorkflowFactory).toSelf().inSingletonScope();
+    container.bind<ActivityDisplayManager>(ActivityDisplayManager).toSelf().inSingletonScope();
+    container.bind<FieldDisplayManager>(FieldDisplayManager).toSelf().inSingletonScope();
+    container.bind<CustomDriverStore>(CustomDriverStore).toSelf().inSingletonScope();
+    container.bind<ExpressionTypeStore>(ExpressionTypeStore).toSelf().inSingletonScope();
+
+    this.addActivityDriverInternal(container, CommonDriver);
+    this.addActivityDriverInternal(container, DynamicPropsDriver);
+    this.addFieldDriverInternal(container, ExpressionDriver);
+    this.addFieldDriverInternal(container, ListDriver);
+    this.addFieldDriverInternal(container, SelectDriver);
+    this.addFieldDriverInternal(container, TextDriver);
+
+    return container;
+  };
+
   render() {
     return !!this.workflowInstanceDefinition ? this.renderWorkflowViewer() : this.renderWorkflowEditor();
   }
 
   private renderWorkflowEditor = () => {
     const workflow = this.workflow;
+    const activityDescriptors = this.activityDescriptors;
+
     return (
       <Host>
-        <div id="header" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-dark border-bottom shadow-sm">
+        <div id="header"
+             class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-dark border-bottom shadow-sm">
           <h5 class="my-3 mr-md-auto mb-sm-3 mb-md-3 font-weight-normal">Workflow Designer</h5>
           <ul class="nav">
             <li class="nav-item">
-              <button class="btn btn-primary" onClick={this.onAddActivityFromToolbarClick}><i class="fas fa-plus"/> Add Activity</button>
+              <button class="btn btn-primary" onClick={this.onAddActivityFromToolbarClick}><i class="fas fa-plus"/> Add
+                Activity
+              </button>
             </li>
           </ul>
         </div>
         <div class="d-flex flex-column flex-fill">
-          <elsa-designer container={this.container} workflow={workflow} activityDescriptors={this.activityDescriptors} ref={el => this.designer = el}/>
+          <elsa-designer workflow={workflow} activityDescriptors={activityDescriptors} ref={el => this.designer = el}/>
           <elsa-notifications notifications={this.notifications}/>
           <elsa-activity-picker
             container={this.container}
@@ -292,10 +366,17 @@ export class DesignerHostComponent {
             showModal={this.showActivityEditor}
             onHidden={() => this.showActivityEditor = false}
           />
-          <elsa-workflow-properties-editor workflow={workflow} showModal={this.showWorkflowProperties} onHidden={() => this.showWorkflowProperties = false}/>
-          <elsa-workflow-definition-picker container={this.container} showModal={this.showWorkflowPicker} onHidden={() => this.showWorkflowPicker = false}/>
-          <elsa-workflow-instance-picker container={this.container} workflow={workflow} status={this.workflowInstancePickerStatus} showModal={this.showWorkflowInstancePicker} onHidden={() => this.showWorkflowInstancePicker = false}/>
-          <elsa-confirmation-modal title="Delete Workflow" showModal={this.showDeleteWorkflowConfirmationDialog} onHidden={() => this.showDeleteWorkflowConfirmationDialog = false} onConfirmed={this.deleteWorkflow}>
+          <elsa-workflow-properties-editor workflow={workflow} showModal={this.showWorkflowProperties}
+                                           onHidden={() => this.showWorkflowProperties = false}/>
+          <elsa-workflow-definition-picker container={this.container} showModal={this.showWorkflowPicker}
+                                           onHidden={() => this.showWorkflowPicker = false}/>
+          <elsa-workflow-instance-picker container={this.container} workflow={workflow}
+                                         status={this.workflowInstancePickerStatus}
+                                         showModal={this.showWorkflowInstancePicker}
+                                         onHidden={() => this.showWorkflowInstancePicker = false}/>
+          <elsa-confirmation-modal title="Delete Workflow" showModal={this.showDeleteWorkflowConfirmationDialog}
+                                   onHidden={() => this.showDeleteWorkflowConfirmationDialog = false}
+                                   onConfirmed={this.deleteWorkflow}>
             <p>Are you sure you want to permanently delete this workflow?</p>
           </elsa-confirmation-modal>
           <elsa-context-menu ref={el => this.workflowContextMenu = el}>
@@ -323,11 +404,13 @@ export class DesignerHostComponent {
           </div>
           <ul class="nav ml-auto">
             <li class="nav-item">
-              <button class="btn btn-danger" onClick={this.onDeleteWorkflowClick} disabled={!workflow.id}>Delete</button>
+              <button class="btn btn-danger" onClick={this.onDeleteWorkflowClick} disabled={!workflow.id}>Delete
+              </button>
             </li>
             <li class="nav-item">
               <bs-dropdown class="btn-group dropup">
-                <button class="btn btn-secondary dropdown-toggle" type="button" id="loadMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="-80,20">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="loadMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="-80,20">
                   Load
                 </button>
                 <div class="dropdown-menu" aria-labelledby="loadMenuButton">
@@ -338,7 +421,8 @@ export class DesignerHostComponent {
             </li>
             <li class="nav-item">
               <bs-dropdown class="btn-group dropup">
-                <button class="btn btn-success dropdown-toggle " type="button" id="saveMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="-80,20">
+                <button class="btn btn-success dropdown-toggle " type="button" id="saveMenuButton"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" data-offset="-80,20">
                   Save
                 </button>
                 <div class="dropdown-menu dropdown-menu-left" aria-labelledby="saveMenuButton">
@@ -358,19 +442,24 @@ export class DesignerHostComponent {
     const workflowInstance = this.workflowInstance;
     const workflow = this.workflowInstanceWorkflow;
     const log = workflowInstance.executionLog;
+    const activityDescriptors = this.activityDescriptors;
 
     return (
       <Host>
-        <div id="header" class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-dark border-bottom shadow-sm">
+        <div id="header"
+             class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-dark border-bottom shadow-sm">
           <h5 class="my-3 mr-md-auto mb-sm-3 mb-md-3 font-weight-normal">Workflow Viewer</h5>
           <ul class="nav">
           </ul>
         </div>
         <div class="d-flex flex-column flex-fill">
           <div class="d-flex flex-row flex-fill">
-            <elsa-execution-log activityDescriptors={this.activityDescriptors} workflowDefinition={workflowInstanceDefinition} log={log}/>
+            <elsa-execution-log activityDescriptors={this.activityDescriptors}
+                                workflowDefinition={workflowInstanceDefinition} log={log}/>
             <div class="flex-fill">
-              <elsa-designer container={this.container} workflow={workflow} activityDescriptors={this.activityDescriptors} readonly={true} ref={el => this.designer = el}/>
+              <elsa-designer workflow={workflow}
+                             activityDescriptors={this.activityDescriptors} readonly={true}
+                             ref={el => this.designer = el}/>
             </div>
           </div>
         </div>
@@ -394,7 +483,9 @@ export class DesignerHostComponent {
 
     const renderStatus = (status: WorkflowStatus, displayText: string, iconClass: string) => {
       const count = summaries.filter(x => x.status === status).length;
-      return <li><span class={`badge badge-${iconClass}`}>{count}</span> <a href="#" onClick={e => this.onShowWorkflowInstancePicker(e, status)}>{displayText}</a></li>
+      return <li><span class={`badge badge-${iconClass}`}>{count}</span> <a href="#"
+                                                                            onClick={e => this.onShowWorkflowInstancePicker(e, status)}>{displayText}</a>
+      </li>
     };
 
     return (

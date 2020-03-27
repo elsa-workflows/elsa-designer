@@ -1,6 +1,6 @@
-import {Component, Event, Prop, Element, h, Host, Method, EventEmitter} from '@stencil/core';
+import {Component, Event, Prop, Element, h, Host, Method, EventEmitter, State} from '@stencil/core';
 import {jsPlumbInstance} from "jsplumb";
-import {Activity, ActivityDefinition, ActivityDescriptor, emptyWorkflow, Workflow} from "../../models";
+import {Activity, ActivityDescriptor, emptyWorkflow, Workflow} from "../../models";
 import {
   createActivityElementId,
   createJsPlumb,
@@ -9,13 +9,8 @@ import {
 import {createPanzoom} from "./panzoom-utils";
 import {PanzoomObject} from "@panzoom/panzoom/dist/src/types";
 import {Container} from "inversify";
-import {ActivityDisplayManager, Node} from "../../services";
 import {ActivityArgs, WorkflowArgs} from "./models";
 import {CssClassMap} from "../../utils/css-class-map";
-
-interface ActivityDisplayMap {
-  [id: string]: Node;
-}
 
 @Component({
   tag: 'elsa-designer',
@@ -27,12 +22,10 @@ export class DesignerComponent {
   private workflowCanvasElement: HTMLElement;
   private jsPlumb: jsPlumbInstance;
   private panzoom: PanzoomObject;
-  private displayManager: ActivityDisplayManager;
-  private activityDisplays: ActivityDisplayMap;
 
   @Element() private element: HTMLElsaDesignerElement;
 
-  @Prop() container: Container;
+  @State() container: Container;
   @Prop() activityDescriptors: Array<ActivityDescriptor> = [];
   @Prop({mutable: true}) workflow: Workflow = {...emptyWorkflow};
   @Prop() readonly: boolean;
@@ -87,20 +80,11 @@ export class DesignerComponent {
   }
 
   componentWillLoad() {
-    this.displayManager = this.container.get<ActivityDisplayManager>(ActivityDisplayManager);
+    this.container = this.createContainer();
   }
 
   componentDidLoad() {
     this.panzoom = createPanzoom(this.workflowCanvasElement, zoom => this.jsPlumb.setZoom(zoom));
-  }
-
-  async componentWillRender() {
-    const displayManager = this.displayManager;
-    const workflow = this.workflowOrDefault();
-    const map = this.activityDisplays = {};
-
-    for (const activity of workflow.activities)
-      map[activity.id] = await displayManager.displayDesigner(activity);
   }
 
   componentDidRender() {
@@ -164,9 +148,6 @@ export class DesignerComponent {
 
   private renderActivity = (activity: Activity) => {
 
-    if (!this.activityDisplays)
-      return;
-
     const activityDefinition = this.activityDescriptors.find(x => x.type === activity.type);
     const displayName = activity.displayName || activityDefinition.displayName;
     const icon = activityDefinition.icon || 'fas fa-cog';
@@ -183,10 +164,7 @@ export class DesignerComponent {
       top: `${activity.top}px`
     };
 
-    let display = this.activityDisplays[activity.id];
-
-    if (!display || display.length === 0)
-      display = (<h5><i class={icon}/>{displayName}</h5>);
+    const display = (<h5><i class={icon}/>{displayName}</h5>);
 
     return (
       <div key={activity.id} id={createActivityElementId(activity.id)}
@@ -198,6 +176,12 @@ export class DesignerComponent {
         {display}
       </div>
     );
+  };
+
+  private createContainer = (): Container => {
+    const container = new Container();
+    container.bind<Container>(Container).toConstantValue(container);
+    return container;
   };
 
   render() {
