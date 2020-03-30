@@ -129,7 +129,7 @@ export namespace Components {
     'configureServices': (action: (container: Container) => void) => Promise<void>;
     'serverUrl': string;
   }
-  interface SampleDesignerHost1 {
+  interface SampleDesignerHost2 {
     'addActivityDriver': (constructor: new (...args: any[]) => ActivityDriver) => Promise<void>;
     'addFieldDriver': (constructor: new (...args: any[]) => FieldDriver) => Promise<void>;
     'configureServices': (action: (container: Container) => void) => Promise<void>;
@@ -230,10 +230,10 @@ declare global {
     new (): HTMLSampleDesignerHost1Element;
   };
 
-  interface HTMLSampleDesignerHost1Element extends Components.SampleDesignerHost1, HTMLStencilElement {}
-  var HTMLSampleDesignerHost1Element: {
-    prototype: HTMLSampleDesignerHost1Element;
-    new (): HTMLSampleDesignerHost1Element;
+  interface HTMLSampleDesignerHost2Element extends Components.SampleDesignerHost2, HTMLStencilElement {}
+  var HTMLSampleDesignerHost2Element: {
+    prototype: HTMLSampleDesignerHost2Element;
+    new (): HTMLSampleDesignerHost2Element;
   };
   interface HTMLElementTagNameMap {
     'elsa-activity-editor': HTMLElsaActivityEditorElement;
@@ -251,7 +251,7 @@ declare global {
     'elsa-workflow-instance-picker': HTMLElsaWorkflowInstancePickerElement;
     'elsa-workflow-properties-editor': HTMLElsaWorkflowPropertiesEditorElement;
     'sample-designer-host-1': HTMLSampleDesignerHost1Element;
-    'sample-designer-host-1': HTMLSampleDesignerHost1Element;
+    'sample-designer-host-2': HTMLSampleDesignerHost2Element;
   }
 }
 
@@ -344,7 +344,7 @@ declare namespace LocalJSX {
   interface SampleDesignerHost1 {
     'serverUrl'?: string;
   }
-  interface SampleDesignerHost1 {
+  interface SampleDesignerHost2 {
     'serverUrl'?: string;
   }
 
@@ -364,7 +364,7 @@ declare namespace LocalJSX {
     'elsa-workflow-instance-picker': ElsaWorkflowInstancePicker;
     'elsa-workflow-properties-editor': ElsaWorkflowPropertiesEditor;
     'sample-designer-host-1': SampleDesignerHost1;
-    'sample-designer-host-1': SampleDesignerHost1;
+    'sample-designer-host-2': SampleDesignerHost2;
   }
 }
 
@@ -389,7 +389,7 @@ declare module "@stencil/core" {
       'elsa-workflow-instance-picker': LocalJSX.ElsaWorkflowInstancePicker & JSXBase.HTMLAttributes<HTMLElsaWorkflowInstancePickerElement>;
       'elsa-workflow-properties-editor': LocalJSX.ElsaWorkflowPropertiesEditor & JSXBase.HTMLAttributes<HTMLElsaWorkflowPropertiesEditorElement>;
       'sample-designer-host-1': LocalJSX.SampleDesignerHost1 & JSXBase.HTMLAttributes<HTMLSampleDesignerHost1Element>;
-      'sample-designer-host-1': LocalJSX.SampleDesignerHost1 & JSXBase.HTMLAttributes<HTMLSampleDesignerHost1Element>;
+      'sample-designer-host-2': LocalJSX.SampleDesignerHost2 & JSXBase.HTMLAttributes<HTMLSampleDesignerHost2Element>;
     }
   }
 }

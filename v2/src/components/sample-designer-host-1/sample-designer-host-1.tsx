@@ -48,7 +48,7 @@ import {ExpressionDriver, ListDriver, SelectDriver, TextDriver} from "../../driv
   styleUrl: 'sample-designer-host-1.scss',
   scoped: true
 })
-export class DesignerHostComponent {
+export class DesignerHostComponent1 {
 
   private designer: HTMLElsaDesignerElement;
   private lastClickedLocation: { x: number, y: number } = {x: 250, y: 250};
