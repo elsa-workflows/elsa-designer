@@ -37,6 +37,40 @@ To use the component, add the following HTML tag:
 Out of the box, the designer registers a default set of activities that are provided from a set of plugins.
 To add custom activities, you need to define them as part of a custom plugin.
 
+## Integration with other Frontend framework
+
+### Angular(2+)
+1. Add Elsa Designer pkg CDN on `index.html`
+```HTML
+<script
+    type="module"
+    src="https://unpkg.com/@elsa-workflows/elsa-workflow-designer@0.0.61/dist/elsa-workflow-designer/elsa-workflow-designer.esm.js"
+></script>
+<script
+    nomodule=""
+    src="https://unpkg.com/@elsa-workflows/elsa-workflow-designer@0.0.61/dist/elsa-workflow-designer/elsa-workflow-designer.js"
+></script>
+```
+
+2. On `app.module.ts`, add `CUSTOM_ELEMENTS_SCHEMA`
+```Typescript
+@NgModule({
+  //whatever you have on app module goes here... 
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
+export class AppModule {}
+```
+
+3. Add `<ng-wf-designer-host></ng-wf-designer-host>` to the HTML
+```HTML
+<wf-designer-host
+    id="designerHost"
+    canvas-height="300vh"
+    [attr.data-activity-definitions]="activityDefinition"
+    [attr.data-workflow]="workflowModel">
+</wf-designer-host>
+```
+> See full example [here](https://codesandbox.io/s/angular-elsa-designer-dkb4t?file=/src/app/app.component.html)
 
 ### Custom Activities
 
