@@ -1,6 +1,6 @@
 import { Component, Element, Event, EventEmitter, h, Method, Prop } from '@stencil/core';
 import { ImportedWorkflowData, Workflow, WorkflowFormat, WorkflowFormatDescriptor } from "../../../models";
-
+import YAML from 'json2yaml';
 @Component({
   tag: 'wf-import-export',
   styleUrl: 'import-export.scss',
@@ -82,7 +82,7 @@ export class ImportExport {
       case 'json':
         return JSON.stringify(workflow);
       case 'yaml':
-        return JSON.stringify(workflow);
+        return YAML.stringify(workflow);
       case 'xml':
         return JSON.stringify(workflow);
       default:
