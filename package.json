@@ -49,6 +49,7 @@
     "jquery": "^3.4.1",
     "jsplumb": "^2.11.1",
     "popper.js": "^1.15.0",
+    "json2yaml": "^1.1.0",
     "uuid-browser": "^3.1.0"
   },
   "directories": {
